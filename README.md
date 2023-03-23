@@ -27,4 +27,4 @@ If you would like to contribute to the project, please follow these guidelines:
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/Miller-GS/MC426A-TV-Application/blob/main/LICENSE) file for details.
