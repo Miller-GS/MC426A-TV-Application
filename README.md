@@ -25,8 +25,6 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 -   Search and browse: Allow users to search and browse for TV series and movies based on title, genre, actors, directors, etc.
 -   Recommendations: Provide personalized recommendations to users based on their watch history, ratings, and preferences.
 -   Reviews and ratings: Allow users to rate and review TV series and movies they have watched.
--   Social features: Allow users to follow other users, share their watchlists, and see what their friends are watching.
--   Notifications: Send users notifications about new episodes or movies they might be interested in.
 
 ## Build
 
