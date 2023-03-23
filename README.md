@@ -15,3 +15,12 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 - Reviews and ratings: Allow users to rate and review TV series and movies they have watched.
 - Social features: Allow users to follow other users, share their watchlists, and see what their friends are watching.
 - Notifications: Send users notifications about new episodes or movies they might be interested in.
+
+## Contribution Guidelines
+If you would like to contribute to the project, please follow these guidelines:
+
+1. Fork the repository and create a new branch for your changes
+2. Make your changes and test them locally
+3. Submit a pull request with a detailed description of your changes and why they are necessary
+4. Ensure that your code follows the project's coding standards and conventions
+5. Respond to any feedback and make the necessary changes to your pull request
