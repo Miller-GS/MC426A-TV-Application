@@ -16,6 +16,9 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 - Social features: Allow users to follow other users, share their watchlists, and see what their friends are watching.
 - Notifications: Send users notifications about new episodes or movies they might be interested in.
 
+## Build
+TODO.
+
 ## Contribution Guidelines
 If you would like to contribute to the project, please follow these guidelines:
 
