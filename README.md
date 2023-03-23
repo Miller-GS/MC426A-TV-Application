@@ -24,3 +24,7 @@ If you would like to contribute to the project, please follow these guidelines:
 3. Submit a pull request with a detailed description of your changes and why they are necessary
 4. Ensure that your code follows the project's coding standards and conventions
 5. Respond to any feedback and make the necessary changes to your pull request
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
