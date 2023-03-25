@@ -34,7 +34,7 @@ TODO.
 
 If you would like to contribute to the project, please follow these guidelines:
 
-1. Fork the repository and create a new branch for your changes
+1. Fork the repository and create a new branch for your changes using proper [naming conventions](https://gist.github.com/seunggabi/87f8c722d35cd07deb3f649d45a31082)
 2. Make your changes and test them locally
 3. Submit a pull request with a detailed description of your changes and why they are necessary
 4. Ensure that your code follows the project's coding standards and conventions
