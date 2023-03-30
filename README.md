@@ -26,15 +26,11 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 -   Recommendations: Provide personalized recommendations to users based on their watch history, ratings, and preferences.
 -   Reviews and ratings: Allow users to rate and review TV series and movies they have watched.
 
-## Build
-
-TODO.
-
 ## Contribution Guidelines
 
 If you would like to contribute to the project, please follow these guidelines:
 
-1. Fork the repository and create a new branch for your changes
+1. Fork the repository and create a new branch for your changes using proper [naming conventions](https://gist.github.com/seunggabi/87f8c722d35cd07deb3f649d45a31082)
 2. Make your changes and test them locally
 3. Submit a pull request with a detailed description of your changes and why they are necessary
 4. Ensure that your code follows the project's coding standards and conventions
@@ -42,4 +38,4 @@ If you would like to contribute to the project, please follow these guidelines:
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/Miller-GS/MC426A-TV-Application/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](https://github.com/Miller-GS/MC426A-TV-Application/blob/main/LICENSE) for details.
