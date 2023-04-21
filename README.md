@@ -26,6 +26,15 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 -   Recommendations: Provide personalized recommendations to users based on their watch history, ratings, and preferences.
 -   Reviews and ratings: Allow users to rate and review TV series and movies they have watched.
 
+## Build and Run
+
+```sh
+docker-compose build
+docker-compose up
+```
+
+Since we're using nodemon, you don't need to restart the containers for every change in the code.
+
 ## Contribution Guidelines
 
 If you would like to contribute to the project, please follow these guidelines:
