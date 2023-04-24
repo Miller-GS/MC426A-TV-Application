@@ -7,5 +7,6 @@ yarn.lock
 yarn-lock.error
 node_modules
 dist/
+coverage/
 
 .DS_Store
