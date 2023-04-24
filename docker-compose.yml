@@ -12,7 +12,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./api:/app
+      - ./api/src:/app/src
+      - ./api/tests:/app/tests
+      - ./api/app.ts:/app/app.ts
   db:
     build:
       context: ./database
