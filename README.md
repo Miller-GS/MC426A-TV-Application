@@ -33,14 +33,14 @@ docker-compose build
 docker-compose up
 ```
 
+Since we're using nodemon, you don't need to restart the containers for every change in the code.
+
 ## Run API tests
 
 ```sh
 docker exec -it api sh
 yarn test
 ```
-
-Since we're using nodemon, you don't need to restart the containers for every change in the code.
 
 ## Contribution Guidelines
 
