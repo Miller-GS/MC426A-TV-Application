@@ -29,8 +29,7 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 ## Build and Run
 
 ```sh
-docker-compose build
-docker-compose up
+make build && make up
 ```
 
 Since we're using nodemon, you don't need to restart the containers for every change in the code.
@@ -38,8 +37,7 @@ Since we're using nodemon, you don't need to restart the containers for every ch
 ## Run API tests
 
 ```sh
-docker exec -it api sh
-yarn test
+make test
 ```
 
 ## Contribution Guidelines
