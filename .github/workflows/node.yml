@@ -36,7 +36,7 @@ jobs:
         run: npm install prettier
 
       - name: Analysing code with prettier
-        run: prettier --config '.prettierrc.yaml'
+        run: prettier --config '.prettierrc.yaml' --check
 
       - name: Install yarn dependencies
         run: yarn install
