@@ -33,7 +33,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install prettier
-        run: npm install prettier
+        run: npm install prettier -g
 
       - name: Analysing code with prettier
         run: prettier --config '.prettierrc.yaml' --check
