@@ -28,6 +28,8 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 
 ## Build and Run
 
+Don't forget to edit de `.env.example` file with your data and copy it to `.env`
+
 ```sh
 make build && make up
 ```
