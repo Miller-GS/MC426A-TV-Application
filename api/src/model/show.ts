@@ -23,7 +23,7 @@ export interface Show {
 }
 
 export class ShowParser {
-        static parseTv(tvObj: any): Show {
+    static parseTv(tvObj: any): Show {
         const show = {
             id: tvObj.id,
             name: tvObj.original_title,

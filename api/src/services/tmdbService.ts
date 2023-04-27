@@ -38,7 +38,12 @@ export default class TMDBService {
         }
     }
 
-    private async listMovies(name: String, genres: String, year: String, page: number) {
+    private async listMovies(
+        name: String,
+        genres: String,
+        year: String,
+        page: number
+    ) {
         let data: Object[] = [];
 
         try {
@@ -59,7 +64,12 @@ export default class TMDBService {
         return response;
     }
 
-    private async listTvShows(name: String, genres: String, year: String, page: number) {
+    private async listTvShows(
+        name: String,
+        genres: String,
+        year: String,
+        page: number
+    ) {
         let data: Object[] = [];
 
         try {
@@ -70,7 +80,7 @@ export default class TMDBService {
                     with_genres: genres,
                     first_air_date_year: year,
                     sort_by: "popularity.desc",
-                    page: page
+                    page: page,
                 });
             }
         } catch {}
@@ -91,11 +101,15 @@ export default class TMDBService {
         let shows: Show[] = [];
 
         if (isSeries === "1") {
-            shows = shows.concat(await this.listTvShows(name, genres, year, page));
+            shows = shows.concat(
+                await this.listTvShows(name, genres, year, page)
+            );
         }
 
         if (isMovie === "1") {
-            shows = shows.concat(await this.listMovies(name, genres, year, page));
+            shows = shows.concat(
+                await this.listMovies(name, genres, year, page)
+            );
         }
 
         return shows.sort((a, b) => b.popularity - a.popularity);
