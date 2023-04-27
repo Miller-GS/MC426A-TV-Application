@@ -44,7 +44,7 @@ describe("isNumber", () => {
     });
 
     test("Should return false if string is literal number string", () => {
-        const response = ValidationUtils.isPositiveNumber("\"432\"");
+        const response = ValidationUtils.isPositiveNumber('"432"');
         expect(response).toEqual(false);
     });
 

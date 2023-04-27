@@ -7,8 +7,13 @@ export class TvController {
     public async list_shows(req: Request, res: Response) {
         const { name, genres, year, isMovie, isSeries, page } = req.query;
 
-        if(isMovie !== "1" && isSeries !== "1"){
-            return res.status(400).json({ message: "You must provide least one of the following query parameters: isMovie=1, isSeries=1" });
+        if (isMovie !== "1" && isSeries !== "1") {
+            return res
+                .status(400)
+                .json({
+                    message:
+                        "You must provide least one of the following query parameters: isMovie=1, isSeries=1",
+                });
         }
 
         const shows = await this.tmdbService.list(

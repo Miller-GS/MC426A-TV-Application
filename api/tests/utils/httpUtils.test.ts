@@ -12,17 +12,26 @@ describe("buildQuery", () => {
     });
 
     test("Query with object with 1 key", async () => {
-        const response = HttpUtils.buildQuery({key: "value"});
+        const response = HttpUtils.buildQuery({ key: "value" });
         expect(response).toEqual("key=value");
     });
 
     test("Query with object with multiple keys", async () => {
-        const response = HttpUtils.buildQuery({key1: "value1", key2: "value2"});
+        const response = HttpUtils.buildQuery({
+            key1: "value1",
+            key2: "value2",
+        });
         expect(response).toEqual("key1=value1&key2=value2");
     });
 
     test("Query with object with special characters", async () => {
-        const response = HttpUtils.buildQuery({key1: " ", key2: "?", key3: "&", key4: "", key5: undefined});
+        const response = HttpUtils.buildQuery({
+            key1: " ",
+            key2: "?",
+            key3: "&",
+            key4: "",
+            key5: undefined,
+        });
         expect(response).toEqual("key1=%20&key2=%3F&key3=%26");
     });
 });

@@ -86,8 +86,8 @@ export default class TMDBService {
     ) {
         let shows: Show[] = [];
 
-        if(!ValidationUtils.isPositiveNumber(page)){
-            page = "1"
+        if (!ValidationUtils.isPositiveNumber(page)) {
+            page = "1";
         }
 
         if (isSeries === "1") {
