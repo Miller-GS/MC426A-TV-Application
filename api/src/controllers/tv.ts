@@ -13,7 +13,7 @@ export class TvController {
             year as String,
             isMovie as String,
             isSeries as String,
-            page as number
+            page as unknown as number
         );
 
         return res.status(200).json(shows);
