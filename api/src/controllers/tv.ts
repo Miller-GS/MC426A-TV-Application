@@ -2,14 +2,19 @@ import { Response, Request } from "express";
 import TMDBService from "../services/tmdbService";
 
 export class TvController {
-    constructor (private readonly tmdbService: TMDBService) {}
+    constructor(private readonly tmdbService: TMDBService) {}
 
     public async list_shows(req: Request, res: Response) {
-        const { name, genresString, year, isMovie, isSeries } = req.query;
+        const { name, genres, year, isMovie, isSeries, page } = req.query;
 
-        const genres = (genresString as String ?? '').split(",");
-
-        const shows = await this.tmdbService.list(name as String, genres, year as String, isMovie as String, isSeries as String);
+        const shows = await this.tmdbService.list(
+            name as String,
+            genres as String,
+            year as String,
+            isMovie as String,
+            isSeries as String,
+            page as number
+        );
 
         return res.status(200).json(shows);
     }

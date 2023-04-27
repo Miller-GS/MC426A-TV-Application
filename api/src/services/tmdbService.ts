@@ -1,20 +1,21 @@
-import axios, {AxiosError} from "axios"
-import env from "../../environment"
+import axios, { AxiosError } from "axios";
+import env from "../../environment";
+
+import { Show, ShowParser } from "../model/show";
 
 export default class TMDBService {
+    constructor() {}
 
-    constructor () {}
-
-    private buildQuery(obj){
+    private buildQuery(obj) {
         return Object.keys(obj)
-                .map(key => {
+            .map((key) => {
                 return `${key}=${encodeURIComponent(obj[key])}`;
-                })
-                .join('&');
+            })
+            .join("&");
     }
 
-    private isEmpty(str){
-        return str == '' || str == undefined;
+    private isEmpty(str) {
+        return str == "" || str == undefined;
     }
 
     private async getGenresIDs(genres: String[]) {
@@ -22,7 +23,7 @@ export default class TMDBService {
     }
 
     private async get(path: String, params: Object) {
-        params = this.buildQuery({...params, api_key: env.TMDB_KEY});
+        params = this.buildQuery({ ...params, api_key: env.TMDB_KEY });
 
         try {
             let uri = env.TMDB_URL + path + "?" + params;
@@ -37,51 +38,66 @@ export default class TMDBService {
         }
     }
 
-    private async listMovies(name: String, genres: String[], year: String) {
+    private async listMovies(name: String, genres: String, year: String, page: number) {
+        let data: Object[] = [];
+
         try {
-            let data = [];
-            if (this.isEmpty(name)) {
-                data = await this.get("/search/movie", {query: name, year});
+            if (!this.isEmpty(name)) {
+                data = await this.get("/search/movie", { query: name, year });
             } else {
-                data = await this.get("/discover/movie", {genres: await this.getGenresIDs(genres), year: year});
+                data = await this.get("/discover/movie", {
+                    with_genres: genres,
+                    year: year,
+                    sort_by: "popularity.desc",
+                    page: page,
+                });
             }
-            
-            return data;
-        } catch {
+        } catch {}
 
-        }
-        return [];
+        const response: Show[] = data.map(ShowParser.parseMovie);
+
+        return response;
     }
 
-    private async listTvShows(name: String, genres: String[], year: String) {
+    private async listTvShows(name: String, genres: String, year: String, page: number) {
+        let data: Object[] = [];
+
         try {
-            let uri = env.TMDB_URL + "/movie"
-
-            const params = {
-                year: "",
-                with_genres: "",
-                api_key: env.TMDB_KEY
+            if (!this.isEmpty(name)) {
+                data = await this.get("/search/tv", { query: name, year });
+            } else {
+                data = await this.get("/discover/tv", {
+                    with_genres: genres,
+                    first_air_date_year: year,
+                    sort_by: "popularity.desc",
+                    page: page
+                });
             }
-            const query = this.buildQuery(params);
-            uri += `?${query}`;
-            
-            await axios.get(uri)
-        } catch {
+        } catch {}
 
-        }
-        return [];
+        const response: Show[] = data.map(ShowParser.parseTv);
+
+        return response;
     }
 
-    public async list(name: String, genres: String[], year: String, isMovie: String, isSeries: String) {
-        let shows = [];
+    public async list(
+        name: String,
+        genres: String,
+        year: String,
+        isMovie: String,
+        isSeries: String,
+        page: number
+    ) {
+        let shows: Show[] = [];
 
         if (isSeries === "1") {
-            shows = shows.concat(await this.listTvShows(name, genres, year));
+            shows = shows.concat(await this.listTvShows(name, genres, year, page));
         }
 
         if (isMovie === "1") {
-            shows = shows.concat(await this.listMovies(name, genres, year));
+            shows = shows.concat(await this.listMovies(name, genres, year, page));
         }
-        return shows;
+
+        return shows.sort((a, b) => b.popularity - a.popularity);
     }
 }
