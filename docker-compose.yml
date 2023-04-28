@@ -9,6 +9,7 @@ services:
     image: api
     container_name: api
     restart: unless-stopped
+    network_mode: host
     command: yarn dev
     ports:
       - "3000:3000"
@@ -23,6 +24,7 @@ services:
     image: db
     container_name: db
     restart: unless-stopped
+    network_mode: host
     environment:
       POSTGRES_DB: my_tv_list
       POSTGRES_USER: postgres
