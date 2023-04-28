@@ -5,4 +5,4 @@ export const usersRouter = express.Router();
 
 const controller = new UsersController();
 
-usersRouter.get("/login", controller.login);
+usersRouter.get("/login", async (req,res) => await controller.login(req, res));

@@ -15,15 +15,15 @@ export class User {
     @Column() 
     Name: string; 
    
-    @Column() 
+    @Column({nullable: true, default: null}) 
     Birthday: Date;
 
-    @Column()
+    @Column({default: () => "CURRENT_TIMESTAMP"})
     CreatedAt: Date;
 
-    @Column()
-    UpdatedAt: Date;
+    @Column({default: () => "CURRENT_TIMESTAMP"})
+    UpdatedAt: Date;    
 
-    @Column()
+    @Column({nullable: true, default: null})
     DeletedAt: Date;
 }

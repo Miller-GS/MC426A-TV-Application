@@ -1,8 +1,14 @@
-import "reflect-metadata"; 
 import {createConnection} from "typeorm";
 import {User} from "../entity/user"; //import User entity
+import appDataSource from '../config/ormconfig';
 
 export default class UsersController {
+    private repository;
+
+    public constructor() {
+        this.repository = appDataSource.getRepository(User);
+    }
+
     public login(req, res) {
         createConnection().then(async connection => { 
 
