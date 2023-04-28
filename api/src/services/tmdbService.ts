@@ -1,29 +1,15 @@
 import axios, { AxiosError } from "axios";
 import env from "../../environment";
 
-import { Show, ShowParser } from "../model/show";
+import { Show, ShowParser } from "../models/show";
+import { HttpUtils } from "../utils/httpUtils";
+import { ValidationUtils } from "../utils/validationUtils";
 
 export default class TMDBService {
     constructor() {}
 
-    private buildQuery(obj) {
-        return Object.keys(obj)
-            .map((key) => {
-                return `${key}=${encodeURIComponent(obj[key])}`;
-            })
-            .join("&");
-    }
-
-    private isEmpty(str) {
-        return str == "" || str == undefined;
-    }
-
-    private async getGenresIDs(genres: String[]) {
-        return [];
-    }
-
     private async get(path: String, params: Object) {
-        params = this.buildQuery({ ...params, api_key: env.TMDB_KEY });
+        params = HttpUtils.buildQuery({ ...params, api_key: env.TMDB_KEY });
 
         try {
             let uri = env.TMDB_URL + path + "?" + params;
@@ -42,12 +28,12 @@ export default class TMDBService {
         name: String,
         genres: String,
         year: String,
-        page: number
+        page: String
     ) {
         let data: Object[] = [];
 
         try {
-            if (!this.isEmpty(name)) {
+            if (!ValidationUtils.isEmpty(name)) {
                 data = await this.get("/search/movie", { query: name, year });
             } else {
                 data = await this.get("/discover/movie", {
@@ -68,12 +54,12 @@ export default class TMDBService {
         name: String,
         genres: String,
         year: String,
-        page: number
+        page: String
     ) {
         let data: Object[] = [];
 
         try {
-            if (!this.isEmpty(name)) {
+            if (!ValidationUtils.isEmpty(name)) {
                 data = await this.get("/search/tv", { query: name, year });
             } else {
                 data = await this.get("/discover/tv", {
@@ -96,9 +82,13 @@ export default class TMDBService {
         year: String,
         isMovie: String,
         isSeries: String,
-        page: number
+        page: String
     ) {
         let shows: Show[] = [];
+
+        if(!ValidationUtils.isPositiveNumber(page)){
+            page = "1"
+        }
 
         if (isSeries === "1") {
             shows = shows.concat(
