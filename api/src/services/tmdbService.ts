@@ -8,7 +8,7 @@ import { ValidationUtils } from "../utils/validationUtils";
 export default class TMDBService {
     constructor() {}
 
-    private async get(path: String, params: Object) {
+    protected async get(path: String, params: Object) {
         params = HttpUtils.buildQuery({ ...params, api_key: env.TMDB_KEY });
 
         try {
