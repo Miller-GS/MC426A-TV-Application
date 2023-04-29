@@ -39,6 +39,9 @@ jobs:
         working-directory: .
         run: prettier --config '.prettierrc.yaml' --check .
 
+      - name: Copy .env.example to .env
+        run: cp .env.example .env
+
       - name: Install yarn dependencies
         run: yarn install
 
