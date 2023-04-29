@@ -2,7 +2,6 @@
 // in the TMDBService object.
 // The point is to assume the axios request and the API are working and only test if we are using them correctly.
 
-
 import request from "supertest";
 import axios from "axios";
 
@@ -16,8 +15,8 @@ interface Show {
     popularity: number;
 }
 
-ShowParser.parseTv = obj => obj;
-ShowParser.parseMovie = obj => obj;
+ShowParser.parseTv = (obj) => obj;
+ShowParser.parseMovie = (obj) => obj;
 
 class TMDBServiceTest extends TMDBService {
     protected async get(path: String, params: Object) {
@@ -33,16 +32,15 @@ describe("TMDB Service", () => {
     });
 
     test("Should search movie by name", async () => {
-    //                                          name,   genres,     year,   isMovie,    isSeries,   page
-        const response = await tmdbService.list("X",    "",         "",     "1",        "",         "");
+        const response = await tmdbService.list("X", "", "", "1", "", "");
         const expected = {
             path: "/search/movie",
             params: {
                 query: "X",
-                year: ""
+                year: "",
             },
-            popularity: 0
-        }
+            popularity: 0,
+        };
 
         expect(response).toEqual([expected]);
     });
