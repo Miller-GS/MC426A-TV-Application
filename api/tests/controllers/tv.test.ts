@@ -178,6 +178,6 @@ describe("Tv controller", () => {
         await tvControllerError.list_shows(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(500);
-        expect(mockResponse.send).toHaveBeenCalledWith({ error: "error" })
+        expect(mockResponse.send).toHaveBeenCalledWith({ error: "error" });
     });
 });
