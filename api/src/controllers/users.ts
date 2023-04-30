@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../entity/user.entity";
 import { DataSource } from "typeorm";
+import { Response, Request } from "express";
 
 export default class UsersController {
     private repository;
@@ -9,7 +10,7 @@ export default class UsersController {
         this.repository = appDataSource.getRepository(User);
     }
 
-    public async register(req, res) {
+    public async register(req: Request, res: Response) {
         const { name, email, password } = req.body;
         if (!name || !email || !password) {
             return res
