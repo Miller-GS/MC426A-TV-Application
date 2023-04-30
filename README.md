@@ -28,7 +28,14 @@ This is done with the help of [TMDB API](https://www.themoviedb.org/documentatio
 
 ## Build and Run
 
-Don't forget to edit the `.env.example` file with your data and copy it to `.env`
+Don't forget to edit the `.env.example` file with your data and copy it to `.env`, both in the api folder and in the database folder.
+You can do that automatically (copying the default values from the example) by running
+
+```sh
+make default-env-files
+```
+
+Then, to build and run, use the following commands:
 
 ```sh
 make build && make up

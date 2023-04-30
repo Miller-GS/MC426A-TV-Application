@@ -2,6 +2,9 @@
 
 DOCKER_CMD=docker-compose -f docker-compose.yml
 
+default-env-files:
+	cp api/.env.example api/.env
+	cp database/.env.example database/.env
 build:
 	$(DOCKER_CMD) build
 up:
