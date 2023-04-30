@@ -12,7 +12,7 @@ export default class UsersController {
     public async register(req, res) {
         const { name, email, password } = req.body;
         if (!name || !email || !password) {
-            return res.status(400).json({ msg: "Please enter all fields" });
+            return res.status(400).json({ msg: "Name, email and password required." });
         }
 
         const duplicate = await this.repository.findOne({

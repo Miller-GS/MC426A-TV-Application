@@ -45,7 +45,7 @@ describe("Users controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
-            msg: "Please enter all fields",
+            msg: "Name, email and password required.",
         });
     });
 
@@ -61,7 +61,7 @@ describe("Users controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
-            msg: "Please enter all fields",
+            msg: "Name, email and password required.",
         });
     });
 
@@ -77,7 +77,7 @@ describe("Users controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
-            msg: "Please enter all fields",
+            msg: "Name, email and password required.",
         });
     });
 
