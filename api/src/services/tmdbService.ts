@@ -11,17 +11,10 @@ export default class TMDBService {
     protected async get(path: String, params: Object) {
         params = HttpUtils.buildQuery({ ...params, api_key: env.TMDB_KEY });
 
-        try {
-            let uri = env.TMDB_URL + path + "?" + params;
-            const response = await axios.get(uri);
-            return response.data.results;
-        } catch (e) {
-            const err = e as AxiosError;
-            console.log("Something went wrong.");
-            console.log(err.message);
+        const url = env.TMDB_URL + path + "?" + params;
+        const response = await axios.get(url);
 
-            return [];
-        }
+        return response.data.results;
     }
 
     private async listMovies(
