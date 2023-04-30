@@ -111,6 +111,24 @@ describe("Tv controller", () => {
         });
     });
 
+    test("Should return 400 with undefined request", async () => {
+        const mockRequest = {
+            query: undefined,
+        } as unknown as Request;
+
+        const mockResponse = {} as unknown as Response;
+        mockResponse.json = jest.fn(() => mockResponse);
+        mockResponse.status = jest.fn(() => mockResponse);
+
+        await tvController.list_shows(mockRequest, mockResponse);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message:
+                "Bad request: Query was undefined",
+        });
+    });
+
     test("Should return 400 with request with neither movies nor series", async () => {
         const mockRequest = {
             query: {
