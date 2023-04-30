@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm"; 
+import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn} from "typeorm"; 
 
 @Entity() 
 export class User {   
@@ -18,12 +18,12 @@ export class User {
     @Column({nullable: true, default: null}) 
     Birthday: Date;
 
-    @Column({default: () => "CURRENT_TIMESTAMP"})
+    @CreateDateColumn()
     CreatedAt: Date;
 
-    @Column({default: () => "CURRENT_TIMESTAMP"})
+    @UpdateDateColumn()
     UpdatedAt: Date;    
 
-    @Column({nullable: true, default: null})
+    @DeleteDateColumn()
     DeletedAt: Date;
 }
