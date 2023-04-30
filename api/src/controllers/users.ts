@@ -26,7 +26,7 @@ export default class UsersController {
         }
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
-            const user = await this.repository.save({
+            await this.repository.save({
                 Name: name,
                 Email: email,
                 Password: hashedPassword,
