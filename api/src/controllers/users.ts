@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import {User} from "../entity/user.entity"; //import User entity
-import appDataSource from "../config/ormconfig";
+import {User} from "../entity/user.entity";
+import { DataSource } from "typeorm";
 
 export default class UsersController {
     private repository;
 
-    public constructor() {
+    public constructor(appDataSource: DataSource) {
         this.repository = appDataSource.getRepository(User);
     }
 
@@ -22,7 +22,6 @@ export default class UsersController {
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await this.repository.save({ Name: name, Email: email, Password: hashedPassword });
-            console.log(user);
             return res.status(201).json({ msg: "User created successfully" });
         }
         catch (err) {
