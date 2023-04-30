@@ -21,15 +21,19 @@ export class TvController {
             });
         }
 
-        const shows = await this.tmdbService.list(
-            name as String,
-            genres as String,
-            year as String,
-            isMovie as String,
-            isSeries as String,
-            page as String
-        );
+        try {
+            const shows = await this.tmdbService.list(
+                name as String,
+                genres as String,
+                year as String,
+                isMovie as String,
+                isSeries as String,
+                page as String
+            );
 
-        return res.status(200).json(shows);
+            return res.status(200).json(shows);
+        } catch (err: any) {
+            res.status(500).send({ error: err.message });
+        }
     }
 }

@@ -33,6 +33,20 @@ class TMDBServiceMock extends TMDBService {
     }
 }
 
+class TMDBServiceMockError extends TMDBService {
+    public async list(
+        name: String,
+        genres: String,
+        year: String,
+        isMovie: String,
+        isSeries: String,
+        page: String
+    ) {
+        throw new Error("error");
+        return [] as Show[];
+    }
+}
+
 describe("Tv controller", () => {
     let tvController: TvController;
 
@@ -147,5 +161,23 @@ describe("Tv controller", () => {
             message:
                 "You must provide least one of the following query parameters: isMovie=1, isSeries=1",
         });
+    });
+
+    test("Show return 500 with error in service", async () => {
+        const tvControllerError = new TvController(new TMDBServiceMockError());
+        const mockRequest = {
+            query: {
+                isSeries: "1",
+            },
+        } as unknown as Request;
+
+        const mockResponse = {} as unknown as Response;
+        mockResponse.send = jest.fn(() => mockResponse);
+        mockResponse.status = jest.fn(() => mockResponse);
+
+        await tvControllerError.list_shows(mockRequest, mockResponse);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith({ error: "error" })
     });
 });

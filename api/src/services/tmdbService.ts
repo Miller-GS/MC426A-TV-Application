@@ -25,22 +25,20 @@ export default class TMDBService {
     ) {
         let data: Object[] = [];
 
-        try {
-            if (!ValidationUtils.isEmpty(name)) {
-                data = await this.get("/search/movie", {
-                    query: name,
-                    year,
-                    page,
-                });
-            } else {
-                data = await this.get("/discover/movie", {
-                    with_genres: genres,
-                    year: year,
-                    sort_by: "popularity.desc",
-                    page: page,
-                });
-            }
-        } catch {}
+        if (!ValidationUtils.isEmpty(name)) {
+            data = await this.get("/search/movie", {
+                query: name,
+                year,
+                page,
+            });
+        } else {
+            data = await this.get("/discover/movie", {
+                with_genres: genres,
+                year: year,
+                sort_by: "popularity.desc",
+                page: page,
+            });
+        }
 
         const response: Show[] = data.map(ShowParser.parseMovie);
 
@@ -55,22 +53,20 @@ export default class TMDBService {
     ) {
         let data: Object[] = [];
 
-        try {
-            if (!ValidationUtils.isEmpty(name)) {
-                data = await this.get("/search/tv", {
-                    query: name,
-                    first_air_date_year: year,
-                    page,
-                });
-            } else {
-                data = await this.get("/discover/tv", {
-                    with_genres: genres,
-                    first_air_date_year: year,
-                    sort_by: "popularity.desc",
-                    page: page,
-                });
-            }
-        } catch {}
+        if (!ValidationUtils.isEmpty(name)) {
+            data = await this.get("/search/tv", {
+                query: name,
+                first_air_date_year: year,
+                page,
+            });
+        } else {
+            data = await this.get("/discover/tv", {
+                with_genres: genres,
+                first_air_date_year: year,
+                sort_by: "popularity.desc",
+                page: page,
+            });
+        }
 
         const response: Show[] = data.map(ShowParser.parseTv);
 
