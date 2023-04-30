@@ -124,8 +124,7 @@ describe("Tv controller", () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message:
-                "Bad request: Query was undefined",
+            message: "Bad request: Query was undefined",
         });
     });
 

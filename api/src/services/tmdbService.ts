@@ -34,7 +34,11 @@ export default class TMDBService {
 
         try {
             if (!ValidationUtils.isEmpty(name)) {
-                data = await this.get("/search/movie", { query: name, year, page });
+                data = await this.get("/search/movie", {
+                    query: name,
+                    year,
+                    page,
+                });
             } else {
                 data = await this.get("/discover/movie", {
                     with_genres: genres,
@@ -60,7 +64,11 @@ export default class TMDBService {
 
         try {
             if (!ValidationUtils.isEmpty(name)) {
-                data = await this.get("/search/tv", { query: name, first_air_date_year: year, page });
+                data = await this.get("/search/tv", {
+                    query: name,
+                    first_air_date_year: year,
+                    page,
+                });
             } else {
                 data = await this.get("/discover/tv", {
                     with_genres: genres,
