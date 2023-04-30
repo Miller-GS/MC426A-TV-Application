@@ -16,6 +16,7 @@ services:
       - ./api/src:/app/src
       - ./api/tests:/app/tests
       - ./api/app.ts:/app/app.ts
+      - ./api/environment.ts:/app/environment.ts
   db:
     build:
       context: ./database
