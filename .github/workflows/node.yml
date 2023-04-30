@@ -37,7 +37,7 @@ jobs:
         working-directory: .
         run: prettier --config '.prettierrc.yaml' --check .
 
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -60,16 +60,5 @@ jobs:
       - name: Install yarn dependencies
         run: yarn install
 
-  test_code:
-    runs-on: ubuntu-latest
-    needs: build
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Testing
+      - name: Run unit tests
         run: yarn test
