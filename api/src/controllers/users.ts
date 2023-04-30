@@ -1,6 +1,6 @@
-import {createConnection} from "typeorm";
-import {User} from "../entity/user"; //import User entity
-import appDataSource from '../config/ormconfig';
+import bcrypt from "bcrypt";
+import {User} from "../entity/user.entity"; //import User entity
+import appDataSource from "../config/ormconfig";
 
 export default class UsersController {
     private repository;
@@ -9,32 +9,27 @@ export default class UsersController {
         this.repository = appDataSource.getRepository(User);
     }
 
-    public login(req, res) {
-        createConnection().then(async connection => { 
+    public async register(req, res) {
+        const { name, email, password } = req.body;
+        if (!name || !email || !password) {
+            return res.status(400).json({ msg: "Please enter all fields" });
+        }
 
-            console.log("Inserting a new record into the student database..."); 
-            
-            //create student object 
-            const user = new User(); 
-            
-            //Assign student name and age here 
-            user.Name = "student1"; 
-            user.Email = "student1@asdas.com";
-            user.Password = "123456";
-            
-             //save student object in connection 
-             await connection.manager.save(user);
-             console.log("Saved a new user with id: " + user.id);
-             
-             console.log("Loading users from the database...");
-         
-             //Display student saved records
-             const users = await connection.manager.find(User);
-             console.log("Loaded users: ", users);
-         
-             console.log("Here you can setup and run express/koa/any other framework.");
+        const duplicate = await this.repository.findOne({ where: { Email: email } });
+        if (duplicate) {
+            return res.status(409).json({ msg: "User already exists" });
+        }
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = await this.repository.save({ Name: name, Email: email, Password: hashedPassword });
+            console.log(user);
+            return res.status(201).json({ msg: "User created successfully" });
+        }
+        catch (err) {
+            let message = 'Internal Server Error'
+            if (err instanceof Error) message = err.message
 
-             res.send(users);
-         }).catch(error => console.log(error));
+            return res.status(500).json({ msg: message});
+        }
     }
 }

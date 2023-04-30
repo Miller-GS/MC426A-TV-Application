@@ -5,4 +5,4 @@ export const usersRouter = express.Router();
 
 const controller = new UsersController();
 
-usersRouter.get("/login", async (req,res) => await controller.login(req, res));
+usersRouter.post("/register", async (req,res) => await controller.register(req, res));
