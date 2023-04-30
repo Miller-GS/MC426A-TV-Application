@@ -16,7 +16,7 @@ This repository will be used in the course MC426 (Software Engineering) at Unica
 ## Introduction
 
 Just like MyAnimeList (MAL), this website aims at helping its users to find, share and store data regarding TV series and movies that were watched.
-This is done with the help of [TVDB API](https://thetvdb.com/api-information), which contains data from various shows, including its title, genre, synopsis, etc.
+This is done with the help of [TMDB API](https://www.themoviedb.org/documentation/api), which contains data from various shows, including its title, genre, synopsis, etc.
 
 ## Features
 
