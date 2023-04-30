@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {User} from "../entity/user.entity";
+import { User } from "../entity/user.entity";
 import { DataSource } from "typeorm";
 
 export default class UsersController {
@@ -15,20 +15,25 @@ export default class UsersController {
             return res.status(400).json({ msg: "Please enter all fields" });
         }
 
-        const duplicate = await this.repository.findOne({ where: { Email: email } });
+        const duplicate = await this.repository.findOne({
+            where: { Email: email },
+        });
         if (duplicate) {
             return res.status(409).json({ msg: "User already exists" });
         }
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
-            const user = await this.repository.save({ Name: name, Email: email, Password: hashedPassword });
+            const user = await this.repository.save({
+                Name: name,
+                Email: email,
+                Password: hashedPassword,
+            });
             return res.status(201).json({ msg: "User created successfully" });
-        }
-        catch (err) {
-            let message = 'Internal Server Error'
-            if (err instanceof Error) message = err.message
+        } catch (err) {
+            let message = "Internal Server Error";
+            if (err instanceof Error) message = err.message;
 
-            return res.status(500).json({ msg: message});
+            return res.status(500).json({ msg: message });
         }
     }
 }

@@ -12,7 +12,12 @@ describe("Users controller", () => {
         userRepositoryMock = {
             findOne: jest.fn((options) => {
                 if (options.where.Email === "existing_email@email.com") {
-                    return {"id": 1, "name": "existing_name", "email": "existing_email@email.com", "password": "existing_password"}
+                    return {
+                        id: 1,
+                        name: "existing_name",
+                        email: "existing_email@email.com",
+                        password: "existing_password",
+                    };
                 }
                 return null;
             }),
@@ -39,7 +44,9 @@ describe("Users controller", () => {
         await controller.register(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ msg: "Please enter all fields" });
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Please enter all fields",
+        });
     });
 
     test("register() should return 400 if email is not provided", async () => {
@@ -53,7 +60,9 @@ describe("Users controller", () => {
         await controller.register(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ msg: "Please enter all fields" });
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Please enter all fields",
+        });
     });
 
     test("register() should return 400 if password is not provided", async () => {
@@ -67,9 +76,11 @@ describe("Users controller", () => {
         await controller.register(req, res);
 
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ msg: "Please enter all fields" });
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Please enter all fields",
+        });
     });
-    
+
     test("register() should return 409 if user already exists", async () => {
         const req = {
             body: {
@@ -96,9 +107,15 @@ describe("Users controller", () => {
 
         await controller.register(req, res);
 
-        expect(userRepositoryMock.save).toHaveBeenCalledWith({ Name: "person", Email: req.body.email, Password: expect.any(String) });
+        expect(userRepositoryMock.save).toHaveBeenCalledWith({
+            Name: "person",
+            Email: req.body.email,
+            Password: expect.any(String),
+        });
         expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.json).toHaveBeenCalledWith({ msg: "User created successfully" });
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "User created successfully",
+        });
     });
 
     test("register() should return 500 if an error occurs", async () => {
@@ -110,7 +127,9 @@ describe("Users controller", () => {
             },
         } as Request;
 
-        userRepositoryMock.save = jest.fn().mockRejectedValue(new Error("Error message"));
+        userRepositoryMock.save = jest
+            .fn()
+            .mockRejectedValue(new Error("Error message"));
 
         await controller.register(req, res);
 
