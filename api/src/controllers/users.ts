@@ -1,7 +1,6 @@
 import { User } from "../entity/user.entity";
 import { DataSource } from "typeorm";
 import { Response, Request } from "express";
-import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 import env from "../../environment";
 import jwt from "jsonwebtoken";
@@ -92,5 +91,51 @@ export default class UsersController {
 
             return res.status(500).json({ msg: message });
         }
+    }
+
+    public async handleRefreshToken(req: Request, res: Response) {
+        const refreshToken = req.cookies?.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json({ msg: "No refresh token provided." });
+        }
+        const user = await this.repository.findOne({
+            where: { RefreshToken: refreshToken },
+        });
+        if (!user) {
+            return res.status(403).json({ msg: "Invalid refresh token." });
+        }
+        jwt.verify(
+            refreshToken,
+            env.REFRESH_TOKEN_SECRET,
+            async (err, user_token) => {
+                if (err || user_token.id !== user.Id) {
+                    return res.status(403).json({ msg: "Invalid refresh token." });
+                }
+                const accessToken = jwt.sign(
+                    { id: user.Id },
+                    env.ACCESS_TOKEN_SECRET,
+                    { expiresIn: "15m" }
+                );
+                return res.status(200).json({ accessToken });
+            }
+        );
+    }
+
+    public async logout(req: Request, res: Response) {
+        const refreshToken = req.cookies?.refreshToken;
+        if (!refreshToken) {
+            return res.status(204).json({ msg: "No refresh token provided." });
+        }
+        const user = await this.repository.findOne({
+            where: { RefreshToken: refreshToken },
+        });
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        if (user)
+            await this.repository.update(user.Id, { RefreshToken: null });
+
+        return res.status(204).json({ msg: "Logged out successfully." });
     }
 }
