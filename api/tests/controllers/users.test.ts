@@ -3,26 +3,31 @@ import { Request, Response } from "express";
 import UsersController from "../../src/controllers/users";
 import { DataSource } from "typeorm";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import env from "../../environment";
 
 describe("Users controller", () => {
     let controller: UsersController;
     let res: Response;
     let userRepositoryMock;
+    const validToken = jwt.sign({ id: 1 }, env.REFRESH_TOKEN_SECRET, { expiresIn: "1h" });
 
     beforeEach(() => {
         userRepositoryMock = {
             findOne: jest.fn((options) => {
-                if (options.where.Email === "existing_email@email.com") {
+                if (options.where.Email === "existing_email@email.com" || options.where.RefreshToken === validToken) {
                     return {
-                        id: 1,
+                        Id: 1,
                         Name: "existing_name",
                         Email: "existing_email@email.com",
                         Password: bcrypt.hashSync("existing_password", 10),
+                        RefreshToken: validToken,
                     };
                 }
                 return null;
             }),
             save: jest.fn(),
+            update: jest.fn(),
         };
         let appDataSourceMock = {
             getRepository: jest.fn().mockReturnValue(userRepositoryMock),
@@ -31,6 +36,8 @@ describe("Users controller", () => {
         res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn(),
+            cookie: jest.fn(),
+            clearCookie: jest.fn(),
         } as unknown as Response;
     });
 
@@ -168,7 +175,7 @@ describe("Users controller", () => {
         });
     });
 
-    test("login() should return 400 if user does not exists", async () => {
+    test("login() should return 401 if user does not exists", async () => {
         const req = {
             body: {
                 email: "email@email.com",
@@ -178,11 +185,11 @@ describe("Users controller", () => {
 
         await controller.login(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({ msg: "Invalid access." });
     });
 
-    test("login() should return 400 if password is wrong", async () => {
+    test("login() should return 401 if password is wrong", async () => {
         const req = {
             body: {
                 email: "existing_email@email.com",
@@ -192,7 +199,7 @@ describe("Users controller", () => {
 
         await controller.login(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({ msg: "Invalid access." });
     });
 
@@ -225,5 +232,90 @@ describe("Users controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ msg: "Error message" });
+    });
+
+    test("handleRefreshToken() should return 401 if no token is provided", async () => {
+        const req = {} as Request;
+
+        await controller.handleRefreshToken(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "No refresh token provided.",
+        });
+    });
+
+    test("handleRefreshToken() should return 403 if token is invalid", async () => {
+        const req = {
+            cookies: {
+                refreshToken: "invalid_token",
+            },
+        } as Request;
+
+        await controller.handleRefreshToken(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Invalid refresh token.",
+        });
+    });
+
+    test("handleRefreshToken() should return 200 if token is valid", async () => {
+        const req = {
+            cookies: {
+                refreshToken: validToken,
+            },
+        } as Request;
+
+        await controller.handleRefreshToken(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            accessToken: expect.any(String),
+        });
+    });
+
+    test("logout() should return 204 if no token is provided", async () => {
+        const req = {} as Request;
+
+        await controller.logout(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.json).toHaveBeenCalledWith({msg: "No refresh token provided."});
+    });
+
+    test("logout() should return 204 and clear cookie if token is invalid", async () => {
+        const req = {
+            cookies: {
+                refreshToken: "invalid_token",
+            },
+        } as Request;
+
+        await controller.logout(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.json).toHaveBeenCalledWith({ msg: "Logged out successfully." });
+        expect(res.clearCookie).toHaveBeenCalledWith("refreshToken", {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+    });
+
+    test("logout() should return 204, clear cookie and update database if token is valid", async () => {
+        const req = {
+            cookies: {
+                refreshToken: validToken,
+            },
+        } as Request;
+
+        await controller.logout(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.json).toHaveBeenCalledWith({ msg: "Logged out successfully." });
+        expect(res.clearCookie).toHaveBeenCalledWith("refreshToken", {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        expect(userRepositoryMock.update).toHaveBeenCalledWith(1, {RefreshToken: null});
     });
 });
