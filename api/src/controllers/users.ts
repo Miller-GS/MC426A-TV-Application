@@ -1,4 +1,5 @@
 import { User } from "../entity/user.entity";
+import { ValidationUtils } from "../utils/validationUtils";
 import { DataSource } from "typeorm";
 import { Response, Request } from "express";
 import bcrypt from "bcrypt";
@@ -14,10 +15,13 @@ export default class UsersController {
 
     public async register(req: Request, res: Response) {
         const { name, email, password } = req.body;
-        if (!name || !email || !password) {
+        if (ValidationUtils.isEmpty(name) || ValidationUtils.isEmpty(email) || ValidationUtils.isEmpty(password)) {
             return res
                 .status(400)
                 .json({ msg: "Name, email and password required." });
+        }
+        if (!ValidationUtils.isValidEmail(email)) {
+            return res.status(400).json({ msg: "Invalid email." });
         }
 
         const duplicate = await this.repository.findOne({
