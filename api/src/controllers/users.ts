@@ -15,11 +15,7 @@ export default class UsersController {
 
     public async register(req: Request, res: Response) {
         const { name, email, password } = req.body;
-        if (
-            ValidationUtils.isEmpty(name) ||
-            ValidationUtils.isEmpty(email) ||
-            ValidationUtils.isEmpty(password)
-        ) {
+        if (ValidationUtils.isAnyStringEmpty(name, email, password)) {
             return res
                 .status(400)
                 .json({ msg: "Name, email and password required." });
