@@ -12,5 +12,3 @@ app.use("/users", usersRouter);
 app.use("/tv", tvRouter);
 
 export default app;
-
-setInterval(controller.updateTokenValidity, 15000);
