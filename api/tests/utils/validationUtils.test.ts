@@ -17,6 +17,23 @@ describe("isEmpty", () => {
     });
 });
 
+describe("isAnyStringEmpty", () => {
+    test("Should return true if any string is empty", () => {
+        const response = ValidationUtils.isAnyStringEmpty("", "test");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if any string is undefined", () => {
+        const response = ValidationUtils.isAnyStringEmpty(undefined, "test");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return false if no string is empty", () => {
+        const response = ValidationUtils.isAnyStringEmpty("test", "test");
+        expect(response).toEqual(false);
+    });
+});
+
 describe("isNumber", () => {
     test("Should return true if string is number 1", () => {
         const response = ValidationUtils.isPositiveNumber("1");
