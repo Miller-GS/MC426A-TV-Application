@@ -73,6 +73,23 @@ describe("Users controller", () => {
         });
     });
 
+    test("register() should returno 400 if email is invalid", async () => {
+        const req = {
+            body: {
+                name: "person",
+                email: "invalid_email",
+                password: "123456",
+            },
+        } as Request;
+
+        await controller.register(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Invalid email.",
+        });
+    });
+
     test("register() should return 400 if password is not provided", async () => {
         const req = {
             body: {
