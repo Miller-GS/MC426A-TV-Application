@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 
 export default class UsersController {
-    public repository;
+    private repository;
 
     public constructor(appDataSource: DataSource) {
         this.repository = appDataSource.getRepository(User);
