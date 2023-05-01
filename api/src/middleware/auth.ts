@@ -3,7 +3,11 @@ import env from "../../environment";
 
 export default function auth(req, res, next) {
     const authHeader = req.header("authorization");
-    if (!authHeader || authHeader.split(" ").length != 2 || authHeader.split(" ")[0] != "Bearer") {
+    if (
+        !authHeader ||
+        authHeader.split(" ").length != 2 ||
+        authHeader.split(" ")[0] != "Bearer"
+    ) {
         return res.status(401).json({ msg: "No token, authorization denied." });
     }
     const token = authHeader.split(" ")[1];
