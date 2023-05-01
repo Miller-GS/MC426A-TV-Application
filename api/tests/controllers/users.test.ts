@@ -10,12 +10,17 @@ describe("Users controller", () => {
     let controller: UsersController;
     let res: Response;
     let userRepositoryMock;
-    const validToken = jwt.sign({ id: 1 }, env.REFRESH_TOKEN_SECRET, { expiresIn: "1h" });
+    const validToken = jwt.sign({ id: 1 }, env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "1h",
+    });
 
     beforeEach(() => {
         userRepositoryMock = {
             findOne: jest.fn((options) => {
-                if (options.where.Email === "existing_email@email.com" || options.where.RefreshToken === validToken) {
+                if (
+                    options.where.Email === "existing_email@email.com" ||
+                    options.where.RefreshToken === validToken
+                ) {
                     return {
                         Id: 1,
                         Name: "existing_name",
@@ -298,7 +303,9 @@ describe("Users controller", () => {
         await controller.logout(req, res);
 
         expect(res.status).toHaveBeenCalledWith(204);
-        expect(res.json).toHaveBeenCalledWith({msg: "No refresh token provided."});
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "No refresh token provided.",
+        });
     });
 
     test("logout() should return 204 and clear cookie if token is invalid", async () => {
@@ -311,7 +318,9 @@ describe("Users controller", () => {
         await controller.logout(req, res);
 
         expect(res.status).toHaveBeenCalledWith(204);
-        expect(res.json).toHaveBeenCalledWith({ msg: "Logged out successfully." });
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Logged out successfully.",
+        });
         expect(res.clearCookie).toHaveBeenCalledWith("refreshToken", {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -328,11 +337,15 @@ describe("Users controller", () => {
         await controller.logout(req, res);
 
         expect(res.status).toHaveBeenCalledWith(204);
-        expect(res.json).toHaveBeenCalledWith({ msg: "Logged out successfully." });
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Logged out successfully.",
+        });
         expect(res.clearCookie).toHaveBeenCalledWith("refreshToken", {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-        expect(userRepositoryMock.update).toHaveBeenCalledWith(1, {RefreshToken: null});
+        expect(userRepositoryMock.update).toHaveBeenCalledWith(1, {
+            RefreshToken: null,
+        });
     });
 });

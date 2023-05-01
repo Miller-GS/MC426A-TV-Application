@@ -15,7 +15,11 @@ export default class UsersController {
 
     public async register(req: Request, res: Response) {
         const { name, email, password } = req.body;
-        if (ValidationUtils.isEmpty(name) || ValidationUtils.isEmpty(email) || ValidationUtils.isEmpty(password)) {
+        if (
+            ValidationUtils.isEmpty(name) ||
+            ValidationUtils.isEmpty(email) ||
+            ValidationUtils.isEmpty(password)
+        ) {
             return res
                 .status(400)
                 .json({ msg: "Name, email and password required." });
@@ -113,7 +117,9 @@ export default class UsersController {
             env.REFRESH_TOKEN_SECRET,
             async (err, user_token) => {
                 if (err || user_token.id !== user.Id) {
-                    return res.status(403).json({ msg: "Invalid refresh token." });
+                    return res
+                        .status(403)
+                        .json({ msg: "Invalid refresh token." });
                 }
                 const accessToken = jwt.sign(
                     { id: user.Id },
@@ -137,8 +143,7 @@ export default class UsersController {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-        if (user)
-            await this.repository.update(user.Id, { RefreshToken: null });
+        if (user) await this.repository.update(user.Id, { RefreshToken: null });
 
         return res.status(204).json({ msg: "Logged out successfully." });
     }

@@ -94,5 +94,4 @@ describe("isValidEmail", () => {
         const response = ValidationUtils.isValidEmail(undefined);
         expect(response).toEqual(false);
     });
-
 });
