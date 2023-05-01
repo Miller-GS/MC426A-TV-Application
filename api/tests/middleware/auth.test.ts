@@ -31,6 +31,18 @@ describe("auth middleware", () => {
         expect(next).not.toHaveBeenCalled();
     });
 
+    test("should return 401 if token is not a Bearer token", () => {
+        const req = {
+            header: jest.fn().mockReturnValue("invalid_token"),
+        };
+        auth(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "No token, authorization denied.",
+        });
+        expect(next).not.toHaveBeenCalled();
+    });
+
     test("should return 403 if token is invalid", () => {
         const req = {
             header: jest.fn().mockReturnValue("Bearer invalid_token"),
