@@ -14,9 +14,9 @@ describe("Users controller", () => {
                 if (options.where.Email === "existing_email@email.com") {
                     return {
                         id: 1,
-                        name: "existing_name",
-                        email: "existing_email@email.com",
-                        password: "existing_password",
+                        Name: "existing_name",
+                        Email: "existing_email@email.com",
+                        Password: "existing_password",
                     };
                 }
                 return null;
@@ -135,5 +135,76 @@ describe("Users controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ msg: "Error message" });
+    });
+
+    test("login() should return 400 if email is not provided", async () => {
+        const req = {
+            body: {
+                password: "existing_password",
+            },
+        } as Request;
+
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Email and password required.",
+        });
+    });
+
+    test("login() should return 400 if password is not provided", async () => {
+        const req = {
+            body: {
+                email: "existing_email@email.com",
+            },
+        } as Request;
+
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Email and password required.",
+        });
+    });
+
+    test("login() should return 400 if user does not exists", async () => {
+        const req = {
+            body: {
+                email: "email@email.com",
+                password: "123456",
+            },
+        } as Request;
+
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ msg: "Invalid access." });
+    });
+
+    test("login() should return 400 if password is wrong", async () => {
+        const req = {
+            body: {
+                email: "existing_email@email.com",
+                password: "123456",
+            },
+        } as Request;
+
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ msg: "Invalid access." });
+    });
+
+    test("login() should return 200 if login is successfull", async () => {
+        const req = {
+            body: {
+                email: "existing_email@email.com",
+                password: "existing_password",
+            },
+        } as Request;
+
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
     });
 });
