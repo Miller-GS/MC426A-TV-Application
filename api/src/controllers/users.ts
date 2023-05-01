@@ -75,16 +75,5 @@ export default class UsersController {
             return res.status(500).json({ msg: message });
         }
     }
-
-    public updateTokenValidity() {
-
-        var sessionTokenValid = this.repository.findBy({
-            where: { IsSessioTokenValid: true },
-        });
-        sessionTokenValid.forEach(element => {
-            element.IsSessionTokenValid = false;
-            this.repository.update(element.id, element);
-        });
-    }
 }
 
