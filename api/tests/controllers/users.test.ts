@@ -323,7 +323,6 @@ describe("Users controller", () => {
         });
         expect(res.clearCookie).toHaveBeenCalledWith("refreshToken", {
             httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
     });
 
@@ -342,7 +341,6 @@ describe("Users controller", () => {
         });
         expect(res.clearCookie).toHaveBeenCalledWith("refreshToken", {
             httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         expect(userRepositoryMock.update).toHaveBeenCalledWith(1, {
             RefreshToken: null,

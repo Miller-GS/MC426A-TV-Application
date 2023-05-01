@@ -137,7 +137,6 @@ export default class UsersController {
         });
         res.clearCookie("refreshToken", {
             httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         if (user) await this.repository.update(user.Id, { RefreshToken: null });
 
