@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import UsersController from "../../src/controllers/users";
 import { DataSource } from "typeorm";
+import bcrypt from "bcrypt";
 
 describe("Users controller", () => {
     let controller: UsersController;
@@ -16,7 +17,7 @@ describe("Users controller", () => {
                         id: 1,
                         Name: "existing_name",
                         Email: "existing_email@email.com",
-                        Password: "existing_password",
+                        Password: bcrypt.hashSync("existing_password", 10),
                     };
                 }
                 return null;

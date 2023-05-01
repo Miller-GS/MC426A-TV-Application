@@ -19,10 +19,10 @@ export class User {
     @Column()
     Password: string;
 
-    @Column()
+    @Column({ nullable: true, default: null })
     SessionToken: string;
 
-    @Column()
+    @Column({ nullable: true, default: null })
     IsSessionTokenValid: boolean;
 
     @Column()

@@ -4,7 +4,7 @@ import appDataSource from "../config/ormconfig";
 
 export const usersRouter = express.Router();
 
-export const controller = new UsersController(appDataSource);
+const controller = new UsersController(appDataSource);
 
 usersRouter.post(
     "/register",

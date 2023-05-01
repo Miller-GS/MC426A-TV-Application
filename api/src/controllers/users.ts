@@ -2,6 +2,7 @@ import { User } from "../entity/user.entity";
 import { DataSource } from "typeorm";
 import { Response, Request } from "express";
 import { randomUUID } from "crypto";
+import bcrypt from "bcrypt";
 
 export default class UsersController {
     public repository;
@@ -24,11 +25,12 @@ export default class UsersController {
         if (duplicate) {
             return res.status(409).json({ msg: "User already exists" });
         }
+        const hashedPassword = await bcrypt.hash(password, 10);
         try {
             await this.repository.save({
                 Name: name,
                 Email: email,
-                Password: password,
+                Password: hashedPassword,
             });
             return res.status(201).json({ msg: "User created successfully" });
         } catch (err) {
@@ -47,26 +49,27 @@ export default class UsersController {
                 .json({ msg: "Email and password required." });
         }
 
-        var targetUser = this.repository.findOne({
+        const targetUser = await this.repository.findOne({
             where: { Email: email },
         });
 
         if (!targetUser) {
             return res.status(400).json({ msg: "Invalid access." });
         }
-
         try {
-            var userPassword = targetUser.Password;
-            var passwordTest = password.localeCompare(targetUser.Password);
-            if (passwordTest != 0) {
+            const passwordTest = await bcrypt.compare(
+                password,
+                targetUser.Password
+            );
+            if (!passwordTest) {
                 return res.status(400).json({ msg: "Invalid access." });
             } else {
-                var sessionToken = randomUUID;
+                const sessionToken = randomUUID({ disableEntropyCache: true });
                 targetUser.SessionToken = sessionToken.toString();
                 targetUser.IsSessionTokenValid = true;
-                await this.repository.save(targetUser.id, targetUser);
+                await this.repository.save(targetUser);
 
-                return res.status(200);
+                return res.status(200).json({ sessionToken });
             }
         } catch (err) {
             let message = "Internal Server Error";
@@ -75,16 +78,4 @@ export default class UsersController {
             return res.status(500).json({ msg: message });
         }
     }
-
-    public updateTokenValidity() {
-
-        var sessionTokenValid = this.repository.findBy({
-            where: { IsSessioTokenValid: true },
-        });
-        sessionTokenValid.forEach(element => {
-            element.IsSessionTokenValid = true;
-            this.repository.update(element.id, element);
-        });
-    }
 }
-

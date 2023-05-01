@@ -1,5 +1,5 @@
-import express, { Router } from "express";
-import { usersRouter,  controller} from "./src/routes/users";
+import express from "express";
+import { usersRouter } from "./src/routes/users";
 import "reflect-metadata";
 import tvRouter from "./src/routes/tv";
 
@@ -12,5 +12,3 @@ app.use("/users", usersRouter);
 app.use("/tv", tvRouter);
 
 export default app;
-
-setInterval(controller.updateTokenValidity, 15000);
