@@ -1,0 +1,30 @@
+---
+version: "3"
+
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: api
+    container_name: api
+    restart: unless-stopped
+    command: yarn dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api/src:/app/src
+      - ./api/tests:/app/tests
+      - ./api/app.ts:/app/app.ts
+      - ./api/environment.ts:/app/environment.ts
+  db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    image: db
+    container_name: db
+    restart: unless-stopped
+    env_file:
+      - ./database/.env
+    ports:
+      - "5432:5432"

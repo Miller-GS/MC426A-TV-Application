@@ -16,7 +16,7 @@ This repository will be used in the course MC426 (Software Engineering) at Unica
 ## Introduction
 
 Just like MyAnimeList (MAL), this website aims at helping its users to find, share and store data regarding TV series and movies that were watched.
-This is done with the help of [TVDB API](https://thetvdb.com/api-information), which contains data from various shows, including its title, genre, synopsis, etc.
+This is done with the help of [TMDB API](https://www.themoviedb.org/documentation/api), which contains data from various shows, including its title, genre, synopsis, etc.
 
 ## Features
 
@@ -25,6 +25,29 @@ This is done with the help of [TVDB API](https://thetvdb.com/api-information), w
 -   Search and browse: Allow users to search and browse for TV series and movies based on title, genre, actors, directors, etc.
 -   Recommendations: Provide personalized recommendations to users based on their watch history, ratings, and preferences.
 -   Reviews and ratings: Allow users to rate and review TV series and movies they have watched.
+
+## Build and Run
+
+Don't forget to edit the `.env.example` file with your data and copy it to `.env`, both in the api folder and in the database folder.
+You can do that automatically (copying the default values from the example) by running
+
+```sh
+make default-env-files
+```
+
+Then, to build and run, use the following commands:
+
+```sh
+make build && make up
+```
+
+Since we're using nodemon, you don't need to restart the containers for every change in the code.
+
+## Run API tests
+
+```sh
+make test
+```
 
 ## Contribution Guidelines
 
