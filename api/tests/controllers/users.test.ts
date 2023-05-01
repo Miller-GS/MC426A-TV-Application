@@ -208,4 +208,22 @@ describe("Users controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(200);
     });
+
+    test("login() should return 500 if an error occurs", async () => {
+        const req = {
+            body: {
+                email: "existing_email@email.com",
+                password: "existing_password",
+            },
+        } as Request;
+
+        userRepositoryMock.save = jest
+            .fn()
+            .mockRejectedValue(new Error("Error message"));
+
+        await controller.login(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ msg: "Error message" });
+    });
 });
