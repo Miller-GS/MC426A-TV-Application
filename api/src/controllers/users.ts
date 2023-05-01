@@ -82,7 +82,7 @@ export default class UsersController {
             where: { IsSessioTokenValid: true },
         });
         sessionTokenValid.forEach(element => {
-            element.IsSessionTokenValid = true;
+            element.IsSessionTokenValid = false;
             this.repository.update(element.id, element);
         });
     }
