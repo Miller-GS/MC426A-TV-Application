@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -17,6 +18,12 @@ export class User {
 
     @Column()
     Password: string;
+
+    @Column()
+    SessionToken: string;
+
+    @Column()
+    IsSessionTokenValid: boolean;
 
     @Column()
     Name: string;
