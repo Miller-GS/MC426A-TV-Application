@@ -1,5 +1,6 @@
-import express, { Router } from "express";
+import express from "express";
 import { usersRouter } from "./src/routes/users";
+import "reflect-metadata";
 import tvRouter from "./src/routes/tv";
 
 const app = express();

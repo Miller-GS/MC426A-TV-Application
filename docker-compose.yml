@@ -24,8 +24,7 @@ services:
     image: db
     container_name: db
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+    env_file:
+      - ./database/.env
     ports:
       - "5432:5432"
