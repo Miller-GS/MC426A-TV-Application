@@ -11,7 +11,7 @@ import {
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number;
+    Id: number;
 
     @Column()
     Email: string;
@@ -20,10 +20,7 @@ export class User {
     Password: string;
 
     @Column({ nullable: true, default: null })
-    SessionToken: string;
-
-    @Column({ nullable: true, default: null })
-    IsSessionTokenValid: boolean;
+    RefreshToken: string;
 
     @Column()
     Name: string;

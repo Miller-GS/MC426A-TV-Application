@@ -17,6 +17,23 @@ describe("isEmpty", () => {
     });
 });
 
+describe("isAnyStringEmpty", () => {
+    test("Should return true if any string is empty", () => {
+        const response = ValidationUtils.isAnyStringEmpty("", "test");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if any string is undefined", () => {
+        const response = ValidationUtils.isAnyStringEmpty(undefined, "test");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return false if no string is empty", () => {
+        const response = ValidationUtils.isAnyStringEmpty("test", "test");
+        expect(response).toEqual(false);
+    });
+});
+
 describe("isNumber", () => {
     test("Should return true if string is number 1", () => {
         const response = ValidationUtils.isPositiveNumber("1");
@@ -55,6 +72,43 @@ describe("isNumber", () => {
 
     test("Should return false if string is undefined", () => {
         const response = ValidationUtils.isPositiveNumber(undefined);
+        expect(response).toEqual(false);
+    });
+});
+
+describe("isValidEmail", () => {
+    test("Should return true if string is email", () => {
+        const response = ValidationUtils.isValidEmail("email@email.com");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return false if string does not have @", () => {
+        const response = ValidationUtils.isValidEmail("emailemail.com");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if there is nothing before @", () => {
+        const response = ValidationUtils.isValidEmail("@emailemail.com");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if string does not have .", () => {
+        const response = ValidationUtils.isValidEmail("email@emailemailcom");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if there is nothing after .", () => {
+        const response = ValidationUtils.isValidEmail("email@emailemail.");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if string is empty", () => {
+        const response = ValidationUtils.isValidEmail("");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if string is undefined", () => {
+        const response = ValidationUtils.isValidEmail(undefined);
         expect(response).toEqual(false);
     });
 });
