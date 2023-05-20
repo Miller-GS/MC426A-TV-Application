@@ -1,7 +1,11 @@
-# Técnica de elicitação de requisitos
+# Elicitação de requisitos
+
+## Técnica usada
 
 A técnica de *brainstorming* foi escolhida pelo grupo para a elicitação de requisitos.
 A equipe decidiu se reunir online para realização deste, e o site [Metro Retro](https://metroretro.io/) foi usado para nos auxiliar no brainstorm.
+
+## Realização do brainstorm
 
 Primeiramente, cada integrante do grupo escreveu suas ideias em Post-Its dentro de um grande quadro.
 A figura abaixo mostra como o quadro ficou depois que todos terminaram de listar todas as suas ideias no brainstorm.
@@ -33,7 +37,9 @@ O conjunto de todos os épicos pode ser examinado com mais detalhes nas próxima
 ![](/docs/images/brainstorm_epicos_navegacao_listas.png)
 ![](/docs/images/brainstorm_epicos_recomendacoes.png)
 
-Assim, nos propomos a entregar, até o final do semestre, os seguintes épicos:
+## Conclusão
+
+Baseado no brainstorm realizado, nos propomos a entregar, até o final do semestre, os seguintes épicos:
 - **Navegação**
 - **Listas**
 - **Avaliações**
