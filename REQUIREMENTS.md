@@ -2,7 +2,7 @@
 
 ## Técnica usada
 
-A técnica de *brainstorming* foi escolhida pelo grupo para a elicitação de requisitos.
+A técnica de _brainstorming_ foi escolhida pelo grupo para a elicitação de requisitos.
 A equipe decidiu se reunir online para realização deste, e o site [Metro Retro](https://metroretro.io/) foi usado para nos auxiliar no brainstorm.
 
 ## Realização do brainstorm
@@ -19,7 +19,7 @@ O modelo que utilizamos pode ser visto abaixo.
 O resultado das discussões individuais gerou o seguinte gráfico:
 ![](/docs/images/brainstorm_discussao.png)
 
-Mais detalhadamente, temos as *features* de cada quadrante listadas a seguir.
+Mais detalhadamente, temos as _features_ de cada quadrante listadas a seguir.
 ![](/docs/images/brainstorm_discussao_highvalue_higheffort.png)
 ![](/docs/images/brainstorm_discussao_highvalue_loweffort.png)
 ![](/docs/images/brainstorm_discussao_lowvalue_loweffort.png)
@@ -40,6 +40,7 @@ O conjunto de todos os épicos pode ser examinado com mais detalhes nas próxima
 ## Conclusão
 
 Baseado no brainstorm realizado, nos propomos a entregar, até o final do semestre, os seguintes épicos:
-- **Navegação**
-- **Listas**
-- **Avaliações**
+
+-   **Navegação**
+-   **Listas**
+-   **Avaliações**
