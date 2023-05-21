@@ -33,8 +33,8 @@ Das features de alto valor, escolhemos os mais importantes para a criação dos 
 Nota-se que estes estão organizados em ordem de importância.
 Como o tempo de desenvolvimento para o projeto é bastante limitado, decidimos priorizar, por enquanto, os 3 primeiros épicos.
 O conjunto de todos os épicos pode ser examinado com mais detalhes nas próximas imagens.
-![](/docs/images/brainstorm_epicos_avaliacoes_social.png)
 ![](/docs/images/brainstorm_epicos_navegacao_listas.png)
+![](/docs/images/brainstorm_epicos_avaliacoes_social.png)
 ![](/docs/images/brainstorm_epicos_recomendacoes.png)
 
 ## Conclusão
