@@ -15,3 +15,13 @@ usersRouter.post(
     "/login",
     async (req, res) => await controller.login(req, res)
 );
+
+usersRouter.get(
+    "/refresh",
+    async (req, res) => await controller.handleRefreshToken(req, res)
+);
+
+usersRouter.get(
+    "/logout",
+    async (req, res) => await controller.logout(req, res)
+);

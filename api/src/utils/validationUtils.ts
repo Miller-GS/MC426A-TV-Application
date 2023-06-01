@@ -3,8 +3,20 @@ export class ValidationUtils {
         return str == "" || str == undefined;
     }
 
+    static isAnyStringEmpty(...strs) {
+        for (let str of strs) {
+            if (this.isEmpty(str)) return true;
+        }
+        return false;
+    }
+
     static isPositiveNumber(str) {
         var numberRegex = /^[1-9]+$/;
         return numberRegex.test(str);
+    }
+
+    static isValidEmail(str) {
+        var emailRegex = /\S+@\S+\.\S+/;
+        return emailRegex.test(str);
     }
 }
