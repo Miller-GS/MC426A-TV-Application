@@ -12,6 +12,7 @@ This repository will be used in the course MC426 (Software Engineering) at Unica
 | MonicaOkAl       | Mônica Okamoto Albrecht    | 174928 |
 | GabrielleBarbosa | Gabrielle da Silva Barbosa | 233862 |
 | Vinschers        | Felipe Scherer Vicentin    | 248283 |
+| that-jpg         | Philipe Godoy              | 200073 |
 
 ## Introduction
 
