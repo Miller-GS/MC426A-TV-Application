@@ -48,7 +48,7 @@ which comes from the TMDB external API.
 
 ### TMDB API
 Short for [The Movie Database](https://www.themoviedb.org/documentation/api), the TMDB API is our source of data about movies and TV series. A repository
-will send getrequests to it.
+will send get requests to it.
 
 ## Build and Run
 
