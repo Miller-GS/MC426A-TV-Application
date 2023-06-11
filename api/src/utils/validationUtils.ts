@@ -1,6 +1,6 @@
 export class ValidationUtils {
     static isEmpty(str) {
-        return str == "" || str == undefined;
+        return str == "" || str == undefined || str == null;
     }
 
     static isAnyStringEmpty(...strs) {
