@@ -47,12 +47,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.listComments.mockRejectedValueOnce(new MediaNotFoundError());
+            commentService.listComments.mockRejectedValueOnce(
+                new MediaNotFoundError()
+            );
 
             await commentController.listComments(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.json).toHaveBeenCalledWith({message: "Media not found"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Media not found",
+            });
         });
 
         test("Should return 500 when an error occurs", async () => {
@@ -70,7 +74,9 @@ describe("Comment controller", () => {
             await commentController.listComments(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({message: "Internal server error"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Internal server error",
+            });
         });
 
         test("Should return 400 when mediaId is not a number", async () => {
@@ -87,7 +93,9 @@ describe("Comment controller", () => {
             await commentController.listComments(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Media ID necessary"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Media ID necessary",
+            });
         });
     });
 
@@ -112,7 +120,12 @@ describe("Comment controller", () => {
 
             expect(res.status).toHaveBeenCalledWith(201);
             expect(res.json).toHaveBeenCalledWith({});
-            expect(commentService.createComment).toHaveBeenCalledWith(1, 1, undefined, "content");
+            expect(commentService.createComment).toHaveBeenCalledWith(
+                1,
+                1,
+                undefined,
+                "content"
+            );
         });
 
         test("Should return 404 when media does not exist", async () => {
@@ -129,12 +142,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.createComment.mockRejectedValueOnce(new MediaNotFoundError());
+            commentService.createComment.mockRejectedValueOnce(
+                new MediaNotFoundError()
+            );
 
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.json).toHaveBeenCalledWith({message: "Media not found"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Media not found",
+            });
         });
 
         test("Should return 404 when parent comment does not exist", async () => {
@@ -152,12 +169,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.createComment.mockRejectedValueOnce(new CommentParentNotFoundError());
+            commentService.createComment.mockRejectedValueOnce(
+                new CommentParentNotFoundError()
+            );
 
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.json).toHaveBeenCalledWith({message: "Comment Parent not found"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Comment Parent not found",
+            });
         });
 
         test("Should return 500 when an error occurs", async () => {
@@ -179,7 +200,9 @@ describe("Comment controller", () => {
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({message: "Internal server error"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Internal server error",
+            });
         });
 
         test("Should return 400 when mediaId is not provided", async () => {
@@ -199,7 +222,9 @@ describe("Comment controller", () => {
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Media ID necessary"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Media ID necessary",
+            });
         });
 
         test("Should return 400 when content is not provided", async () => {
@@ -219,7 +244,9 @@ describe("Comment controller", () => {
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Content necessary"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Content necessary",
+            });
         });
 
         test("Should return 400 when parentId is provided but not a number", async () => {
@@ -241,7 +268,9 @@ describe("Comment controller", () => {
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Parent ID must be a number"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Parent ID must be a number",
+            });
         });
 
         test("Should return 401 when user is not logged in", async () => {
@@ -260,7 +289,7 @@ describe("Comment controller", () => {
             await commentController.createComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({message: "Unauthorized"});
+            expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized" });
         });
     });
 
@@ -287,7 +316,11 @@ describe("Comment controller", () => {
 
             expect(res.status).toHaveBeenCalledWith(204);
             expect(res.json).toHaveBeenCalledWith();
-            expect(commentService.updateComment).toHaveBeenCalledWith(1, 1, "content");
+            expect(commentService.updateComment).toHaveBeenCalledWith(
+                1,
+                1,
+                "content"
+            );
         });
 
         test("Should return 404 when comment does not exist", async () => {
@@ -306,12 +339,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.updateComment.mockRejectedValueOnce(new CommentNotFoundError());
+            commentService.updateComment.mockRejectedValueOnce(
+                new CommentNotFoundError()
+            );
 
             await commentController.updateComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.json).toHaveBeenCalledWith({message: "Comment not found"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Comment not found",
+            });
         });
 
         test("Should return 403 when user is not the author of the comment", async () => {
@@ -330,12 +367,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.updateComment.mockRejectedValueOnce(new CommentNotOwnedError());
+            commentService.updateComment.mockRejectedValueOnce(
+                new CommentNotOwnedError()
+            );
 
             await commentController.updateComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(403);
-            expect(res.json).toHaveBeenCalledWith({message: "Comment not owned by logged in user"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Comment not owned by logged in user",
+            });
         });
 
         test("Should return 500 when an error occurs", async () => {
@@ -359,7 +400,9 @@ describe("Comment controller", () => {
             await commentController.updateComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({message: "Internal server error"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Internal server error",
+            });
         });
 
         test("Should return 400 when content is not provided", async () => {
@@ -367,8 +410,7 @@ describe("Comment controller", () => {
                 params: {
                     commentId: 1,
                 },
-                body: {
-                },
+                body: {},
                 user: {
                     id: 1,
                 },
@@ -381,7 +423,9 @@ describe("Comment controller", () => {
             await commentController.updateComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Content necessary"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Content necessary",
+            });
         });
 
         test("Should return 401 when user is not logged in", async () => {
@@ -402,7 +446,7 @@ describe("Comment controller", () => {
             await commentController.updateComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({message: "Unauthorized"});
+            expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized" });
         });
 
         test("Should return 400 when commentId is not a number", async () => {
@@ -425,7 +469,9 @@ describe("Comment controller", () => {
             await commentController.updateComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Comment ID necessary"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Comment ID necessary",
+            });
         });
     });
 
@@ -465,12 +511,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.deleteComment.mockRejectedValueOnce(new CommentNotFoundError());
+            commentService.deleteComment.mockRejectedValueOnce(
+                new CommentNotFoundError()
+            );
 
             await commentController.deleteComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.json).toHaveBeenCalledWith({message: "Comment not found"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Comment not found",
+            });
         });
 
         test("Should return 403 when user is not the author of the comment", async () => {
@@ -486,12 +536,16 @@ describe("Comment controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            commentService.deleteComment.mockRejectedValueOnce(new CommentNotOwnedError());
+            commentService.deleteComment.mockRejectedValueOnce(
+                new CommentNotOwnedError()
+            );
 
             await commentController.deleteComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(403);
-            expect(res.json).toHaveBeenCalledWith({message: "Comment not owned by logged in user"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Comment not owned by logged in user",
+            });
         });
 
         test("Should return 500 when an error occurs", async () => {
@@ -512,7 +566,9 @@ describe("Comment controller", () => {
             await commentController.deleteComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({message: "Internal server error"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Internal server error",
+            });
         });
 
         test("Should return 401 when user is not logged in", async () => {
@@ -530,7 +586,7 @@ describe("Comment controller", () => {
             await commentController.deleteComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({message: "Unauthorized"});
+            expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized" });
         });
 
         test("Should return 400 when commentId is not a number", async () => {
@@ -550,8 +606,9 @@ describe("Comment controller", () => {
             await commentController.deleteComment(req, res);
 
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({message: "Bad request: Comment ID necessary"});
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Comment ID necessary",
+            });
         });
     });
 });
-    

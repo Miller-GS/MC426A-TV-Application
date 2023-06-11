@@ -12,31 +12,48 @@ export default class CommentService {
     private commentRepository: Repository<CommentEntity>;
     private mediaRepository: Repository<MediaEntity>;
 
-    public constructor(commentRepository: Repository<CommentEntity>, mediaRepository: Repository<MediaEntity>) {
+    public constructor(
+        commentRepository: Repository<CommentEntity>,
+        mediaRepository: Repository<MediaEntity>
+    ) {
         this.commentRepository = commentRepository;
         this.mediaRepository = mediaRepository;
     }
 
     public async listComments(mediaId: number) {
-        const mediaExists = await this.mediaRepository.exist({ where: { Id: mediaId } });
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
         if (!mediaExists) {
             throw new MediaNotFoundError();
         }
 
-        const comments = await this.commentRepository.find({ where: { MediaId: mediaId }, withDeleted: true });
-        
+        const comments = await this.commentRepository.find({
+            where: { MediaId: mediaId },
+            withDeleted: true,
+        });
+
         return CommentParser.parseComments(comments);
     }
 
-    public async createComment(mediaId: number, userId: number, parentId: number | null, content: string) {
-        const mediaExists = await this.mediaRepository.exist({ where: { Id: mediaId } });
+    public async createComment(
+        mediaId: number,
+        userId: number,
+        parentId: number | null,
+        content: string
+    ) {
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
         if (!mediaExists) {
             throw new MediaNotFoundError();
         }
 
         if (!ValidationUtils.isEmpty(parentId)) {
-            const commentExists = await this.commentRepository.exist({ where: { Id: parentId as number} });
-            if(!commentExists){
+            const commentExists = await this.commentRepository.exist({
+                where: { Id: parentId as number },
+            });
+            if (!commentExists) {
                 throw new CommentParentNotFoundError();
             }
         }
@@ -45,14 +62,20 @@ export default class CommentService {
             UserId: userId,
             MediaId: mediaId,
             ParentId: parentId,
-            Content: content
+            Content: content,
         } as CommentEntity);
 
         return CommentParser.parseComment(commentEntity);
     }
 
-    public async updateComment(commentId: number, userId: number, content: string) {
-        const comment = await this.commentRepository.findOne({ where: { Id: commentId } });
+    public async updateComment(
+        commentId: number,
+        userId: number,
+        content: string
+    ) {
+        const comment = await this.commentRepository.findOne({
+            where: { Id: commentId },
+        });
         if (!comment) {
             throw new CommentNotFoundError();
         }
@@ -60,15 +83,17 @@ export default class CommentService {
         if (comment.UserId !== userId) {
             throw new CommentNotOwnedError();
         }
-        
+
         await this.commentRepository.update(commentId, {
             Content: content,
-            Edited: true
+            Edited: true,
         });
     }
 
     public async deleteComment(commentId: number, userId: number) {
-        const comment = await this.commentRepository.findOne({ where: { Id: commentId } });
+        const comment = await this.commentRepository.findOne({
+            where: { Id: commentId },
+        });
         if (!comment) {
             throw new CommentNotFoundError();
         }
@@ -80,7 +105,7 @@ export default class CommentService {
         await this.commentRepository.update(commentId, {
             UserId: null,
             Content: "Comment deleted",
-            DeletedAt: new Date() 
+            DeletedAt: new Date(),
         });
     }
 }

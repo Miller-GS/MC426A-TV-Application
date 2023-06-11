@@ -1,23 +1,24 @@
-import CommentService from '../services/commentService';
+import CommentService from "../services/commentService";
 import { Response, Request } from "express";
-import { ValidationUtils } from '../utils/validationUtils';
+import { ValidationUtils } from "../utils/validationUtils";
 import { MyTVListError } from "../errors/MyTVListError";
 
 export class CommentController {
     private commentService: CommentService;
 
     public constructor(commentService: CommentService) {
-        this.commentService = commentService
+        this.commentService = commentService;
     }
 
     public async listComments(req: Request, res: Response) {
         const mediaId = req.params["mediaId"];
         if (!this.validateMediaId(mediaId, res)) return res;
-        
+
         try {
-            const comments = await this.commentService.listComments(parseInt(mediaId));
+            const comments = await this.commentService.listComments(
+                parseInt(mediaId)
+            );
             return res.status(200).json(comments);
-            
         } catch (err: any) {
             console.error(err.message);
             return this.handleError(err, res);
@@ -30,11 +31,16 @@ export class CommentController {
         if (!this.validateContent(content, res)) return res;
         if (!this.validateParentId(parentId, res)) return res;
         if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
-        
+
         const userId = req["user"].id;
 
         try {
-            const comment = await this.commentService.createComment(mediaId, userId, parentId, content);
+            const comment = await this.commentService.createComment(
+                mediaId,
+                userId,
+                parentId,
+                content
+            );
             return res.status(201).json(comment);
         } catch (err: any) {
             console.error(err.message);
@@ -45,7 +51,7 @@ export class CommentController {
     public async updateComment(req: Request, res: Response) {
         const commentId = req.params["commentId"];
         const content = req.body["content"];
-        
+
         if (!this.validateContent(content, res)) return res;
         if (!this.validateCommentId(commentId, res)) return res;
         if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
@@ -53,11 +59,15 @@ export class CommentController {
         const userId = req["user"].id;
 
         try {
-            await this.commentService.updateComment(parseInt(commentId), userId, content);
+            await this.commentService.updateComment(
+                parseInt(commentId),
+                userId,
+                content
+            );
             return res.status(204).json();
         } catch (err: any) {
             console.error(err.message);
-            return this.handleError(err, res)
+            return this.handleError(err, res);
         }
     }
 
@@ -69,7 +79,10 @@ export class CommentController {
         const userId = req["user"].id;
 
         try {
-            await this.commentService.deleteComment(parseInt(commentId), userId);
+            await this.commentService.deleteComment(
+                parseInt(commentId),
+                userId
+            );
             return res.status(204).json();
         } catch (err: any) {
             console.error(err.message);
@@ -108,7 +121,7 @@ export class CommentController {
     }
 
     private validateParentId(parentId: any, res: Response) {
-        if (!ValidationUtils.isEmpty(parentId) && (isNaN(parentId))){
+        if (!ValidationUtils.isEmpty(parentId) && isNaN(parentId)) {
             res.status(400).json({
                 message: "Bad request: Parent ID must be a number",
             });
@@ -117,7 +130,7 @@ export class CommentController {
         return true;
     }
 
-    private handleError(err: Error, res: Response){
+    private handleError(err: Error, res: Response) {
         if (err instanceof MyTVListError) {
             return res.status(err.getStatus()).json({
                 message: err.message,

@@ -2,7 +2,6 @@ import { CommentEntity } from "../entity/comment.entity";
 import { ValidationUtils } from "../utils/validationUtils";
 
 export interface Comment {
-
     id: number;
     userId: number | null;
     mediaId: number;
@@ -23,14 +22,17 @@ export class CommentParser {
             content: commentEntity.Content,
             edited: commentEntity.Edited,
             deleted: commentEntity.DeletedAt !== null,
-            responses: []
+            responses: [],
         };
     }
 
     public static parseComments(commentEntities: CommentEntity[]): Comment[] {
         const commentMap = new Map();
         for (const commentEntity of commentEntities) {
-            commentMap.set(commentEntity.Id, CommentParser.parseComment(commentEntity));
+            commentMap.set(
+                commentEntity.Id,
+                CommentParser.parseComment(commentEntity)
+            );
         }
         for (const commentEntity of commentEntities) {
             if (commentEntity.ParentId !== null) {
@@ -38,6 +40,8 @@ export class CommentParser {
                 parentComment.responses.push(commentMap.get(commentEntity.Id));
             }
         }
-        return Array.from(commentMap.values()).filter((comment) => ValidationUtils.isEmpty(comment.parentId));
+        return Array.from(commentMap.values()).filter((comment) =>
+            ValidationUtils.isEmpty(comment.parentId)
+        );
     }
 }

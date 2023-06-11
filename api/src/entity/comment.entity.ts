@@ -12,10 +12,10 @@ export class CommentEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
-    @Column({type: "integer", nullable: true, default: null})
+    @Column({ type: "integer", nullable: true, default: null })
     UserId: number | null;
 
-    @Column({nullable: true, default: null})
+    @Column({ nullable: true, default: null })
     ParentId: number;
 
     @Column()
@@ -24,7 +24,7 @@ export class CommentEntity {
     @Column()
     Content: string;
 
-    @Column({default: false})
+    @Column({ default: false })
     Edited: boolean;
 
     @CreateDateColumn()
