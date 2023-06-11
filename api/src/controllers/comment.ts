@@ -1,10 +1,7 @@
 import CommentService from '../services/commentService';
 import { Response, Request } from "express";
 import { ValidationUtils } from '../utils/validationUtils';
-import { MediaNotFoundError } from "../errors/MediaNotFoundError";
-import { CommentParentNotFoundError } from "../errors/CommentParentNotFoundError";
-import { CommentNotFoundError } from "../errors/CommentNotFoundError";
-import { CommentNotOwnedError } from "../errors/CommentNotOwnedError";
+import { MyTVListError } from "../errors/MyTVListError";
 
 export class CommentController {
     private commentService: CommentService;
@@ -15,146 +12,119 @@ export class CommentController {
 
     public async listComments(req: Request, res: Response) {
         const mediaId = req.params["mediaId"];
-        if (!ValidationUtils.isPositiveNumber(mediaId)) {
-            return res.status(400).json({
-                message: "Bad request: Media ID necessary",
-            });
-        }
+        if (!this.validateMediaId(mediaId, res)) return res;
         
         try {
             const comments = await this.commentService.listComments(parseInt(mediaId));
             return res.status(200).json(comments);
             
         } catch (err: any) {
-            if (err instanceof MediaNotFoundError) {
-                return res.status(404).json({
-                    message: err.message,
-                });
-            }
-            return res.status(500).json({
-                message: err.message,
-            });
+            console.error(err.message);
+            return this.handleError(err, res);
         }
     }
 
     public async createComment(req: Request, res: Response) {
         const { content, mediaId, parentId } = req.body;
-        if (ValidationUtils.isEmpty(mediaId) || isNaN(mediaId)) {
-            return res.status(400).json({
-                message: "Bad request: Media ID necessary",
-            });
-        }
-        if (ValidationUtils.isEmpty(content)) {
-            return res.status(400).json({
-                message: "Bad request: Content necessary",
-            });
-        }
-        if (!ValidationUtils.isEmpty(parentId) && (isNaN(parentId) || parentId < 0)){
-            return res.status(400).json({
-                message: "Bad request: Parent ID must be a positive number",
-            });
-        }
+        if (!this.validateMediaId(mediaId, res)) return res;
+        if (!this.validateContent(content, res)) return res;
+        if (!this.validateParentId(parentId, res)) return res;
+        if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
         
         const userId = req["user"].id;
-        if (ValidationUtils.isEmpty(userId)) {
-            return res.status(401).json({
-                message: "Unauthorized",
-            });
-        }
 
         try {
             const comment = await this.commentService.createComment(mediaId, userId, parentId, content);
             return res.status(201).json(comment);
         } catch (err: any) {
-            if (err instanceof MediaNotFoundError) {
-                return res.status(404).json({
-                    message: err.message,
-                });
-            }
-            if (err instanceof CommentParentNotFoundError) {
-                return res.status(404).json({
-                    message: err.message,
-                });
-            }
-            return res.status(500).json({
-                message: err.message,
-            });
+            console.error(err.message);
+            this.handleError(err, res);
         }
     }
 
     public async updateComment(req: Request, res: Response) {
         const commentId = req.params["commentId"];
         const content = req.body["content"];
-        if (!ValidationUtils.isPositiveNumber(commentId)) {
-            return res.status(400).json({
-                message: "Bad request: Comment ID necessary",
-            });
-        }
-        if (ValidationUtils.isEmpty(content)) {
-            return res.status(400).json({
-                message: "Bad request: Content necessary",
-            });
-        }
+        
+        if (!this.validateContent(content, res)) return res;
+        if (!this.validateCommentId(commentId, res)) return res;
+        if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
 
         const userId = req["user"].id;
-        if (ValidationUtils.isEmpty(userId)) {
-            return res.status(401).json({
-                message: "Unauthorized",
-            });
-        }
 
         try {
             await this.commentService.updateComment(parseInt(commentId), userId, content);
             return res.status(204).json();
         } catch (err: any) {
-            if (err instanceof CommentNotFoundError) {
-                return res.status(404).json({
-                    message: err.message,
-                });
-            }
-            if (err instanceof CommentNotOwnedError) {
-                return res.status(401).json({
-                    message: err.message,
-                });
-            }
-            return res.status(500).json({
-                message: "Internal Server Error",
-            });
+            console.error(err.message);
+            return this.handleError(err, res)
         }
     }
 
     public async deleteComment(req: Request, res: Response) {
         const commentId = req.params["commentId"];
-        if (!ValidationUtils.isPositiveNumber(commentId)) {
-            return res.status(400).json({
-                message: "Bad request: Comment ID necessary",
-            });
-        }
+        if (!this.validateCommentId(commentId, res)) return res;
+        if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
 
         const userId = req["user"].id;
-        if (ValidationUtils.isEmpty(userId)) {
-            return res.status(401).json({
-                message: "Unauthorized",
-            });
-        }
 
         try {
             await this.commentService.deleteComment(parseInt(commentId), userId);
             return res.status(204).json();
         } catch (err: any) {
-            if (err instanceof CommentNotFoundError) {
-                return res.status(404).json({
-                    message: err.message,
-                });
-            }
-            if (err instanceof CommentNotOwnedError) {
-                return res.status(401).json({
-                    message: err.message,
-                });
-            }
-            return res.status(500).json({
-                message: "Internal Server Error",
+            console.error(err.message);
+            return this.handleError(err, res);
+        }
+    }
+
+    private validateMediaId(mediaId: any, res: Response) {
+        if (ValidationUtils.isEmpty(mediaId) || isNaN(mediaId)) {
+            res.status(400).json({
+                message: "Bad request: Media ID necessary",
+            });
+            return false;
+        }
+        return true;
+    }
+
+    private validateContent(content: any, res: Response) {
+        if (ValidationUtils.isEmpty(content)) {
+            res.status(400).json({
+                message: "Bad request: Content necessary",
+            });
+            return false;
+        }
+        return true;
+    }
+
+    private validateCommentId(commentId: any, res: Response) {
+        if (!ValidationUtils.isPositiveNumber(commentId)) {
+            res.status(400).json({
+                message: "Bad request: Comment ID necessary",
+            });
+            return false;
+        }
+        return true;
+    }
+
+    private validateParentId(parentId: any, res: Response) {
+        if (!ValidationUtils.isEmpty(parentId) && (isNaN(parentId))){
+            res.status(400).json({
+                message: "Bad request: Parent ID must be a number",
+            });
+            return false;
+        }
+        return true;
+    }
+
+    private handleError(err: Error, res: Response){
+        if (err instanceof MyTVListError) {
+            return res.status(err.getStatus()).json({
+                message: err.message,
             });
         }
+        return res.status(500).json({
+            message: "Internal server error",
+        });
     }
 }
