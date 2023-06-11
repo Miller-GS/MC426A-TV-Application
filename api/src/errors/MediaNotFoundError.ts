@@ -1,5 +1,7 @@
-export class MediaNotFoundError extends Error {
+import { MyTVListError } from "./MyTVListError";
+
+export class MediaNotFoundError extends MyTVListError {
     public constructor() {
-        super("Media not found");
+        super("Media not found", 404);
     }
 }
