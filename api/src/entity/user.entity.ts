@@ -1,4 +1,3 @@
-import { UUID } from "crypto";
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -8,8 +7,8 @@ import {
     DeleteDateColumn,
 } from "typeorm";
 
-@Entity()
-export class User {
+@Entity("user")
+export class UserEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
