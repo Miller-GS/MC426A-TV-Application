@@ -6,7 +6,9 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
+    OneToMany,
 } from "typeorm";
+import { Notification } from "./notification.entity";
 
 @Entity()
 export class User {
@@ -36,4 +38,7 @@ export class User {
 
     @DeleteDateColumn()
     DeletedAt: Date;
+
+    @OneToMany(() => Notification, (notification: Notification) => notification.User)
+    Notifications: Notification[];
 }
