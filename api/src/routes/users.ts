@@ -21,6 +21,11 @@ usersRouter.post(
     async (req, res) => await controller.addFriend(req, res)
 );
 
+usersRouter.post(
+    '/:id/friends/:friendId',
+    async (req, res) => await controller.acceptFriend(req, res)
+);
+
 usersRouter.get(
     "/:id/friends",
     async (req, res) => await controller.getFriends(req, res)

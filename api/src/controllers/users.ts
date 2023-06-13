@@ -168,7 +168,7 @@ export default class UsersController {
         const friendshipRepository = this.friendshipRepository;
 
         const user1Id = Number(req.params.id);
-        const user2Id = Number(req.body.friendId);
+        const user2Id = Number(req.params.friendId);
 
         const friendship = await friendshipRepository.findOne({ where: { user_id1: user1Id, user_id2: user2Id } });
 
