@@ -1,6 +1,6 @@
 export class ValidationUtils {
     static isEmpty(str) {
-        return str == "" || str == undefined;
+        return str == "" || str == undefined || str == null;
     }
 
     static isAnyStringEmpty(...strs) {
@@ -11,12 +11,23 @@ export class ValidationUtils {
     }
 
     static isPositiveNumber(str) {
-        var numberRegex = /^[1-9]+$/;
+        const numberRegex = /^[1-9]+$/;
         return numberRegex.test(str);
     }
 
     static isValidEmail(str) {
-        var emailRegex = /\S+@\S+\.\S+/;
+        const emailRegex = /\S+@\S+\.\S+/;
         return emailRegex.test(str);
+    }
+
+    static validateUserLoggedIn(req, res) {
+        const user = req["user"];
+        if (ValidationUtils.isEmpty(user)) {
+            res.status(401).json({
+                message: "Unauthorized",
+            });
+            return false;
+        }
+        return true;
     }
 }

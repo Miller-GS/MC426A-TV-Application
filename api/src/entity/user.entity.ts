@@ -1,4 +1,3 @@
-import { UUID } from "crypto";
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -10,8 +9,8 @@ import {
 } from "typeorm";
 import { Notification } from "./notification.entity";
 
-@Entity()
-export class User {
+@Entity("user")
+export class UserEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
