@@ -11,16 +11,14 @@ export default class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public async get(userId: number) {
+    public async listNotifications(userId: number) {
         const notifications = await this.notificationRepository.find({
-            relations: {
-                User: true,
-            },
             where: {
                 User: {
                     Id: userId,
                 },
             },
+            withDeleted: true,
         });
 
         return notifications;

@@ -10,9 +10,10 @@ import {
 import { UserEntity } from "./user.entity";
 
 export enum NotificationType {
+    COMMENT_REPLY = "CommentReply"
 }
 
-@Entity()
+@Entity("notification")
 export class NotificationEntity {
     @PrimaryGeneratedColumn()
     Id: number;

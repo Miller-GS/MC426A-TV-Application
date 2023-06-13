@@ -15,7 +15,7 @@ export default class NotificationController {
         const userId = req["user"].id;
 
         try {
-            const notifications = await this.notificationService.get(userId);
+            const notifications = await this.notificationService.listNotifications(userId);
             return res.status(200).json(notifications);
         } catch (err: any) {
             console.error(err.message);
