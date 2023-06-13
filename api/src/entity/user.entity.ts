@@ -38,6 +38,9 @@ export class UserEntity {
     @DeleteDateColumn()
     DeletedAt: Date;
 
-    @OneToMany(() => NotificationEntity, (notification: NotificationEntity) => notification.User)
+    @OneToMany(
+        () => NotificationEntity,
+        (notification: NotificationEntity) => notification.User
+    )
     Notifications: NotificationEntity[];
 }

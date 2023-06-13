@@ -4,9 +4,7 @@ import { NotificationEntity } from "../entity/notification.entity";
 export default class NotificationService {
     private notificationRepository: Repository<NotificationEntity>;
 
-    public constructor(
-        notificationRepository: Repository<NotificationEntity>
-    ) {
+    public constructor(notificationRepository: Repository<NotificationEntity>) {
         this.notificationRepository = notificationRepository;
     }
 

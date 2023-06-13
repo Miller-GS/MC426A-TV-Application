@@ -10,7 +10,7 @@ import {
 import { UserEntity } from "./user.entity";
 
 export enum NotificationType {
-    COMMENT_REPLY = "CommentReply"
+    COMMENT_REPLY = "CommentReply",
 }
 
 @Entity("notification")

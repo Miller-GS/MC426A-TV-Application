@@ -36,7 +36,10 @@ describe("Notification Service", () => {
         test("Should return empty list when user has no notifications", async () => {
             notificationRepositoryMock.find.mockReturnValueOnce([]);
 
-            const response = await notificationService.listNotifications(1, true);
+            const response = await notificationService.listNotifications(
+                1,
+                true
+            );
 
             expect(response).toEqual([]);
         });
@@ -58,7 +61,10 @@ describe("Notification Service", () => {
         test("Should return empty list when user has no new notifications", async () => {
             notificationRepositoryMock.find.mockReturnValueOnce([]);
 
-            const response = await notificationService.listNotifications(1, false);
+            const response = await notificationService.listNotifications(
+                1,
+                false
+            );
 
             expect(response).toEqual([]);
         });

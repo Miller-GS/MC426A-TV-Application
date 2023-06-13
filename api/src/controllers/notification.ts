@@ -15,7 +15,8 @@ export default class NotificationController {
         const userId = req["user"].id;
 
         try {
-            const notifications = await this.notificationService.listNotifications(userId, true);
+            const notifications =
+                await this.notificationService.listNotifications(userId, true);
             return res.status(200).json(notifications);
         } catch (err: any) {
             console.error(err.message);
@@ -28,7 +29,8 @@ export default class NotificationController {
         const userId = req["user"].id;
 
         try {
-            const notifications = await this.notificationService.listNotifications(userId, false);
+            const notifications =
+                await this.notificationService.listNotifications(userId, false);
             return res.status(200).json(notifications);
         } catch (err: any) {
             console.error(err.message);
