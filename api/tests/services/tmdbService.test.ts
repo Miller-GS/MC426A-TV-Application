@@ -3,6 +3,7 @@
 
 import TMDBService from "../../src/services/tmdbService";
 import { ShowParser } from "../../src/models/show";
+import { ListMediasParams } from "../../src/models/listMediasParams";
 
 interface Show {
     path: string;
@@ -27,21 +28,29 @@ describe("TMDB Service - Movies", () => {
     });
 
     test("Should discover movie by year and genres", async () => {
-        const response = await tmdbService.list(
-            "",
-            "0,1,2",
-            "2023",
-            "1",
-            "0",
-            ""
-        );
+        const params = {
+            name: "",
+            genres: "0,1,2",
+            year: 2023,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 1,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "1", "0");
         const expected = {
             path: "/discover/movie",
             params: {
                 with_genres: "0,1,2",
-                year: "2023",
+                year: 2023,
                 sort_by: "popularity.desc",
-                page: "1",
+                page: 1,
+                "vote_average.gte": undefined,
+                "vote_average.lte": undefined,
+                "vote_count.gte": undefined,
+                "vote_count.lte": undefined,
             },
             popularity: 0,
         };
@@ -50,13 +59,24 @@ describe("TMDB Service - Movies", () => {
     });
 
     test("Should search movie by name", async () => {
-        const response = await tmdbService.list("X", "", "", "1", "", "1");
+        const params = {
+            name: "X",
+            genres: "0,1,2",
+            year: undefined,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 1,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "1", "");
         const expected = {
             path: "/search/movie",
             params: {
                 query: "X",
-                year: "",
-                page: "1",
+                year: undefined,
+                page: 1,
             },
             popularity: 0,
         };
@@ -65,14 +85,29 @@ describe("TMDB Service - Movies", () => {
     });
 
     test("Should discover movie and go to page", async () => {
-        const response = await tmdbService.list("", "0", "1999", "1", "0", "4");
+        const params = {
+            name: "",
+            genres: "0",
+            year: 1999,
+            minVoteAverage: 5.0,
+            maxVoteAverage: undefined,
+            minVoteCount: 5,
+            maxVoteCount: undefined,
+            page: 4,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "1", "0");
         const expected = {
             path: "/discover/movie",
             params: {
                 with_genres: "0",
-                year: "1999",
+                year: 1999,
                 sort_by: "popularity.desc",
-                page: "4",
+                page: 4,
+                "vote_average.gte": 5.0,
+                "vote_count.gte": 5,
+                "vote_average.lte": undefined,
+                "vote_count.lte": undefined,
             },
             popularity: 0,
         };
@@ -89,21 +124,29 @@ describe("TMDB Service - TV", () => {
     });
 
     test("Should discover tv by year and genres", async () => {
-        const response = await tmdbService.list(
-            "",
-            "0,1,2",
-            "2023",
-            "0",
-            "1",
-            ""
-        );
+        const params = {
+            name: "",
+            genres: "0,1,2",
+            year: 2023,
+            minVoteAverage: 5.0,
+            maxVoteAverage: 9.0,
+            minVoteCount: 5,
+            maxVoteCount: 1000,
+            page: 1,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "0", "1");
         const expected = {
             path: "/discover/tv",
             params: {
                 with_genres: "0,1,2",
-                first_air_date_year: "2023",
+                first_air_date_year: 2023,
                 sort_by: "popularity.desc",
-                page: "1",
+                page: 1,
+                "vote_average.gte": 5.0,
+                "vote_average.lte": 9.0,
+                "vote_count.gte": 5,
+                "vote_count.lte": 1000,
             },
             popularity: 0,
         };
@@ -112,13 +155,24 @@ describe("TMDB Service - TV", () => {
     });
 
     test("Should search tv by name", async () => {
-        const response = await tmdbService.list("X", "", "", "", "1", "1");
+        const params = {
+            name: "X",
+            genres: undefined,
+            year: undefined,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 1,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "", "1");
         const expected = {
             path: "/search/tv",
             params: {
                 query: "X",
-                first_air_date_year: "",
-                page: "1",
+                first_air_date_year: undefined,
+                page: 1,
             },
             popularity: 0,
         };
@@ -127,14 +181,29 @@ describe("TMDB Service - TV", () => {
     });
 
     test("Should discover tv and go to page", async () => {
-        const response = await tmdbService.list("", "0", "1999", "0", "1", "5");
+        const params = {
+            name: "",
+            genres: "0",
+            year: 1999,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 5,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "0", "1");
         const expected = {
             path: "/discover/tv",
             params: {
                 with_genres: "0",
-                first_air_date_year: "1999",
+                first_air_date_year: 1999,
                 sort_by: "popularity.desc",
-                page: "5",
+                page: 5,
+                "vote_average.gte": undefined,
+                "vote_average.lte": undefined,
+                "vote_count.gte": undefined,
+                "vote_count.lte": undefined,
             },
             popularity: 0,
         };
@@ -151,22 +220,30 @@ describe("TMDB Service - Movie + TV", () => {
     });
 
     test("Should discover movie + tv by year and genres", async () => {
-        const response = await tmdbService.list(
-            "",
-            "0,1,2",
-            "2023",
-            "1",
-            "1",
-            ""
-        );
+        const params = {
+            name: "",
+            genres: "0,1,2",
+            year: 2016,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 5,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "1", "1");
         const expected = [
             {
                 path: "/discover/tv",
                 params: {
                     with_genres: "0,1,2",
-                    first_air_date_year: "2023",
+                    first_air_date_year: 2016,
                     sort_by: "popularity.desc",
-                    page: "1",
+                    page: 5,
+                    "vote_average.gte": undefined,
+                    "vote_average.lte": undefined,
+                    "vote_count.gte": undefined,
+                    "vote_count.lte": undefined,
                 },
                 popularity: 0,
             },
@@ -174,9 +251,13 @@ describe("TMDB Service - Movie + TV", () => {
                 path: "/discover/movie",
                 params: {
                     with_genres: "0,1,2",
-                    year: "2023",
+                    year: 2016,
                     sort_by: "popularity.desc",
-                    page: "1",
+                    page: 5,
+                    "vote_average.gte": undefined,
+                    "vote_average.lte": undefined,
+                    "vote_count.gte": undefined,
+                    "vote_count.lte": undefined,
                 },
                 popularity: 0,
             },
@@ -186,14 +267,25 @@ describe("TMDB Service - Movie + TV", () => {
     });
 
     test("Should search movie + tv by name", async () => {
-        const response = await tmdbService.list("X", "", "", "1", "1", "1");
+        const params = {
+            name: "X",
+            genres: undefined,
+            year: undefined,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 3,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "1", "1");
         const expected = [
             {
                 path: "/search/tv",
                 params: {
                     query: "X",
-                    first_air_date_year: "",
-                    page: "1",
+                    first_air_date_year: undefined,
+                    page: 3,
                 },
                 popularity: 0,
             },
@@ -201,8 +293,8 @@ describe("TMDB Service - Movie + TV", () => {
                 path: "/search/movie",
                 params: {
                     query: "X",
-                    year: "",
-                    page: "1",
+                    year: undefined,
+                    page: 3,
                 },
                 popularity: 0,
             },
@@ -212,15 +304,30 @@ describe("TMDB Service - Movie + TV", () => {
     });
 
     test("Should discover movie + tv and go to page", async () => {
-        const response = await tmdbService.list("", "0", "1999", "1", "1", "6");
+        const params = {
+            name: "",
+            genres: "0",
+            year: 1999,
+            minVoteAverage: undefined,
+            maxVoteAverage: undefined,
+            minVoteCount: undefined,
+            maxVoteCount: undefined,
+            page: 6,
+        } as ListMediasParams;
+
+        const response = await tmdbService.list(params, "1", "1");
         const expected = [
             {
                 path: "/discover/tv",
                 params: {
                     with_genres: "0",
-                    first_air_date_year: "1999",
+                    first_air_date_year: 1999,
                     sort_by: "popularity.desc",
-                    page: "6",
+                    page: 6,
+                    "vote_average.gte": undefined,
+                    "vote_average.lte": undefined,
+                    "vote_count.gte": undefined,
+                    "vote_count.lte": undefined,
                 },
                 popularity: 0,
             },
@@ -228,9 +335,13 @@ describe("TMDB Service - Movie + TV", () => {
                 path: "/discover/movie",
                 params: {
                     with_genres: "0",
-                    year: "1999",
+                    year: 1999,
                     sort_by: "popularity.desc",
-                    page: "6",
+                    page: 6,
+                    "vote_average.gte": undefined,
+                    "vote_average.lte": undefined,
+                    "vote_count.gte": undefined,
+                    "vote_count.lte": undefined,
                 },
                 popularity: 0,
             },
