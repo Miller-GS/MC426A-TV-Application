@@ -116,7 +116,7 @@ describe("Tv controller", () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message:
-            "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
+                "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
         });
     });
 

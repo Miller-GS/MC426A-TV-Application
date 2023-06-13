@@ -19,9 +19,7 @@ export default class TMDBService {
         return response.data.results;
     }
 
-    private async listMovies(
-        params: ListMediasParams
-    ) {
+    private async listMovies(params: ListMediasParams) {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
@@ -36,10 +34,10 @@ export default class TMDBService {
                 year: params.year,
                 sort_by: "popularity.desc",
                 page: params.page,
-                'vote_average.gte': params.minVoteAverage,
-                'vote_average.lte': params.maxVoteAverage,
-                'vote_count.gte': params.minVoteCount,
-                'vote_count.lte': params.maxVoteCount
+                "vote_average.gte": params.minVoteAverage,
+                "vote_average.lte": params.maxVoteAverage,
+                "vote_count.gte": params.minVoteCount,
+                "vote_count.lte": params.maxVoteCount,
             });
         }
 
@@ -48,9 +46,7 @@ export default class TMDBService {
         return response;
     }
 
-    private async listTvShows(
-        params: ListMediasParams
-    ) {
+    private async listTvShows(params: ListMediasParams) {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
@@ -65,10 +61,10 @@ export default class TMDBService {
                 first_air_date_year: params.year,
                 sort_by: "popularity.desc",
                 page: params.page,
-                'vote_average.gte': params.minVoteAverage,
-                'vote_average.lte': params.maxVoteAverage,
-                'vote_count.gte': params.minVoteCount,
-                'vote_count.lte': params.maxVoteCount
+                "vote_average.gte": params.minVoteAverage,
+                "vote_average.lte": params.maxVoteAverage,
+                "vote_count.gte": params.minVoteCount,
+                "vote_count.lte": params.maxVoteCount,
             });
         }
 
@@ -85,15 +81,11 @@ export default class TMDBService {
         let shows: Show[] = [];
 
         if (includeSeries === "1") {
-            shows = shows.concat(
-                await this.listTvShows(params)
-            );
+            shows = shows.concat(await this.listTvShows(params));
         }
 
         if (includeMovies === "1") {
-            shows = shows.concat(
-                await this.listMovies(params)
-            );
+            shows = shows.concat(await this.listMovies(params));
         }
 
         return shows.sort((a, b) => b.popularity - a.popularity);

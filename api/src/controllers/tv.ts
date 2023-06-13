@@ -14,9 +14,18 @@ export class TvController {
             });
         }
 
-        const { name, genres, year, minVoteAverage, 
-            maxVoteAverage, minVoteCount, maxVoteCount, 
-            includeMovies, includeSeries, page } = req.query;
+        const {
+            name,
+            genres,
+            year,
+            minVoteAverage,
+            maxVoteAverage,
+            minVoteCount,
+            maxVoteCount,
+            includeMovies,
+            includeSeries,
+            page,
+        } = req.query;
 
         if (includeMovies !== "1" && includeSeries !== "1") {
             return res.status(400).json({
@@ -30,12 +39,20 @@ export class TvController {
                 name: name as String,
                 genres: genres as String,
                 year: ParseUtils.parseIntOrUndefined(year as string),
-                minVoteAverage: ParseUtils.parseFloatOrUndefined(minVoteAverage as string),
-                maxVoteAverage: ParseUtils.parseFloatOrUndefined(maxVoteAverage as string),
-                minVoteCount: ParseUtils.parseIntOrUndefined(minVoteCount as string),
-                maxVoteCount: ParseUtils.parseIntOrUndefined(maxVoteCount as string),
-                page: ParseUtils.parseIntOrUndefined(page as string) ?? 1
-            } as ListMediasParams
+                minVoteAverage: ParseUtils.parseFloatOrUndefined(
+                    minVoteAverage as string
+                ),
+                maxVoteAverage: ParseUtils.parseFloatOrUndefined(
+                    maxVoteAverage as string
+                ),
+                minVoteCount: ParseUtils.parseIntOrUndefined(
+                    minVoteCount as string
+                ),
+                maxVoteCount: ParseUtils.parseIntOrUndefined(
+                    maxVoteCount as string
+                ),
+                page: ParseUtils.parseIntOrUndefined(page as string) ?? 1,
+            } as ListMediasParams;
 
             const shows = await this.tmdbService.list(
                 params,
