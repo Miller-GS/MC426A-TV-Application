@@ -23,3 +23,6 @@ ps:
 	$(DOCKER_CMD) ps
 db-shell:
 	$(DOCKER_CMD) exec db psql -Upostgres
+
+pretty:
+	prettier --write . --config .prettierrc.yaml
