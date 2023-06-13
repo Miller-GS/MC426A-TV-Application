@@ -65,6 +65,10 @@ export default class TMDBService {
                 first_air_date_year: params.year,
                 sort_by: "popularity.desc",
                 page: params.page,
+                'vote_average.gte': params.minVoteAverage,
+                'vote_average.lte': params.maxVoteAverage,
+                'vote_count.gte': params.minVoteCount,
+                'vote_count.lte': params.maxVoteCount
             });
         }
 
@@ -80,13 +84,13 @@ export default class TMDBService {
     ) {
         let shows: Show[] = [];
 
-        if (includeMovies === "1") {
+        if (includeSeries === "1") {
             shows = shows.concat(
                 await this.listTvShows(params)
             );
         }
 
-        if (includeSeries === "1") {
+        if (includeMovies === "1") {
             shows = shows.concat(
                 await this.listMovies(params)
             );
