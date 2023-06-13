@@ -9,6 +9,9 @@ import {
 } from "typeorm";
 import { User } from "./user.entity";
 
+export enum NotificationType {
+}
+
 @Entity()
 export class Notification {
     @PrimaryGeneratedColumn()
@@ -19,6 +22,12 @@ export class Notification {
 
     @Column()
     Text: string;
+
+    @Column({
+        type: "enum",
+        enum: NotificationType,
+    })
+    Type: NotificationType;
 
     @CreateDateColumn()
     CreatedAt: Date;

@@ -3,11 +3,11 @@ import appDataSource from "../config/ormconfig";
 import NotificationsController from "../controllers/notifications";
 import auth from "../middleware/auth";
 
-export const notificationsRouter = express.Router();
+export const notificationRouter = express.Router();
 
 const controller = new NotificationsController(appDataSource);
 
-notificationsRouter.get(
+notificationRouter.get(
     "/list",
     [auth],
     async (req, res) => await controller.list(req, res)
