@@ -16,6 +16,16 @@ usersRouter.post(
     async (req, res) => await controller.login(req, res)
 );
 
+usersRouter.post(
+    "/:id/friends",
+    async (req, res) => await controller.addFriend(req, res)
+);
+
+usersRouter.get(
+    "/:id/friends",
+    async (req, res) => await controller.getFriends(req, res)
+)
+
 usersRouter.get(
     "/refresh",
     async (req, res) => await controller.handleRefreshToken(req, res)
