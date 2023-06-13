@@ -1,5 +1,4 @@
 import { Repository } from "typeorm";
-import { UserEntity } from "../entity/user.entity";
 import { NotificationEntity } from "../entity/notification.entity";
 
 export default class NotificationService {
@@ -11,14 +10,14 @@ export default class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public async listNotifications(userId: number) {
+    public async listNotifications(userId: number, withDeleted: boolean) {
         const notifications = await this.notificationRepository.find({
             where: {
                 User: {
                     Id: userId,
                 },
             },
-            withDeleted: true,
+            withDeleted: withDeleted,
         });
 
         return notifications;

@@ -16,3 +16,9 @@ notificationRouter.get(
     auth,
     async (req, res) => await controller.listNotifications(req, res)
 );
+
+notificationRouter.get(
+    "/new",
+    auth,
+    async (req, res) => await controller.listNewNotifications(req, res)
+);

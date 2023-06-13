@@ -32,17 +32,17 @@ describe("Notification Service", () => {
         );
     });
 
-    describe("List Notifications", () => {
+    describe("List all Notifications", () => {
         test("Should return empty list when user has no notifications", async () => {
             notificationRepositoryMock.find.mockReturnValueOnce([]);
 
-            const response = await notificationService.listNotifications(1);
+            const response = await notificationService.listNotifications(1, true);
 
             expect(response).toEqual([]);
         });
 
-        test("Should return empty list when there are notifications that do not belong to user", async () => {
-            await notificationService.listNotifications(2);
+        test("Should select corrent user on all notifications", async () => {
+            await notificationService.listNotifications(2, true);
             expect(notificationRepositoryMock.find).toHaveBeenCalledWith({
                 where: {
                     User: {
@@ -50,6 +50,28 @@ describe("Notification Service", () => {
                     },
                 },
                 withDeleted: true,
+            });
+        });
+    });
+
+    describe("List new Notifications", () => {
+        test("Should return empty list when user has no new notifications", async () => {
+            notificationRepositoryMock.find.mockReturnValueOnce([]);
+
+            const response = await notificationService.listNotifications(1, false);
+
+            expect(response).toEqual([]);
+        });
+
+        test("Should select corrent user on new notifications", async () => {
+            await notificationService.listNotifications(2, false);
+            expect(notificationRepositoryMock.find).toHaveBeenCalledWith({
+                where: {
+                    User: {
+                        Id: 2,
+                    },
+                },
+                withDeleted: false,
             });
         });
     });

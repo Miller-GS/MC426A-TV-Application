@@ -68,4 +68,60 @@ describe("Notification controller", () => {
             });
         });
     });
+
+    describe("listNewNotifications", () => {
+        test("Should return 200 and empty list when user has no new notifications", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+            };
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+            notificationService.listNotifications.mockResolvedValueOnce([]);
+
+            await notificationController.listNewNotifications(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith([]);
+        });
+
+        test("Should return 401 if user is not logged in on new notifications", async () => {
+            const req: any = {};
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            await notificationController.listNewNotifications(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized" });
+        });
+
+        test("Should return 500 when an error occurs on new notifications", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+            };
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            notificationService.listNotifications.mockRejectedValueOnce(
+                new Error()
+            );
+
+            await notificationController.listNewNotifications(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Internal server error",
+            });
+        });
+    });
 });
