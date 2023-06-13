@@ -1,14 +1,18 @@
 import express from "express";
 import appDataSource from "../config/ormconfig";
-import NotificationsController from "../controllers/notifications";
+import NotificationController from "../controllers/notification";
 import auth from "../middleware/auth";
+import { NotificationEntity } from "../entity/notification.entity";
+import NotificationService from "../services/notificationService";
 
 export const notificationRouter = express.Router();
 
-const controller = new NotificationsController(appDataSource);
+const notificationRepository = appDataSource.getRepository(NotificationEntity);
+const service = new NotificationService(notificationRepository);
+const controller = new NotificationController(service);
 
 notificationRouter.get(
-    "/list",
-    [auth],
-    async (req, res) => await controller.list(req, res)
+    "/",
+    auth,
+    async (req, res) => await controller.listNotifications(req, res)
 );

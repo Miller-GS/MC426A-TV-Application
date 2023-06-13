@@ -7,18 +7,18 @@ import {
     DeleteDateColumn,
     ManyToOne,
 } from "typeorm";
-import { User } from "./user.entity";
+import { UserEntity } from "./user.entity";
 
 export enum NotificationType {
 }
 
 @Entity()
-export class Notification {
+export class NotificationEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
-    @ManyToOne(() => User, (user: User) => user.Notifications)
-    User: User;
+    @ManyToOne(() => UserEntity, (user: UserEntity) => user.Notifications)
+    User: UserEntity;
 
     @Column()
     Text: string;
