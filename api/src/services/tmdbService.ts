@@ -4,6 +4,7 @@ import env from "../../environment";
 import { Show, ShowParser } from "../models/show";
 import { HttpUtils } from "../utils/httpUtils";
 import { ValidationUtils } from "../utils/validationUtils";
+import { ListMediasParams } from "../models/listMediasParams";
 
 export default class TMDBService {
     constructor() {}
@@ -12,31 +13,33 @@ export default class TMDBService {
         params = HttpUtils.buildQuery({ ...params, api_key: env.TMDB_KEY });
 
         const url = env.TMDB_URL + path + "?" + params;
+
         const response = await axios.get(url);
 
         return response.data.results;
     }
 
     private async listMovies(
-        name: String,
-        genres: String,
-        year: String,
-        page: String
+        params: ListMediasParams
     ) {
         let data: Object[] = [];
 
-        if (!ValidationUtils.isEmpty(name)) {
+        if (!ValidationUtils.isEmpty(params.name)) {
             data = await this.get("/search/movie", {
-                query: name,
-                year,
-                page,
+                query: params.name,
+                year: params.year,
+                page: params.page,
             });
         } else {
             data = await this.get("/discover/movie", {
-                with_genres: genres,
-                year: year,
+                with_genres: params.genres,
+                year: params.year,
                 sort_by: "popularity.desc",
-                page: page,
+                page: params.page,
+                'vote_average.gte': params.minVoteAverage,
+                'vote_average.lte': params.maxVoteAverage,
+                'vote_count.gte': params.minVoteCount,
+                'vote_count.lte': params.maxVoteCount
             });
         }
 
@@ -46,25 +49,22 @@ export default class TMDBService {
     }
 
     private async listTvShows(
-        name: String,
-        genres: String,
-        year: String,
-        page: String
+        params: ListMediasParams
     ) {
         let data: Object[] = [];
 
-        if (!ValidationUtils.isEmpty(name)) {
+        if (!ValidationUtils.isEmpty(params.name)) {
             data = await this.get("/search/tv", {
-                query: name,
-                first_air_date_year: year,
-                page,
+                query: params.name,
+                first_air_date_year: params.year,
+                page: params.page,
             });
         } else {
             data = await this.get("/discover/tv", {
-                with_genres: genres,
-                first_air_date_year: year,
+                with_genres: params.genres,
+                first_air_date_year: params.year,
                 sort_by: "popularity.desc",
-                page: page,
+                page: params.page,
             });
         }
 
@@ -74,28 +74,21 @@ export default class TMDBService {
     }
 
     public async list(
-        name: String,
-        genres: String,
-        year: String,
-        isMovie: String,
-        isSeries: String,
-        page: String
+        params: ListMediasParams,
+        includeMovies: String,
+        includeSeries: String
     ) {
         let shows: Show[] = [];
 
-        if (!ValidationUtils.isPositiveNumber(page)) {
-            page = "1";
-        }
-
-        if (isSeries === "1") {
+        if (includeMovies === "1") {
             shows = shows.concat(
-                await this.listTvShows(name, genres, year, page)
+                await this.listTvShows(params)
             );
         }
 
-        if (isMovie === "1") {
+        if (includeSeries === "1") {
             shows = shows.concat(
-                await this.listMovies(name, genres, year, page)
+                await this.listMovies(params)
             );
         }
 

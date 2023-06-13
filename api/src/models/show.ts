@@ -20,8 +20,8 @@ export interface Show {
     posterImageUrl: string;
 
     popularity: number;
-    voteAverage: number;
-    voteCount: number;
+    tmdbVoteAverage: number;
+    tmdbVoteCount: number;
 }
 
 export class ShowParser {
@@ -36,8 +36,8 @@ export class ShowParser {
             language: tvObj.original_language,
             releaseDate: tvObj.first_air_date,
             popularity: tvObj.popularity,
-            voteAverage: tvObj.vote_average,
-            voteCount: tvObj.vote_count,
+            tmdbVoteAverage: tvObj.vote_average,
+            tmdbVoteCount: tvObj.vote_count,
             showType: ShowTypeEnum.TV,
         } as Show;
 
@@ -66,8 +66,8 @@ export class ShowParser {
             language: movieObj.original_language,
             releaseDate: movieObj.release_date,
             popularity: movieObj.popularity,
-            voteAverage: movieObj.vote_average,
-            voteCount: movieObj.vote_count,
+            tmdbVoteAverage: movieObj.vote_average,
+            tmdbVoteCount: movieObj.vote_count,
             showType: ShowTypeEnum.MOVIE,
         } as Show;
 
