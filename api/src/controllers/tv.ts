@@ -1,6 +1,8 @@
 import { Response, Request } from "express";
 import TMDBService from "../services/tmdbService";
 import { ValidationUtils } from "../utils/validationUtils";
+import { ListMediasParams } from "../models/listMediasParams";
+import { ParseUtils } from "../utils/parseUtils";
 
 export class TvController {
     constructor(private readonly tmdbService: TMDBService) {}
@@ -12,23 +14,33 @@ export class TvController {
             });
         }
 
-        const { name, genres, year, isMovie, isSeries, page } = req.query;
+        const { name, genres, year, minVoteAverage, 
+            maxVoteAverage, minVoteCount, maxVoteCount, 
+            includeMovies, includeSeries, page } = req.query;
 
-        if (isMovie !== "1" && isSeries !== "1") {
+        if (includeMovies !== "1" && includeSeries !== "1") {
             return res.status(400).json({
                 message:
-                    "You must provide least one of the following query parameters: isMovie=1, isSeries=1",
+                    "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
             });
         }
 
         try {
+            const params = {
+                name: name as String,
+                genres: genres as String,
+                year: ParseUtils.parseIntOrUndefined(year as string),
+                minVoteAverage: ParseUtils.parseFloatOrUndefined(minVoteAverage as string),
+                maxVoteAverage: ParseUtils.parseFloatOrUndefined(maxVoteAverage as string),
+                minVoteCount: ParseUtils.parseIntOrUndefined(minVoteCount as string),
+                maxVoteCount: ParseUtils.parseIntOrUndefined(maxVoteCount as string),
+                page: ParseUtils.parseIntOrUndefined(page as string) ?? 1
+            } as ListMediasParams
+
             const shows = await this.tmdbService.list(
-                name as String,
-                genres as String,
-                year as String,
-                isMovie as String,
-                isSeries as String,
-                page as String
+                params,
+                includeMovies as String,
+                includeSeries as String
             );
 
             return res.status(200).json(shows);
