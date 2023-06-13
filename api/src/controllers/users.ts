@@ -1,4 +1,4 @@
-import { User } from "../entity/user.entity";
+import { UserEntity } from "../entity/user.entity";
 import { ValidationUtils } from "../utils/validationUtils";
 import { DataSource } from "typeorm";
 import { Response, Request } from "express";
@@ -10,7 +10,7 @@ export default class UsersController {
     private repository;
 
     public constructor(appDataSource: DataSource) {
-        this.repository = appDataSource.getRepository(User);
+        this.repository = appDataSource.getRepository(UserEntity);
     }
 
     public async register(req: Request, res: Response) {

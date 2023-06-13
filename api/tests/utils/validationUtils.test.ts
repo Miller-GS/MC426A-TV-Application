@@ -11,6 +11,11 @@ describe("isEmpty", () => {
         expect(response).toEqual(true);
     });
 
+    test("Should return true if string is null", () => {
+        const response = ValidationUtils.isEmpty(null);
+        expect(response).toEqual(true);
+    });
+
     test("Should return false if string is not empty", () => {
         const response = ValidationUtils.isEmpty("undefined");
         expect(response).toEqual(false);
@@ -25,6 +30,11 @@ describe("isAnyStringEmpty", () => {
 
     test("Should return true if any string is undefined", () => {
         const response = ValidationUtils.isAnyStringEmpty(undefined, "test");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if any string is null", () => {
+        const response = ValidationUtils.isAnyStringEmpty(null, "test");
         expect(response).toEqual(true);
     });
 

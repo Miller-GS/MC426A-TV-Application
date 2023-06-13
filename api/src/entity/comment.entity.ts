@@ -7,25 +7,25 @@ import {
     DeleteDateColumn,
 } from "typeorm";
 
-@Entity("user")
-export class UserEntity {
+@Entity("comment")
+export class CommentEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
-    @Column()
-    Email: string;
-
-    @Column()
-    Password: string;
+    @Column({ type: "integer", nullable: true, default: null })
+    UserId: number | null;
 
     @Column({ nullable: true, default: null })
-    RefreshToken: string;
+    ParentId: number;
 
     @Column()
-    Name: string;
+    MediaId: number;
 
-    @Column({ nullable: true, default: null })
-    Birthday: Date;
+    @Column()
+    Content: string;
+
+    @Column({ default: false })
+    Edited: boolean;
 
     @CreateDateColumn()
     CreatedAt: Date;
