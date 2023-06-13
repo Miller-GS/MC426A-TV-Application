@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { TvController } from "../../src/controllers/tv";
 import TMDBService from "../../src/services/tmdbService";
 import { ShowParser, Show } from "../../src/models/show";
+import { ListMediasParams } from "../../src/models/listMediasParams";
 
 class TMDBServiceMock extends TMDBService {
     static series = [
@@ -17,17 +18,14 @@ class TMDBServiceMock extends TMDBService {
     static shows = TMDBServiceMock.series.concat(TMDBServiceMock.movies);
 
     public async list(
-        name: String,
-        genres: String,
-        year: String,
-        isMovie: String,
-        isSeries: String,
-        page: String
+        params: ListMediasParams,
+        includeMovie: String,
+        includeSeries: String
     ) {
         let ret: Show[] = [];
 
-        if (isSeries === "1") ret = ret.concat(TMDBServiceMock.series);
-        if (isMovie === "1") ret = ret.concat(TMDBServiceMock.movies);
+        if (includeSeries === "1") ret = ret.concat(TMDBServiceMock.series);
+        if (includeMovie === "1") ret = ret.concat(TMDBServiceMock.movies);
 
         return ret;
     }
@@ -35,12 +33,9 @@ class TMDBServiceMock extends TMDBService {
 
 class TMDBServiceMockError extends TMDBService {
     public async list(
-        name: String,
-        genres: String,
-        year: String,
-        isMovie: String,
-        isSeries: String,
-        page: String
+        params: ListMediasParams,
+        includeMovie: String,
+        includeSeries: String
     ) {
         throw new Error("error");
         return [] as Show[];
@@ -57,8 +52,8 @@ describe("Tv controller", () => {
     test("Should return 200 with list of series", async () => {
         const mockRequest = {
             query: {
-                isSeries: "1",
-                isMovie: "0",
+                includeSeries: "1",
+                includeMovies: "0",
             },
         } as unknown as Request;
 
@@ -75,7 +70,7 @@ describe("Tv controller", () => {
     test("Should return 200 with list of movies", async () => {
         const mockRequest = {
             query: {
-                isMovie: "1",
+                includeMovies: "1",
             },
         } as unknown as Request;
 
@@ -92,8 +87,8 @@ describe("Tv controller", () => {
     test("Should return 200 with list of all shows", async () => {
         const mockRequest = {
             query: {
-                isSeries: "1",
-                isMovie: "1",
+                includeSeries: "1",
+                includeMovies: "1",
             },
         } as unknown as Request;
 
@@ -121,7 +116,7 @@ describe("Tv controller", () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message:
-                "You must provide least one of the following query parameters: isMovie=1, isSeries=1",
+            "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
         });
     });
 
@@ -145,8 +140,8 @@ describe("Tv controller", () => {
     test("Should return 400 with request with neither movies nor series", async () => {
         const mockRequest = {
             query: {
-                isSeries: "0",
-                isMovie: 0,
+                includeSeries: "0",
+                includeMovies: 0,
             },
         } as unknown as Request;
 
@@ -159,7 +154,7 @@ describe("Tv controller", () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message:
-                "You must provide least one of the following query parameters: isMovie=1, isSeries=1",
+                "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
         });
     });
 
@@ -167,7 +162,7 @@ describe("Tv controller", () => {
         const tvControllerError = new TvController(new TMDBServiceMockError());
         const mockRequest = {
             query: {
-                isSeries: "1",
+                includeSeries: "1",
             },
         } as unknown as Request;
 
