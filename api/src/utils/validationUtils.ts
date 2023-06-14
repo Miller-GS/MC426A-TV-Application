@@ -1,6 +1,10 @@
 export class ValidationUtils {
+    static isNull(obj: any) {
+        return obj == undefined || obj == null;
+    }
+
     static isEmpty(str) {
-        return str == "" || str == undefined || str == null;
+        return str == "" || ValidationUtils.isNull(str);
     }
 
     static isAnyStringEmpty(...strs) {
