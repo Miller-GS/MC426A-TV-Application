@@ -1,16 +1,16 @@
 import env from "../../environment";
 import { ValidationUtils } from "../utils/validationUtils";
 
-export class ShowTypeEnum {
+export class MediaTypeEnum {
     public static TV: string = "TV";
     public static MOVIE: string = "Movie";
 }
 
-export interface Show {
+export interface TMDBMedia {
     id: number;
     name: string;
     genres: number[];
-    showType: string;
+    mediaType: string;
 
     description: string;
     language: string;
@@ -24,11 +24,11 @@ export interface Show {
     tmdbVoteCount: number;
 }
 
-export class ShowParser {
-    static parseTv(tvObj: any): Show {
-        if (tvObj === undefined) return {} as Show;
+export class TMDBMediaParser {
+    static parseTv(tvObj: any): TMDBMedia {
+        if (tvObj === undefined) return {} as TMDBMedia;
 
-        const show = {
+        const tvShow = {
             id: tvObj.id,
             name: tvObj.original_title,
             genres: tvObj.genre_ids,
@@ -38,27 +38,27 @@ export class ShowParser {
             popularity: tvObj.popularity,
             tmdbVoteAverage: tvObj.vote_average,
             tmdbVoteCount: tvObj.vote_count,
-            showType: ShowTypeEnum.TV,
-        } as Show;
+            mediaType: MediaTypeEnum.TV,
+        } as TMDBMedia;
 
-        Object.keys(show).forEach(
-            (key) => show[key] === undefined && delete show[key]
+        Object.keys(tvShow).forEach(
+            (key) => tvShow[key] === undefined && delete tvShow[key]
         );
 
         if (!ValidationUtils.isEmpty(tvObj.backdrop_path)) {
-            show.backgroundImageUrl = `${env.TMDB_IMAGE_URL}${tvObj.backdrop_path}`;
+            tvShow.backgroundImageUrl = `${env.TMDB_IMAGE_URL}${tvObj.backdrop_path}`;
         }
         if (!ValidationUtils.isEmpty(tvObj.poster_path)) {
-            show.posterImageUrl = `${env.TMDB_IMAGE_URL}${tvObj.poster_path}`;
+            tvShow.posterImageUrl = `${env.TMDB_IMAGE_URL}${tvObj.poster_path}`;
         }
 
-        return show;
+        return tvShow;
     }
 
-    static parseMovie(movieObj: any): Show {
-        if (movieObj === undefined) return {} as Show;
+    static parseMovie(movieObj: any): TMDBMedia {
+        if (movieObj === undefined) return {} as TMDBMedia;
 
-        const show = {
+        const movie = {
             id: movieObj.id,
             name: movieObj.original_title,
             genres: movieObj.genre_ids,
@@ -68,20 +68,20 @@ export class ShowParser {
             popularity: movieObj.popularity,
             tmdbVoteAverage: movieObj.vote_average,
             tmdbVoteCount: movieObj.vote_count,
-            showType: ShowTypeEnum.MOVIE,
-        } as Show;
+            mediaType: MediaTypeEnum.MOVIE,
+        } as TMDBMedia;
 
         if (!ValidationUtils.isEmpty(movieObj.backdrop_path)) {
-            show.backgroundImageUrl = `${env.TMDB_IMAGE_URL}${movieObj.backdrop_path}`;
+            movie.backgroundImageUrl = `${env.TMDB_IMAGE_URL}${movieObj.backdrop_path}`;
         }
         if (!ValidationUtils.isEmpty(movieObj.poster_path)) {
-            show.posterImageUrl = `${env.TMDB_IMAGE_URL}${movieObj.poster_path}`;
+            movie.posterImageUrl = `${env.TMDB_IMAGE_URL}${movieObj.poster_path}`;
         }
 
-        Object.keys(show).forEach(
-            (key) => show[key] === undefined && delete show[key]
+        Object.keys(movie).forEach(
+            (key) => movie[key] === undefined && delete movie[key]
         );
 
-        return show;
+        return movie;
     }
 }

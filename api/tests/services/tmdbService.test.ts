@@ -2,21 +2,21 @@
 // The point is to assume the axios request and the API are working and only test if we are using them correctly.
 
 import TMDBService from "../../src/services/tmdbService";
-import { ShowParser } from "../../src/models/show";
+import { TMDBMediaParser } from "../../src/models/tmdbMedia";
 import { ListMediasParams } from "../../src/models/listMediasParams";
 
-interface Show {
+interface TMDBMedia {
     path: string;
     params: Object;
     popularity: number;
 }
 
-ShowParser.parseTv = (obj) => obj;
-ShowParser.parseMovie = (obj) => obj;
+TMDBMediaParser.parseTv = (obj) => obj;
+TMDBMediaParser.parseMovie = (obj) => obj;
 
 class TMDBServiceTest extends TMDBService {
     protected async get(path: String, params: Object) {
-        return [{ path: path, params: params, popularity: 0 } as Show];
+        return [{ path: path, params: params, popularity: 0 } as TMDBMedia];
     }
 }
 

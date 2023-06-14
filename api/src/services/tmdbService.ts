@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import env from "../../environment";
 
-import { Show, ShowParser } from "../models/show";
+import { TMDBMedia, TMDBMediaParser } from "../models/tmdbMedia";
 import { HttpUtils } from "../utils/httpUtils";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
@@ -41,7 +41,7 @@ export default class TMDBService {
             });
         }
 
-        const response: Show[] = data.map(ShowParser.parseMovie);
+        const response: TMDBMedia[] = data.map(TMDBMediaParser.parseMovie);
 
         return response;
     }
@@ -68,7 +68,7 @@ export default class TMDBService {
             });
         }
 
-        const response: Show[] = data.map(ShowParser.parseTv);
+        const response: TMDBMedia[] = data.map(TMDBMediaParser.parseTv);
 
         return response;
     }
@@ -78,16 +78,16 @@ export default class TMDBService {
         includeMovies: String,
         includeSeries: String
     ) {
-        let shows: Show[] = [];
+        let medias: TMDBMedia[] = [];
 
         if (includeSeries === "1") {
-            shows = shows.concat(await this.listTvShows(params));
+            medias = medias.concat(await this.listTvShows(params));
         }
 
         if (includeMovies === "1") {
-            shows = shows.concat(await this.listMovies(params));
+            medias = medias.concat(await this.listMovies(params));
         }
 
-        return shows.sort((a, b) => b.popularity - a.popularity);
+        return medias.sort((a, b) => b.popularity - a.popularity);
     }
 }

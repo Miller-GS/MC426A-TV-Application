@@ -4,10 +4,10 @@ import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 import { ParseUtils } from "../utils/parseUtils";
 
-export class TvController {
+export class MediaController {
     constructor(private readonly tmdbService: TMDBService) {}
 
-    public async list_shows(req: Request, res: Response) {
+    public async list_medias(req: Request, res: Response) {
         if (ValidationUtils.isEmpty(req.query)) {
             return res.status(400).json({
                 message: "Bad request: Query was undefined",
@@ -54,13 +54,13 @@ export class TvController {
                 page: ParseUtils.parseIntOrUndefined(page as string) ?? 1,
             } as ListMediasParams;
 
-            const shows = await this.tmdbService.list(
+            const medias = await this.tmdbService.list(
                 params,
                 includeMovies as String,
                 includeSeries as String
             );
 
-            return res.status(200).json(shows);
+            return res.status(200).json(medias);
         } catch (err: any) {
             res.status(500).send({ error: err.message });
         }
