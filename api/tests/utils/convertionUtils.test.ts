@@ -45,5 +45,4 @@ describe("string to boolean", () => {
         const response = ConvertionUtils.stringToBoolean("", false);
         expect(response).toEqual(false);
     });
-
 });

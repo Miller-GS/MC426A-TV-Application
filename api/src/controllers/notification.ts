@@ -18,12 +18,20 @@ export default class NotificationController {
 
         let withDeleted = false;
         if (!ValidationUtils.isNull(req.query))
-            withDeleted = ConvertionUtils.stringToBoolean(req.query["all"] as string, false);
+            withDeleted = ConvertionUtils.stringToBoolean(
+                req.query["all"] as string,
+                false
+            );
 
         try {
             const notifications =
-                await this.notificationService.listNotifications(userId, withDeleted);
-            return res.status(200).json(NotificationParser.parseNotifications(notifications));
+                await this.notificationService.listNotifications(
+                    userId,
+                    withDeleted
+                );
+            return res
+                .status(200)
+                .json(NotificationParser.parseNotifications(notifications));
         } catch (err: any) {
             console.error(err.message);
             ErrorUtils.handleError(err, res);

@@ -28,7 +28,10 @@ describe("Notification controller", () => {
 
             await notificationController.listNotifications(req, res);
 
-            expect(notificationService.listNotifications).toHaveBeenCalledWith(1, false);
+            expect(notificationService.listNotifications).toHaveBeenCalledWith(
+                1,
+                false
+            );
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith([]);
         });
@@ -39,8 +42,8 @@ describe("Notification controller", () => {
                     id: 1,
                 },
                 query: {
-                    all: true
-                }
+                    all: true,
+                },
             };
             const res: any = {
                 status: jest.fn().mockReturnThis(),
@@ -50,7 +53,10 @@ describe("Notification controller", () => {
 
             await notificationController.listNotifications(req, res);
 
-            expect(notificationService.listNotifications).toHaveBeenCalledWith(1, true);
+            expect(notificationService.listNotifications).toHaveBeenCalledWith(
+                1,
+                true
+            );
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith([]);
         });
@@ -85,21 +91,24 @@ describe("Notification controller", () => {
 
             await notificationController.listNotifications(req, res);
 
-            expect(notificationService.listNotifications).toHaveBeenCalledWith(1, false);
+            expect(notificationService.listNotifications).toHaveBeenCalledWith(
+                1,
+                false
+            );
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({
                 message: "Internal server error",
             });
         });
 
-        test("Should call service with all notifications", async() => {
+        test("Should call service with all notifications", async () => {
             const req: any = {
                 user: {
                     id: 1,
                 },
                 query: {
-                    all: true
-                }
+                    all: true,
+                },
             };
 
             const res: any = {
@@ -114,7 +123,7 @@ describe("Notification controller", () => {
                     Id: 1,
                     Text: "text 1",
                     User: {
-                        Id: 1
+                        Id: 1,
                     },
                     ReadAt: null,
                 },
@@ -128,7 +137,10 @@ describe("Notification controller", () => {
 
             await notificationController.listNotifications(req, res);
 
-            expect(notificationService.listNotifications).toHaveBeenCalledWith(1, true);
+            expect(notificationService.listNotifications).toHaveBeenCalledWith(
+                1,
+                true
+            );
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith([
                 {
@@ -142,7 +154,7 @@ describe("Notification controller", () => {
                     text: "text 2",
                     userId: null,
                     read: true,
-                }
+                },
             ]);
         });
     });

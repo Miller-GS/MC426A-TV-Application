@@ -9,17 +9,22 @@ export interface Notification {
 }
 
 export class NotificationParser {
-    public static parseNotification(notificationEntity: NotificationEntity): Notification {
+    public static parseNotification(
+        notificationEntity: NotificationEntity
+    ): Notification {
         return {
             id: notificationEntity.Id,
-            userId: ValidationUtils.isNull(notificationEntity.User) ? null : notificationEntity.User.Id,
+            userId: ValidationUtils.isNull(notificationEntity.User)
+                ? null
+                : notificationEntity.User.Id,
             text: notificationEntity.Text,
             read: notificationEntity.ReadAt !== null,
         };
     }
 
-    public static parseNotifications(notificationEntities: NotificationEntity[]): Notification[] {
+    public static parseNotifications(
+        notificationEntities: NotificationEntity[]
+    ): Notification[] {
         return notificationEntities.map(NotificationParser.parseNotification);
     }
 }
-
