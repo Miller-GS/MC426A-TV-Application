@@ -4,6 +4,7 @@ import { usersRouter } from "./src/routes/users";
 import tvRouter from "./src/routes/tv";
 import commentRouter from "./src/routes/comment";
 import cookieParser from "cookie-parser";
+import { notificationRouter } from "./src/routes/notification";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cookieParser());
 
 app.use("/users", usersRouter);
 app.use("/tv", tvRouter);
+app.use("/notification", notificationRouter);
 app.use("/comment", commentRouter);
 
 export default app;
