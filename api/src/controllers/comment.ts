@@ -2,6 +2,7 @@ import CommentService from "../services/commentService";
 import { Response, Request } from "express";
 import { ValidationUtils } from "../utils/validationUtils";
 import { MyTVListError } from "../errors/MyTVListError";
+import { ErrorUtils } from "../utils/errorUtils";
 
 export class CommentController {
     private commentService: CommentService;
@@ -21,7 +22,7 @@ export class CommentController {
             return res.status(200).json(comments);
         } catch (err: any) {
             console.error(err.message);
-            return this.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -44,7 +45,7 @@ export class CommentController {
             return res.status(201).json(comment);
         } catch (err: any) {
             console.error(err.message);
-            this.handleError(err, res);
+            ErrorUtils.handleError(err, res);
         }
     }
 
@@ -67,7 +68,7 @@ export class CommentController {
             return res.status(204).json();
         } catch (err: any) {
             console.error(err.message);
-            return this.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -86,7 +87,7 @@ export class CommentController {
             return res.status(204).json();
         } catch (err: any) {
             console.error(err.message);
-            return this.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -128,16 +129,5 @@ export class CommentController {
             return false;
         }
         return true;
-    }
-
-    private handleError(err: Error, res: Response) {
-        if (err instanceof MyTVListError) {
-            return res.status(err.getStatus()).json({
-                message: err.message,
-            });
-        }
-        return res.status(500).json({
-            message: "Internal server error",
-        });
     }
 }
