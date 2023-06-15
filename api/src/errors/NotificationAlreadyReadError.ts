@@ -5,4 +5,3 @@ export class NotificationAlreadyReadError extends MyTVListError {
         super("Notification has already been read", 405);
     }
 }
-

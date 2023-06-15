@@ -56,7 +56,10 @@ export default class NotificationController {
     }
 
     private validateNotificationId(notificationId: any, res: Response) {
-        if (ValidationUtils.isEmpty(notificationId) || !ValidationUtils.isPositiveNumber(notificationId)) {
+        if (
+            ValidationUtils.isEmpty(notificationId) ||
+            !ValidationUtils.isPositiveNumber(notificationId)
+        ) {
             res.status(400).json({
                 message: "Bad request: Notification ID necessary",
             });
