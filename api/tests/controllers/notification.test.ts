@@ -288,7 +288,9 @@ describe("Notification controller", () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            notificationService.readNotification.mockRejectedValueOnce(new Error());
+            notificationService.readNotification.mockRejectedValueOnce(
+                new Error()
+            );
 
             await notificationController.readNotification(req, res);
 
