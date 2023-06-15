@@ -125,7 +125,7 @@ describe("TMDB Service - TV", () => {
         tmdbService = new TMDBServiceTest();
     });
 
-    test("Should discover tv by year and genres", async () => {
+    test("Should discover tv by year, genres and vote ranges", async () => {
         const params = makeMediaParamsMock({
             name: "",
             genres: "0,1,2",
@@ -211,11 +211,15 @@ describe("TMDB Service - Movie + TV", () => {
         tmdbService = new TMDBServiceTest();
     });
 
-    test("Should discover movie + tv by year and genres", async () => {
+    test("Should discover movie + tv by year, genres and vote ranges", async () => {
         const params = makeMediaParamsMock({
             name: "",
             genres: "0,1,2",
             year: 2016,
+            maxVoteAverage: 6.9,
+            minVoteAverage: 5.0,
+            maxVoteCount: 100,
+            minVoteCount: 5,
             page: 5,
         });
 
@@ -228,10 +232,10 @@ describe("TMDB Service - Movie + TV", () => {
                     first_air_date_year: 2016,
                     sort_by: "popularity.desc",
                     page: 5,
-                    "vote_average.gte": undefined,
-                    "vote_average.lte": undefined,
-                    "vote_count.gte": undefined,
-                    "vote_count.lte": undefined,
+                    "vote_average.gte": 5.0,
+                    "vote_average.lte": 6.9,
+                    "vote_count.gte": 5,
+                    "vote_count.lte": 100,
                 },
                 popularity: 0,
             },
@@ -242,10 +246,10 @@ describe("TMDB Service - Movie + TV", () => {
                     year: 2016,
                     sort_by: "popularity.desc",
                     page: 5,
-                    "vote_average.gte": undefined,
-                    "vote_average.lte": undefined,
-                    "vote_count.gte": undefined,
-                    "vote_count.lte": undefined,
+                    "vote_average.gte": 5.0,
+                    "vote_average.lte": 6.9,
+                    "vote_count.gte": 5,
+                    "vote_count.lte": 100,
                 },
                 popularity: 0,
             },
