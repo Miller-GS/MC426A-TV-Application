@@ -72,6 +72,11 @@ describe("isNumber", () => {
         expect(response).toEqual(true);
     });
 
+    test("Should return true if string is number 10", () => {
+        const response = ValidationUtils.isPositiveNumber("10");
+        expect(response).toEqual(true);
+    });
+
     test("Should return true if string is number 43243", () => {
         const response = ValidationUtils.isPositiveNumber("43243");
         expect(response).toEqual(true);
