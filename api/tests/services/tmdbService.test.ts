@@ -20,6 +20,19 @@ class TMDBServiceTest extends TMDBService {
     }
 }
 
+const makeMediaParamsMock = (params = {} as any) => {
+    return {
+        name: params.name || undefined,
+        genres: params.genres || undefined,
+        year: params.year || undefined,
+        minVoteAverage: params.minVoteAverage || undefined,
+        maxVoteAverage: params.maxVoteAverage || undefined,
+        minVoteCount: params.minVoteCount || undefined,
+        maxVoteCount: params.maxVoteCount || undefined,
+        page: params.page || undefined,
+    };
+};
+
 describe("TMDB Service - Movies", () => {
     let tmdbService: TMDBServiceTest;
 
@@ -28,16 +41,12 @@ describe("TMDB Service - Movies", () => {
     });
 
     test("Should discover movie by year and genres", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "",
             genres: "0,1,2",
             year: 2023,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 1,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "1", "0");
         const expected = {
@@ -59,16 +68,11 @@ describe("TMDB Service - Movies", () => {
     });
 
     test("Should search movie by name", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "X",
             genres: "0,1,2",
-            year: undefined,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 1,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "1", "");
         const expected = {
@@ -85,16 +89,14 @@ describe("TMDB Service - Movies", () => {
     });
 
     test("Should discover movie and go to page", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "",
             genres: "0",
             year: 1999,
             minVoteAverage: 5.0,
-            maxVoteAverage: undefined,
             minVoteCount: 5,
-            maxVoteCount: undefined,
             page: 4,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "1", "0");
         const expected = {
@@ -124,7 +126,7 @@ describe("TMDB Service - TV", () => {
     });
 
     test("Should discover tv by year and genres", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "",
             genres: "0,1,2",
             year: 2023,
@@ -133,7 +135,7 @@ describe("TMDB Service - TV", () => {
             minVoteCount: 5,
             maxVoteCount: 1000,
             page: 1,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "0", "1");
         const expected = {
@@ -155,16 +157,10 @@ describe("TMDB Service - TV", () => {
     });
 
     test("Should search tv by name", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "X",
-            genres: undefined,
-            year: undefined,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 1,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "", "1");
         const expected = {
@@ -181,16 +177,12 @@ describe("TMDB Service - TV", () => {
     });
 
     test("Should discover tv and go to page", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "",
             genres: "0",
             year: 1999,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 5,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "0", "1");
         const expected = {
@@ -220,16 +212,12 @@ describe("TMDB Service - Movie + TV", () => {
     });
 
     test("Should discover movie + tv by year and genres", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "",
             genres: "0,1,2",
             year: 2016,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 5,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "1", "1");
         const expected = [
@@ -267,16 +255,10 @@ describe("TMDB Service - Movie + TV", () => {
     });
 
     test("Should search movie + tv by name", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "X",
-            genres: undefined,
-            year: undefined,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 3,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "1", "1");
         const expected = [
@@ -304,16 +286,12 @@ describe("TMDB Service - Movie + TV", () => {
     });
 
     test("Should discover movie + tv and go to page", async () => {
-        const params = {
+        const params = makeMediaParamsMock({
             name: "",
             genres: "0",
             year: 1999,
-            minVoteAverage: undefined,
-            maxVoteAverage: undefined,
-            minVoteCount: undefined,
-            maxVoteCount: undefined,
             page: 6,
-        } as ListMediasParams;
+        });
 
         const response = await tmdbService.list(params, "1", "1");
         const expected = [
