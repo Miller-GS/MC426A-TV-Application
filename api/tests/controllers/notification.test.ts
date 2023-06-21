@@ -155,7 +155,6 @@ describe("Notification controller", () => {
                 {
                     id: 2,
                     text: "text 2",
-                    userId: null,
                     read: true,
                 },
             ]);
