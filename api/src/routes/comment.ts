@@ -13,7 +13,11 @@ const commentRepository = appDataSource.getRepository(CommentEntity);
 const mediaRepository = appDataSource.getRepository(MediaEntity);
 const notificationRepository = appDataSource.getRepository(NotificationEntity);
 
-const service = new CommentService(commentRepository, mediaRepository, notificationRepository);
+const service = new CommentService(
+    commentRepository,
+    mediaRepository,
+    notificationRepository
+);
 const controller = new CommentController(service);
 
 commentRouter.get(

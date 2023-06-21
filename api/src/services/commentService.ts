@@ -20,7 +20,7 @@ class ReplyNotification extends NotificationCreationService {
     public constructor(
         notificationRepository: Repository<NotificationEntity>,
         comment: Comment,
-        parentUserId: number,
+        parentUserId: number
     ) {
         super(notificationRepository);
 
@@ -109,7 +109,7 @@ export default class CommentService {
             const notificaton = new ReplyNotification(
                 this.notificationRepository,
                 comment,
-                parentUserId,
+                parentUserId
             );
 
             notificaton.saveNotification(parentUserId);

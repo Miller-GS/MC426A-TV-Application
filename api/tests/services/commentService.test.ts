@@ -122,7 +122,9 @@ describe("Comment Service", () => {
 
         test("Should create comment when media exists and parent comment exists", async () => {
             mediaRepositoryMock.exist.mockReturnValueOnce(true);
-            commentRepositoryMock.findOne.mockReturnValueOnce(makeCommentEntityMock());
+            commentRepositoryMock.findOne.mockReturnValueOnce(
+                makeCommentEntityMock()
+            );
             const commentEntityMock = makeCommentEntityMock({ ParentId: 1 });
             commentRepositoryMock.save.mockReturnValueOnce(commentEntityMock);
 
