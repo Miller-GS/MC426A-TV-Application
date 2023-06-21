@@ -5,4 +5,3 @@ export class UserIdError extends MyTVListError {
         super("User id error", 404);
     }
 }
-

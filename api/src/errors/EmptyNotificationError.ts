@@ -5,4 +5,3 @@ export class EmptyNotificationError extends MyTVListError {
         super("Notification text was empty", 404);
     }
 }
-
