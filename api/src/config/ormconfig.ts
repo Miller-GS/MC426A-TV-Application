@@ -13,7 +13,13 @@ const appDataSource = new DataSource({
     username: env.DB_USER,
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
-    entities: [UserEntity, MediaEntity, CommentEntity, NotificationEntity, FriendshipEntity],
+    entities: [
+        UserEntity,
+        MediaEntity,
+        CommentEntity,
+        NotificationEntity,
+        FriendshipEntity,
+    ],
     migrations: ["src/migration/**/*.ts"],
     synchronize: true,
 });

@@ -31,6 +31,4 @@ friendshipRouter.post(
     async (req, res) => await controller.acceptFriend(req, res)
 );
 
-
-
 export default friendshipRouter;

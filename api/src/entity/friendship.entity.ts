@@ -4,18 +4,17 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     PrimaryColumn,
-} from 'typeorm';
+} from "typeorm";
 
 export enum FriendshipStatus {
-    PENDING = 'pending',
-    ACCEPTED = 'accepted',
-    DECLINED = 'declined',
-    BLOCKED = 'blocked'
+    PENDING = "pending",
+    ACCEPTED = "accepted",
+    DECLINED = "declined",
+    BLOCKED = "blocked",
 }
 
 @Entity("friendship")
 export class FriendshipEntity {
-
     @PrimaryColumn()
     UserId1: number;
 
@@ -25,7 +24,7 @@ export class FriendshipEntity {
     @Column({
         type: "enum",
         enum: FriendshipStatus,
-        default: FriendshipStatus.PENDING
+        default: FriendshipStatus.PENDING,
     })
     Status: FriendshipStatus;
 

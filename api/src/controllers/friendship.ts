@@ -1,7 +1,10 @@
 import FriendshipService from "../services/friendshipService";
 import { Response, Request } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
-import { FriendshipEntity, FriendshipStatus } from "../entity/friendship.entity";
+import {
+    FriendshipEntity,
+    FriendshipStatus,
+} from "../entity/friendship.entity";
 
 export class FriendshipController {
     private friendshipService: FriendshipService;
@@ -31,7 +34,7 @@ export class FriendshipController {
             userId1: askerUserId,
             userId2: askedUserId,
             status: FriendshipStatus.PENDING,
-            actionUserId: askedUserId
+            actionUserId: askedUserId,
         });
 
         // TODO: Check if the friendship doesn't exist already
@@ -47,10 +50,9 @@ export class FriendshipController {
         const friendship = await this.friendshipService.acceptFriendship({
             accepterUserId,
             acceptedUserId,
-            accepted
+            accepted,
         });
 
         return res.status(201).json(friendship);
-
     }
 }
