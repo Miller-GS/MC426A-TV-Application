@@ -2,6 +2,8 @@ import { FriendshipEntity, FriendshipStatus } from "../entity/friendship.entity"
 import { UserEntity } from "../entity/user.entity";
 import { Repository } from "typeorm";
 import { FriendParser } from "../models/friend";
+import { FriendshipAlreadyExistError } from "../errors/FriendshipAlreadyExistError";
+import { FriendshipNotFoundError } from "../errors/FriendshipNotFoundError";
 
 export default class CommentService {
     private friendshipRepository: Repository<FriendshipEntity>;
@@ -30,7 +32,7 @@ export default class CommentService {
 
 
         if (!friendship) {
-            throw new Error("Friendship not found");
+            throw new FriendshipNotFoundError();
         }
 
         friendship.Status = accepted ? FriendshipStatus.ACCEPTED : FriendshipStatus.DECLINED;
@@ -50,14 +52,21 @@ export default class CommentService {
         status: FriendshipStatus,
         actionUserId: number
     }) {
+
+        const friendshipAlreadyExist = await this.friendshipRepository.findOne({
+            where: [{ UserId1: userId1, UserId2: userId2 }, { UserId1: userId2, UserId2: userId1 }]
+        });
+
+        if (friendshipAlreadyExist) {
+            throw new FriendshipAlreadyExistError();
+        }
+
         const friendship = await this.friendshipRepository.save({
             UserId1: userId1,
             UserId2: userId2,
             Status: status,
             ActionUserId: actionUserId
         } as FriendshipEntity);
-
-        // TODO: Implement validations for the new friendship
 
         return friendship;
     }
