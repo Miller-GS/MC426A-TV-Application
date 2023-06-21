@@ -29,6 +29,7 @@ export default class NotificationService {
             where: {
                 Id: notificationId,
             },
+            withDeleted: true,
         });
 
         if (!notification) {
