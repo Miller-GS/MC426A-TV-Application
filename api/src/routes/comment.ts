@@ -5,12 +5,15 @@ import { MediaEntity } from "../entity/media.entity";
 import CommentService from "../services/commentService";
 import appDataSource from "../config/ormconfig";
 import auth from "../middleware/auth";
+import { NotificationEntity } from "../entity/notification.entity";
 
 const commentRouter = express.Router();
 
 const commentRepository = appDataSource.getRepository(CommentEntity);
 const mediaRepository = appDataSource.getRepository(MediaEntity);
-const service = new CommentService(commentRepository, mediaRepository);
+const notificationRepository = appDataSource.getRepository(NotificationEntity);
+
+const service = new CommentService(commentRepository, mediaRepository, notificationRepository);
 const controller = new CommentController(service);
 
 commentRouter.get(
