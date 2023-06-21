@@ -1,6 +1,7 @@
 import { FriendshipEntity, FriendshipStatus } from "../entity/friendship.entity";
 import { UserEntity } from "../entity/user.entity";
 import { Repository } from "typeorm";
+import { FriendParser } from "../models/friend";
 
 export default class CommentService {
     private friendshipRepository: Repository<FriendshipEntity>;
@@ -65,10 +66,7 @@ export default class CommentService {
         const friendships = await this.friendshipRepository.find({
             where: { UserId1: userId, Status: FriendshipStatus.ACCEPTED }
         });
-
         const friends = await this.userRepository.findByIds(friendships.map(f => f.UserId2));
-
-        // TODO: Sanitize users before exposing them
-        return friends;
+        return friends.map(friend => FriendParser.parseUserToFriend(friend));;
     }
 }
