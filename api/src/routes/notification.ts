@@ -16,3 +16,9 @@ notificationRouter.get(
     auth,
     async (req, res) => await controller.listNotifications(req, res)
 );
+
+notificationRouter.delete(
+    "/:notificationId",
+    auth,
+    async (req, res) => await controller.readNotification(req, res)
+);

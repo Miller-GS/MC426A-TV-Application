@@ -1,3 +1,5 @@
+import { NotificationAlreadyReadError } from "../../src/errors/NotificationAlreadyReadError";
+import { NotificationNotFoundError } from "../../src/errors/NotificationNotFoundError";
 import NotificationService from "../../src/services/notificationService";
 
 const makeNotificationEntityMock = (entity = {} as any) => {
@@ -25,6 +27,9 @@ describe("Notification Service", () => {
     beforeEach(() => {
         notificationRepositoryMock = {
             find: jest.fn(),
+            findOne: jest.fn(),
+            exist: jest.fn(),
+            update: jest.fn(),
         };
 
         notificationService = new NotificationService(
@@ -79,6 +84,52 @@ describe("Notification Service", () => {
                 },
                 withDeleted: false,
             });
+        });
+    });
+
+    describe("Read notifications", () => {
+        test("Should read notification when it exists and has not been read yet", async () => {
+            notificationRepositoryMock.exist.mockReturnValueOnce(true);
+
+            const notificationEntityMock = makeNotificationEntityMock();
+            notificationRepositoryMock.findOne.mockReturnValueOnce(
+                notificationEntityMock
+            );
+
+            notificationRepositoryMock.update.mockReturnValueOnce(
+                notificationRepositoryMock
+            );
+
+            await notificationService.readNotification(
+                notificationEntityMock.Id
+            );
+
+            expect(notificationRepositoryMock.update).toHaveBeenCalledWith(
+                notificationEntityMock.Id,
+                {
+                    ReadAt: expect.any(Date),
+                }
+            );
+        });
+
+        test("Should throw error when notification does not exist", async () => {
+            notificationRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                notificationService.readNotification(0)
+            ).rejects.toThrow(NotificationNotFoundError);
+        });
+
+        test("Should throw error when notification has already been read", async () => {
+            notificationRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 0,
+                Text: "",
+                ReadAt: new Date(),
+            });
+
+            await expect(
+                notificationService.readNotification(0)
+            ).rejects.toThrow(NotificationAlreadyReadError);
         });
     });
 });

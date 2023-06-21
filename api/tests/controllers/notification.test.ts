@@ -1,4 +1,6 @@
 import NotificationController from "../../src/controllers/notification";
+import { NotificationAlreadyReadError } from "../../src/errors/NotificationAlreadyReadError";
+import { NotificationNotFoundError } from "../../src/errors/NotificationNotFoundError";
 
 describe("Notification controller", () => {
     let notificationController: NotificationController;
@@ -7,6 +9,7 @@ describe("Notification controller", () => {
     beforeEach(() => {
         notificationService = {
             listNotifications: jest.fn(),
+            readNotification: jest.fn(),
         };
         notificationController = new NotificationController(
             notificationService
@@ -156,6 +159,163 @@ describe("Notification controller", () => {
                     read: true,
                 },
             ]);
+        });
+    });
+
+    describe("readNotification", () => {
+        test("Should mark notification as read", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+                params: {
+                    notificationId: 1,
+                },
+            };
+
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            notificationService.readNotification.mockResolvedValueOnce({});
+
+            await notificationController.readNotification(req, res);
+
+            expect(notificationService.readNotification).toHaveBeenCalledWith(
+                1
+            );
+            expect(res.status).toHaveBeenCalledWith(204);
+            expect(res.json).toHaveBeenCalledWith();
+        });
+
+        test("Should return NotificationNotFound error", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+                params: {
+                    notificationId: 10,
+                },
+            };
+
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            notificationService.readNotification.mockRejectedValueOnce(
+                new NotificationNotFoundError()
+            );
+
+            await notificationController.readNotification(req, res);
+
+            expect(notificationService.readNotification).toHaveBeenCalledWith(
+                10
+            );
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Notification not found",
+            });
+        });
+
+        test("Should return NotificationAlreadyRead error", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+                params: {
+                    notificationId: "3",
+                },
+            };
+
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            notificationService.readNotification.mockRejectedValueOnce(
+                new NotificationAlreadyReadError()
+            );
+
+            await notificationController.readNotification(req, res);
+
+            expect(notificationService.readNotification).toHaveBeenCalledWith(
+                3
+            );
+            expect(res.status).toHaveBeenCalledWith(405);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Notification has already been read",
+            });
+        });
+
+        test("Should return invalid notification id error", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+                params: {
+                    notificationId: 0,
+                },
+            };
+
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            notificationService.readNotification.mockResolvedValueOnce({});
+
+            await notificationController.readNotification(req, res);
+
+            expect(notificationService.readNotification).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Notification ID necessary",
+            });
+        });
+
+        test("Should return 500 when an error occurs", async () => {
+            const req: any = {
+                params: {
+                    notificationId: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+            notificationService.readNotification.mockRejectedValueOnce(
+                new Error()
+            );
+
+            await notificationController.readNotification(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Internal server error",
+            });
+        });
+
+        test("Should return 401 when user is not logged in", async () => {
+            const req: any = {
+                params: {
+                    notificationId: 1,
+                },
+                user: undefined,
+            };
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            await notificationController.readNotification(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized" });
         });
     });
 });
