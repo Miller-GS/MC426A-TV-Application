@@ -1,6 +1,9 @@
 import { Repository } from "typeorm";
 import { NotificationEntity, NotificationType } from "../entity/notification.entity";
 import { NotificationParser } from "../models/notification";
+import { ValidationUtils } from "../utils/validationUtils";
+import { UserIdError } from "../errors/UserIdError";
+import { EmptyNotificationError } from "../errors/EmptyNotificationError";
 
 export default abstract class NotificationCreationService {
     private notificationRepository: Repository<NotificationEntity>;
@@ -13,8 +16,16 @@ export default abstract class NotificationCreationService {
     abstract getNotificationType() : NotificationType;
 
     public async saveNotification(userId: number) {
+        if (!ValidationUtils.isPositiveNumber(userId)) {
+            throw new UserIdError();
+        }
+
         const text: string = this.getNotificationText();
         const type: NotificationType = this.getNotificationType();
+
+        if (ValidationUtils.isEmpty(text)) {
+            throw new EmptyNotificationError();
+        }
 
         const notification = await this.notificationRepository.save({
             User: {
