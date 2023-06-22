@@ -37,4 +37,34 @@ export default class NotificationController {
             ErrorUtils.handleError(err, res);
         }
     }
+
+    public async readNotification(req: Request, res: Response) {
+        if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
+
+        const notificationId = req.params["notificationId"];
+        if (!this.validateNotificationId(notificationId, res)) return res;
+
+        try {
+            await this.notificationService.readNotification(
+                parseInt(notificationId)
+            );
+            return res.status(204).json();
+        } catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
+    }
+
+    private validateNotificationId(notificationId: any, res: Response) {
+        if (
+            ValidationUtils.isEmpty(notificationId) ||
+            !ValidationUtils.isPositiveNumber(notificationId)
+        ) {
+            res.status(400).json({
+                message: "Bad request: Notification ID necessary",
+            });
+            return false;
+        }
+        return true;
+    }
 }

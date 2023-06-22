@@ -15,7 +15,7 @@ export class ValidationUtils {
     }
 
     static isPositiveNumber(str) {
-        const numberRegex = /^[1-9]+$/;
+        const numberRegex = /^[0-9]*[1-9][0-9]*$/;
         return numberRegex.test(str);
     }
 
