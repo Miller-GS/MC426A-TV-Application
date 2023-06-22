@@ -28,8 +28,12 @@ export class MediaController {
             page,
         } = req.query;
 
-        const includeMoviesBool = ConvertionUtils.stringToBoolean(includeMovies as string)
-        const includeTvShowsBool = ConvertionUtils.stringToBoolean(includeTvShows as string)
+        const includeMoviesBool = ConvertionUtils.stringToBoolean(
+            includeMovies as string
+        );
+        const includeTvShowsBool = ConvertionUtils.stringToBoolean(
+            includeTvShows as string
+        );
 
         if (!includeMoviesBool && !includeTvShowsBool) {
             return res.status(400).json({
