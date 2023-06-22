@@ -3,12 +3,13 @@ import TMDBService from "../services/tmdbService";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 import { ParseUtils } from "../utils/parseUtils";
+import { ConvertionUtils } from "../utils/convertionUtils";
 
 export class MediaController {
     constructor(private readonly tmdbService: TMDBService) {}
 
-    public async list_medias(req: Request, res: Response) {
-        if (ValidationUtils.isEmpty(req.query)) {
+    public async listMedias(req: Request, res: Response) {
+        if (ValidationUtils.isNull(req.query)) {
             return res.status(400).json({
                 message: "Bad request: Query was undefined",
             });
@@ -23,14 +24,17 @@ export class MediaController {
             minVoteCount,
             maxVoteCount,
             includeMovies,
-            includeSeries,
+            includeTvShows,
             page,
         } = req.query;
 
-        if (includeMovies !== "1" && includeSeries !== "1") {
+        const includeMoviesBool = ConvertionUtils.stringToBoolean(includeMovies as string)
+        const includeTvShowsBool = ConvertionUtils.stringToBoolean(includeTvShows as string)
+
+        if (!includeMoviesBool && !includeTvShowsBool) {
             return res.status(400).json({
                 message:
-                    "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
+                    "You must provide least one of the following query parameters: includeMovies=1, includeTvShows=1",
             });
         }
 
@@ -56,8 +60,8 @@ export class MediaController {
 
             const medias = await this.tmdbService.list(
                 params,
-                includeMovies as String,
-                includeSeries as String
+                includeMoviesBool,
+                includeTvShowsBool
             );
 
             return res.status(200).json(medias);

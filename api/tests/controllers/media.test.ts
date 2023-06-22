@@ -6,7 +6,7 @@ import { TMDBMediaParser, TMDBMedia } from "../../src/models/tmdbMedia";
 import { ListMediasParams } from "../../src/models/listMediasParams";
 
 class TMDBServiceMock extends TMDBService {
-    static series = [
+    static tvShows = [
         TMDBMediaParser.parseTv({ id: 1 }),
         TMDBMediaParser.parseTv({ id: 2 }),
     ];
@@ -15,17 +15,17 @@ class TMDBServiceMock extends TMDBService {
         TMDBMediaParser.parseMovie({ id: 4 }),
     ];
 
-    static medias = TMDBServiceMock.series.concat(TMDBServiceMock.movies);
+    static medias = TMDBServiceMock.tvShows.concat(TMDBServiceMock.movies);
 
     public async list(
         params: ListMediasParams,
-        includeMovie: String,
-        includeSeries: String
+        includeMovie: boolean,
+        includeTvShows: boolean
     ) {
         let ret: TMDBMedia[] = [];
 
-        if (includeSeries === "1") ret = ret.concat(TMDBServiceMock.series);
-        if (includeMovie === "1") ret = ret.concat(TMDBServiceMock.movies);
+        if (includeTvShows) ret = ret.concat(TMDBServiceMock.tvShows);
+        if (includeMovie) ret = ret.concat(TMDBServiceMock.movies);
 
         return ret;
     }
@@ -34,8 +34,8 @@ class TMDBServiceMock extends TMDBService {
 class TMDBServiceMockError extends TMDBService {
     public async list(
         params: ListMediasParams,
-        includeMovie: String,
-        includeSeries: String
+        includeMovie: boolean,
+        includeTvShows: boolean
     ) {
         throw new Error("error");
         return [] as TMDBMedia[];
@@ -49,10 +49,10 @@ describe("Tv controller", () => {
         mediaController = new MediaController(new TMDBServiceMock());
     });
 
-    test("Should return 200 with list of series", async () => {
+    test("Should return 200 with list of tv shows", async () => {
         const mockRequest = {
             query: {
-                includeSeries: "1",
+                includeTvShows: "1",
                 includeMovies: "0",
             },
         } as unknown as Request;
@@ -61,10 +61,10 @@ describe("Tv controller", () => {
         mockResponse.json = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaController.list_medias(mockRequest, mockResponse);
+        await mediaController.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(TMDBServiceMock.series);
+        expect(mockResponse.json).toHaveBeenCalledWith(TMDBServiceMock.tvShows);
     });
 
     test("Should return 200 with list of movies", async () => {
@@ -78,7 +78,7 @@ describe("Tv controller", () => {
         mockResponse.json = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaController.list_medias(mockRequest, mockResponse);
+        await mediaController.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(TMDBServiceMock.movies);
@@ -87,7 +87,7 @@ describe("Tv controller", () => {
     test("Should return 200 with list of all medias", async () => {
         const mockRequest = {
             query: {
-                includeSeries: "1",
+                includeTvShows: "1",
                 includeMovies: "1",
             },
         } as unknown as Request;
@@ -96,7 +96,7 @@ describe("Tv controller", () => {
         mockResponse.json = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaController.list_medias(mockRequest, mockResponse);
+        await mediaController.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(TMDBServiceMock.medias);
@@ -111,12 +111,12 @@ describe("Tv controller", () => {
         mockResponse.json = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaController.list_medias(mockRequest, mockResponse);
+        await mediaController.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message:
-                "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
+                "You must provide least one of the following query parameters: includeMovies=1, includeTvShows=1",
         });
     });
 
@@ -129,7 +129,7 @@ describe("Tv controller", () => {
         mockResponse.json = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaController.list_medias(mockRequest, mockResponse);
+        await mediaController.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
@@ -137,10 +137,10 @@ describe("Tv controller", () => {
         });
     });
 
-    test("Should return 400 with request with neither movies nor series", async () => {
+    test("Should return 400 with request with neither movies nor tvShows", async () => {
         const mockRequest = {
             query: {
-                includeSeries: "0",
+                includeTvShows: "0",
                 includeMovies: 0,
             },
         } as unknown as Request;
@@ -149,12 +149,12 @@ describe("Tv controller", () => {
         mockResponse.json = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaController.list_medias(mockRequest, mockResponse);
+        await mediaController.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message:
-                "You must provide least one of the following query parameters: includeMovies=1, includeSeries=1",
+                "You must provide least one of the following query parameters: includeMovies=1, includeTvShows=1",
         });
     });
 
@@ -164,7 +164,7 @@ describe("Tv controller", () => {
         );
         const mockRequest = {
             query: {
-                includeSeries: "1",
+                includeTvShows: "1",
             },
         } as unknown as Request;
 
@@ -172,7 +172,7 @@ describe("Tv controller", () => {
         mockResponse.send = jest.fn(() => mockResponse);
         mockResponse.status = jest.fn(() => mockResponse);
 
-        await mediaControllerError.list_medias(mockRequest, mockResponse);
+        await mediaControllerError.listMedias(mockRequest, mockResponse);
 
         expect(mockResponse.status).toHaveBeenCalledWith(500);
         expect(mockResponse.send).toHaveBeenCalledWith({ error: "error" });

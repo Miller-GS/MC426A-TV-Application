@@ -48,7 +48,7 @@ describe("TMDB Service - Movies", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, "1", "0");
+        const response = await tmdbService.list(params, true, false);
         const expected = {
             path: "/discover/movie",
             params: {
@@ -74,7 +74,7 @@ describe("TMDB Service - Movies", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, "1", "");
+        const response = await tmdbService.list(params, true, false);
         const expected = {
             path: "/search/movie",
             params: {
@@ -98,7 +98,7 @@ describe("TMDB Service - Movies", () => {
             page: 4,
         });
 
-        const response = await tmdbService.list(params, "1", "0");
+        const response = await tmdbService.list(params, true, false);
         const expected = {
             path: "/discover/movie",
             params: {
@@ -137,7 +137,7 @@ describe("TMDB Service - TV", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, "0", "1");
+        const response = await tmdbService.list(params, false, true);
         const expected = {
             path: "/discover/tv",
             params: {
@@ -162,7 +162,7 @@ describe("TMDB Service - TV", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, "", "1");
+        const response = await tmdbService.list(params, false, true);
         const expected = {
             path: "/search/tv",
             params: {
@@ -184,7 +184,7 @@ describe("TMDB Service - TV", () => {
             page: 5,
         });
 
-        const response = await tmdbService.list(params, "0", "1");
+        const response = await tmdbService.list(params, false, true);
         const expected = {
             path: "/discover/tv",
             params: {
@@ -223,7 +223,7 @@ describe("TMDB Service - Movie + TV", () => {
             page: 5,
         });
 
-        const response = await tmdbService.list(params, "1", "1");
+        const response = await tmdbService.list(params, true, true);
         const expected = [
             {
                 path: "/discover/tv",
@@ -264,7 +264,7 @@ describe("TMDB Service - Movie + TV", () => {
             page: 3,
         });
 
-        const response = await tmdbService.list(params, "1", "1");
+        const response = await tmdbService.list(params, true, true);
         const expected = [
             {
                 path: "/search/tv",
@@ -297,7 +297,7 @@ describe("TMDB Service - Movie + TV", () => {
             page: 6,
         });
 
-        const response = await tmdbService.list(params, "1", "1");
+        const response = await tmdbService.list(params, true, true);
         const expected = [
             {
                 path: "/discover/tv",

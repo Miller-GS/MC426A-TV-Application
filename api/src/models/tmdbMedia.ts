@@ -26,7 +26,7 @@ export interface TMDBMedia {
 
 export class TMDBMediaParser {
     static parseTv(tvObj: any): TMDBMedia {
-        if (tvObj === undefined) return {} as TMDBMedia;
+        if (ValidationUtils.isNull(tvObj)) return {} as TMDBMedia;
 
         const tvShow = {
             id: tvObj.id,
@@ -42,7 +42,7 @@ export class TMDBMediaParser {
         } as TMDBMedia;
 
         Object.keys(tvShow).forEach(
-            (key) => tvShow[key] === undefined && delete tvShow[key]
+            (key) => ValidationUtils.isNull(tvShow[key]) && delete tvShow[key]
         );
 
         if (!ValidationUtils.isEmpty(tvObj.backdrop_path)) {
@@ -56,7 +56,7 @@ export class TMDBMediaParser {
     }
 
     static parseMovie(movieObj: any): TMDBMedia {
-        if (movieObj === undefined) return {} as TMDBMedia;
+        if (ValidationUtils.isNull(movieObj)) return {} as TMDBMedia;
 
         const movie = {
             id: movieObj.id,
@@ -79,7 +79,7 @@ export class TMDBMediaParser {
         }
 
         Object.keys(movie).forEach(
-            (key) => movie[key] === undefined && delete movie[key]
+            (key) => ValidationUtils.isNull(movie[key]) && delete movie[key]
         );
 
         return movie;

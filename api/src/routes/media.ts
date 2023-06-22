@@ -8,7 +8,7 @@ const controller = new MediaController(new TMDBService());
 
 mediaRouter.get(
     "/list",
-    async (req, res) => await controller.list_medias(req, res)
+    async (req, res) => await controller.listMedias(req, res)
 );
 
 export default mediaRouter;

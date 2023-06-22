@@ -75,16 +75,16 @@ export default class TMDBService {
 
     public async list(
         params: ListMediasParams,
-        includeMovies: String,
-        includeSeries: String
+        includeMovies: boolean,
+        includeTvShows: boolean
     ) {
         let medias: TMDBMedia[] = [];
 
-        if (includeSeries === "1") {
+        if (includeTvShows) {
             medias = medias.concat(await this.listTvShows(params));
         }
 
-        if (includeMovies === "1") {
+        if (includeMovies) {
             medias = medias.concat(await this.listMovies(params));
         }
 
