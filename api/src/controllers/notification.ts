@@ -2,8 +2,8 @@ import { Response, Request } from "express";
 import { ValidationUtils } from "../utils/validationUtils";
 import NotificationService from "../services/notificationService";
 import { ErrorUtils } from "../utils/errorUtils";
-import { ConvertionUtils } from "../utils/convertionUtils";
 import { NotificationParser } from "../models/notification";
+import { ParseUtils } from "../utils/parseUtils";
 
 export default class NotificationController {
     private notificationService: NotificationService;
@@ -18,7 +18,7 @@ export default class NotificationController {
 
         let withDeleted = false;
         if (!ValidationUtils.isNull(req.query))
-            withDeleted = ConvertionUtils.stringToBoolean(
+            withDeleted = ParseUtils.parseBoolean(
                 req.query["all"] as string,
                 false
             );

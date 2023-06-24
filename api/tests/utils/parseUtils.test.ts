@@ -53,3 +53,50 @@ describe("Parse float or return undefined", () => {
         expect(response).toEqual(undefined);
     });
 });
+
+describe("string to boolean", () => {
+    test("Should return true if string is 1", () => {
+        const response = ParseUtils.parseBoolean("1");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if string is true", () => {
+        const response = ParseUtils.parseBoolean("true");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if string is True", () => {
+        const response = ParseUtils.parseBoolean("True");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return false if string is 0", () => {
+        const response = ParseUtils.parseBoolean("0");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if string is false", () => {
+        const response = ParseUtils.parseBoolean("false");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if string is False", () => {
+        const response = ParseUtils.parseBoolean("False");
+        expect(response).toEqual(false);
+    });
+
+    test("Should return undefined if string is neither true or false", () => {
+        const response = ParseUtils.parseBoolean("test");
+        expect(response).toEqual(undefined);
+    });
+
+    test("Should return true if string is neither true or false and default value is true", () => {
+        const response = ParseUtils.parseBoolean("test", true);
+        expect(response).toEqual(true);
+    });
+
+    test("Should return false if string is neither true or false and default value is false", () => {
+        const response = ParseUtils.parseBoolean("", false);
+        expect(response).toEqual(false);
+    });
+});
