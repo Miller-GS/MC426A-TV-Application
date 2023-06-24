@@ -3,7 +3,6 @@ import TMDBService from "../services/tmdbService";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 import { ParseUtils } from "../utils/parseUtils";
-import { ConvertionUtils } from "../utils/convertionUtils";
 
 export class MediaController {
     constructor(private readonly tmdbService: TMDBService) {}
@@ -28,10 +27,10 @@ export class MediaController {
             page,
         } = req.query;
 
-        const includeMoviesBool = ConvertionUtils.stringToBoolean(
+        const includeMoviesBool = ParseUtils.parseBoolean(
             includeMovies as string
         );
-        const includeTvShowsBool = ConvertionUtils.stringToBoolean(
+        const includeTvShowsBool = ParseUtils.parseBoolean(
             includeTvShows as string
         );
 
