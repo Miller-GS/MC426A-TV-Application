@@ -23,7 +23,9 @@ export default class UsersController {
 
         try {
             await this.userService.register(name, email, password);
-            return res.status(201).json({ message: "User created successfully" });
+            return res
+                .status(201)
+                .json({ message: "User created successfully" });
         } catch (err: any) {
             ErrorUtils.handleError(err, res);
         }
@@ -56,7 +58,9 @@ export default class UsersController {
     public async handleRefreshToken(req: Request, res: Response) {
         const refreshToken = req.cookies?.refreshToken;
         if (!refreshToken)
-            return res.status(401).json({ message: "No refresh token provided." });
+            return res
+                .status(401)
+                .json({ message: "No refresh token provided." });
 
         try {
             const accessToken = await this.userService.getNewAccessToken(
@@ -71,7 +75,9 @@ export default class UsersController {
     public async logout(req: Request, res: Response) {
         const refreshToken = req.cookies?.refreshToken;
         if (ValidationUtils.isEmpty(refreshToken)) {
-            return res.status(204).json({ message: "No refresh token provided." });
+            return res
+                .status(204)
+                .json({ message: "No refresh token provided." });
         }
 
         try {
@@ -81,7 +87,9 @@ export default class UsersController {
                 httpOnly: true,
             });
 
-            return res.status(204).json({ message: "Logged out successfully." });
+            return res
+                .status(204)
+                .json({ message: "Logged out successfully." });
         } catch (err: any) {
             ErrorUtils.handleError(err, res);
         }

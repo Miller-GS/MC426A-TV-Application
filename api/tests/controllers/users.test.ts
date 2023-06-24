@@ -221,7 +221,9 @@ describe("Users controller", () => {
                 },
             } as Request;
 
-            service.getNewAccessToken.mockRejectedValueOnce(new InvalidRefreshTokenError());
+            service.getNewAccessToken.mockRejectedValueOnce(
+                new InvalidRefreshTokenError()
+            );
             await controller.handleRefreshToken(req, res);
 
             expect(res.status).toHaveBeenCalledWith(403);
