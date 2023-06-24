@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 
-import UsersController from "../../src/controllers/users";
+import UserController from "../../src/controllers/user";
 import { InvalidRefreshTokenError } from "../../src/errors/InvalidRefreshTokenError";
 
 describe("Users controller", () => {
-    let controller: UsersController;
+    let controller: UserController;
     let service: any;
     let res: Response;
 
@@ -16,7 +16,7 @@ describe("Users controller", () => {
             getNewAccessToken: jest.fn(),
         };
 
-        controller = new UsersController(service);
+        controller = new UserController(service);
 
         res = {
             status: jest.fn().mockReturnThis(),
