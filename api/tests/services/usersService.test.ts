@@ -99,7 +99,7 @@ describe("Users controller", () => {
         });
     });
 
-    describe("getNewAccessToken", async () => {
+    describe("getNewAccessToken", () => {
         test("getNewAccessToken() should throw InvalidRefreshTokenError if token is invalid", async () => {
             const refreshToken = "invalid_token";
 

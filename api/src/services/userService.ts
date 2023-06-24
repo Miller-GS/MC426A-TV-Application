@@ -68,7 +68,8 @@ export default class UserService {
             where: { RefreshToken: refreshToken },
         });
 
-        if (user) await this.userRepository.update(user.Id, { RefreshToken: null });
+        if (user)
+            await this.userRepository.update(user.Id, { RefreshToken: null });
     }
 
     public async getNewAccessToken(refreshToken: string) {
