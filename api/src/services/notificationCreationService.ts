@@ -12,7 +12,10 @@ export default abstract class NotificationCreationService {
     private notificationRepository: Repository<NotificationEntity>;
     protected userId: number;
 
-    public constructor(notificationRepository: Repository<NotificationEntity>, userId: number) {
+    public constructor(
+        notificationRepository: Repository<NotificationEntity>,
+        userId: number
+    ) {
         this.notificationRepository = notificationRepository;
         this.userId = userId;
     }
