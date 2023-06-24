@@ -3,7 +3,7 @@ import { Response, Request } from "express";
 import UserService from "../services/userService";
 import { ErrorUtils } from "../utils/errorUtils";
 
-export default class UsersController {
+export default class UserController {
     private userService: UserService;
 
     public constructor(userService: UserService) {

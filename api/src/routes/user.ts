@@ -1,32 +1,32 @@
 import express, { Request, Response } from "express";
-import UsersController from "../controllers/users";
+import UserController from "../controllers/user";
 import appDataSource from "../config/ormconfig";
 import UserService from "../services/userService";
 import { UserEntity } from "../entity/user.entity";
 
-export const usersRouter = express.Router();
+export const userRouter = express.Router();
 
 const userRepository = appDataSource.getRepository(UserEntity);
 
 const service = new UserService(userRepository);
-const controller = new UsersController(service);
+const controller = new UserController(service);
 
-usersRouter.post(
+userRouter.post(
     "/register",
     async (req, res) => await controller.register(req, res)
 );
 
-usersRouter.post(
+userRouter.post(
     "/login",
     async (req, res) => await controller.login(req, res)
 );
 
-usersRouter.get(
+userRouter.get(
     "/refresh",
     async (req, res) => await controller.handleRefreshToken(req, res)
 );
 
-usersRouter.get(
+userRouter.get(
     "/logout",
     async (req, res) => await controller.logout(req, res)
 );
