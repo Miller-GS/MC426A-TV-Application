@@ -1,7 +1,6 @@
 import CommentService from "../services/commentService";
 import { Response, Request } from "express";
 import { ValidationUtils } from "../utils/validationUtils";
-import { MyTVListError } from "../errors/MyTVListError";
 import { ErrorUtils } from "../utils/errorUtils";
 
 export class CommentController {

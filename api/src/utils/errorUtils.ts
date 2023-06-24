@@ -1,5 +1,6 @@
 import { MyTVListError } from "../errors/MyTVListError";
 import { Response } from "express";
+import { ValidationUtils } from "./validationUtils";
 
 export class ErrorUtils {
     static handleError(err: Error, res: Response) {
@@ -8,8 +9,13 @@ export class ErrorUtils {
                 message: err.message,
             });
         }
+
+        let message = "Internal server error";
+        if (err instanceof Error && !ValidationUtils.isEmpty(err.message))
+            message = err.message;
+
         return res.status(500).json({
-            message: "Internal server error",
+            message: message,
         });
     }
 }
