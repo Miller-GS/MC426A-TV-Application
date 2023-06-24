@@ -39,13 +39,15 @@ export default class UsersController {
 
         try {
             const tokens = await this.userService.login(email, password);
+            const accessToken = tokens.accessToken;
+            const refreshToken = tokens.refreshToken;
 
-            res.cookie("refreshToken", tokens.refreshToken, {
+            res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
 
-            return res.status(200).json({ tokens.accessToken });
+            return res.status(200).json({ accessToken });
         } catch (err: any) {
             ErrorUtils.handleError(err, res);
         }
@@ -53,10 +55,13 @@ export default class UsersController {
 
     public async handleRefreshToken(req: Request, res: Response) {
         const refreshToken = req.cookies?.refreshToken;
-        if (!refreshToken) return res.status(401).json({ msg: "No refresh token provided." });
+        if (!refreshToken)
+            return res.status(401).json({ msg: "No refresh token provided." });
 
         try {
-            const accessToken = await this.userService.getNewAccessToken(refreshToken);
+            const accessToken = await this.userService.getNewAccessToken(
+                refreshToken
+            );
             return res.status(200).json({ accessToken });
         } catch (err: any) {
             ErrorUtils.handleError(err, res);

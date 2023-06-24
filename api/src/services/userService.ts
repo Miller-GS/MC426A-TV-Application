@@ -1,15 +1,15 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import env from "../../environment";
 import { Repository } from "typeorm";
+import env from "../../environment";
 import { UserEntity } from "../entity/user.entity";
-import { UserAlreadyExistsError } from "../errors/UserAlreadyExistsError";
-import { UserNotExistsError } from "../errors/UserNotExistsError";
 import { InvalidAccessError } from "../errors/InvalidAccessError";
 import { InvalidRefreshTokenError } from "../errors/InvalidRefreshTokenError";
+import { UserAlreadyExistsError } from "../errors/UserAlreadyExistsError";
+import { UserNotExistsError } from "../errors/UserNotExistsError";
 
 export default class UserService {
-    private userRepository: Repository<UserEntity>;
+    private userRepository: any;
 
     public constructor(userRepository: Repository<UserEntity>) {
         this.userRepository = userRepository;
@@ -68,8 +68,7 @@ export default class UserService {
             where: { RefreshToken: refreshToken },
         });
 
-        if (user)
-            await this.userRepository.update(user.Id, { RefreshToken: null });
+        if (user) await this.userRepository.update(user.Id, { RefreshToken: null });
     }
 
     public async getNewAccessToken(refreshToken: string) {
