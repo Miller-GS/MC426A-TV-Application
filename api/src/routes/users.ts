@@ -1,10 +1,15 @@
 import express, { Request, Response } from "express";
 import UsersController from "../controllers/users";
 import appDataSource from "../config/ormconfig";
+import UserService from "../services/userService";
+import { UserEntity } from "../entity/user.entity";
 
 export const usersRouter = express.Router();
 
-const controller = new UsersController(appDataSource);
+const userRepository = appDataSource.getRepository(UserEntity);
+
+const service = new UserService(userRepository);
+const controller = new UsersController(service);
 
 usersRouter.post(
     "/register",
