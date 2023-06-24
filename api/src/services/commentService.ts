@@ -7,35 +7,8 @@ import { CommentNotFoundError } from "../errors/CommentNotFoundError";
 import { CommentNotOwnedError } from "../errors/CommentNotOwnedError";
 import { ValidationUtils } from "../../src/utils/validationUtils";
 import { Comment, CommentParser } from "../models/comment";
-import NotificationCreationService from "./notificationCreationService";
-import {
-    NotificationEntity,
-    NotificationType,
-} from "../entity/notification.entity";
-
-class ReplyNotification extends NotificationCreationService {
-    private comment: Comment;
-    private parentUserId: number;
-
-    public constructor(
-        notificationRepository: Repository<NotificationEntity>,
-        comment: Comment,
-        parentUserId: number
-    ) {
-        super(notificationRepository);
-
-        this.comment = comment;
-        this.parentUserId = parentUserId;
-    }
-
-    getNotificationText(): string {
-        return `User ${this.parentUserId} replied to your comment made at ${this.comment.mediaId}.`;
-    }
-
-    getNotificationType(): NotificationType {
-        return NotificationType.COMMENT_REPLY;
-    }
-}
+import { NotificationEntity } from "../entity/notification.entity";
+import { ReplyNotification } from "./replyNotification";
 
 export default class CommentService {
     private commentRepository: Repository<CommentEntity>;
@@ -108,11 +81,11 @@ export default class CommentService {
 
             const notificaton = new ReplyNotification(
                 this.notificationRepository,
-                comment,
-                parentUserId
+                parentUserId,
+                comment
             );
 
-            notificaton.saveNotification(parentUserId);
+            notificaton.saveNotification();
         }
 
         return comment;

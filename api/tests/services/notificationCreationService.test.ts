@@ -44,25 +44,28 @@ describe("Notification Creation Service", () => {
 
     describe("Reply Notification", () => {
         test("Should save notification for comment reply", async () => {
+            const userId: number = 2;
+
             notificationCreator = new TestCommentNotification(
-                notificationRepositoryMock
+                notificationRepositoryMock,
+                userId
             );
 
             notificationRepositoryMock.save.mockReturnValueOnce({
                 Id: 1,
                 User: {
-                    Id: 2,
+                    Id: userId,
                 },
                 Text: "Test",
                 Type: NotificationType.COMMENT_REPLY,
             });
 
-            const result = await notificationCreator.saveNotification(2);
-            const response = makeNotificationMock({ userId: 2 });
+            const result = await notificationCreator.saveNotification();
+            const response = makeNotificationMock({ userId: userId });
 
             expect(notificationRepositoryMock.save).toHaveBeenCalledWith({
                 User: {
-                    Id: 2,
+                    Id: userId,
                 },
                 Text: "Test",
                 Type: NotificationType.COMMENT_REPLY,
@@ -71,33 +74,38 @@ describe("Notification Creation Service", () => {
         });
 
         test("Should throw error with invalid user id 0", async () => {
+            const userId: number = 0;
             notificationCreator = new TestCommentNotification(
-                notificationRepositoryMock
+                notificationRepositoryMock,
+                userId
             );
 
-            const userId = 0;
             await expect(
-                notificationCreator.saveNotification(userId)
+                notificationCreator.saveNotification()
             ).rejects.toThrow(UserIdError);
         });
 
         test("Should throw error with invalid user id -1", async () => {
+            const userId: number = -1;
             notificationCreator = new TestCommentNotification(
-                notificationRepositoryMock
+                notificationRepositoryMock,
+                userId
             );
 
-            const userId = -1;
             await expect(
-                notificationCreator.saveNotification(userId)
+                notificationCreator.saveNotification()
             ).rejects.toThrow(UserIdError);
         });
 
-        test("Should throw error with invalid user id -1", async () => {
+        test("Should throw error with empty notification error", async () => {
+            const userId: number = 10;
             notificationCreator = new EmptyTestNotification(
-                notificationRepositoryMock
+                notificationRepositoryMock,
+                userId
             );
+
             await expect(
-                notificationCreator.saveNotification(10)
+                notificationCreator.saveNotification()
             ).rejects.toThrow(EmptyNotificationError);
         });
     });

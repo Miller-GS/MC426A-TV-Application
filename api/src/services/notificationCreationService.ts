@@ -10,16 +10,18 @@ import { EmptyNotificationError } from "../errors/EmptyNotificationError";
 
 export default abstract class NotificationCreationService {
     private notificationRepository: Repository<NotificationEntity>;
+    protected userId: number;
 
-    public constructor(notificationRepository: Repository<NotificationEntity>) {
+    public constructor(notificationRepository: Repository<NotificationEntity>, userId: number) {
         this.notificationRepository = notificationRepository;
+        this.userId = userId;
     }
 
     abstract getNotificationText(): string;
     abstract getNotificationType(): NotificationType;
 
-    public async saveNotification(userId: number) {
-        if (!ValidationUtils.isPositiveNumber(userId)) {
+    public async saveNotification() {
+        if (!ValidationUtils.isPositiveNumber(this.userId)) {
             throw new UserIdError();
         }
 
@@ -32,7 +34,7 @@ export default abstract class NotificationCreationService {
 
         const notification = await this.notificationRepository.save({
             User: {
-                Id: userId,
+                Id: this.userId,
             },
             Text: text,
             Type: type,
