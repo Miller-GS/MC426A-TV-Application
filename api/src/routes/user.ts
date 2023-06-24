@@ -16,10 +16,7 @@ userRouter.post(
     async (req, res) => await controller.register(req, res)
 );
 
-userRouter.post(
-    "/login",
-    async (req, res) => await controller.login(req, res)
-);
+userRouter.post("/login", async (req, res) => await controller.login(req, res));
 
 userRouter.get(
     "/refresh",
