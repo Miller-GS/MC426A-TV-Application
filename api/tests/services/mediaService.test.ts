@@ -62,13 +62,19 @@ describe("Media Service", () => {
         });
         mediaService = new MediaServiceTest(mediaRepositoryMock);
 
-        mediaService.getMock().mockImplementation((path: String, params: Object) => {
-            return {
-                results: [
-                    { path: path, params: params, popularity: 0 } as TMDBMedia,
-                ],
-            };
-        });
+        mediaService
+            .getMock()
+            .mockImplementation((path: String, params: Object) => {
+                return {
+                    results: [
+                        {
+                            path: path,
+                            params: params,
+                            popularity: 0,
+                        } as TMDBMedia,
+                    ],
+                };
+            });
     });
 
     describe("list - Movies", () => {
@@ -79,7 +85,7 @@ describe("Media Service", () => {
                 year: 2023,
                 page: 1,
             });
-    
+
             const response = await mediaService.list(params, true, false);
             const expected = {
                 id: 1,
@@ -96,17 +102,17 @@ describe("Media Service", () => {
                 },
                 popularity: 0,
             };
-    
+
             expect(response).toEqual([expected]);
         });
-    
+
         test("Should search movie by name", async () => {
             const params = makeMediaParamsMock({
                 name: "X",
                 genres: "0,1,2",
                 page: 1,
             });
-    
+
             const response = await mediaService.list(params, true, false);
             const expected = {
                 id: 1,
@@ -118,10 +124,10 @@ describe("Media Service", () => {
                 },
                 popularity: 0,
             };
-    
+
             expect(response).toEqual([expected]);
         });
-    
+
         test("Should discover movie and go to page", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -131,7 +137,7 @@ describe("Media Service", () => {
                 minVoteCount: 5,
                 page: 4,
             });
-    
+
             const response = await mediaService.list(params, true, false);
             const expected = {
                 id: 1,
@@ -148,10 +154,10 @@ describe("Media Service", () => {
                 },
                 popularity: 0,
             };
-    
+
             expect(response).toEqual([expected]);
         });
-    
+
         test("Should save new movies into the Media database", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -165,15 +171,14 @@ describe("Media Service", () => {
             mediaRepositoryMock.save.mockReturnValue({
                 Id: 1,
             });
-    
+
             await mediaService.list(params, true, false);
-    
+
             expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
         });
     });
-    
-    describe("list - TV", () => {
 
+    describe("list - TV", () => {
         test("Should discover tv by year, genres and vote ranges", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -185,7 +190,7 @@ describe("Media Service", () => {
                 maxVoteCount: 1000,
                 page: 1,
             });
-    
+
             const response = await mediaService.list(params, false, true);
             const expected = {
                 id: 1,
@@ -202,16 +207,16 @@ describe("Media Service", () => {
                 },
                 popularity: 0,
             };
-    
+
             expect(response).toEqual([expected]);
         });
-    
+
         test("Should search tv by name", async () => {
             const params = makeMediaParamsMock({
                 name: "X",
                 page: 1,
             });
-    
+
             const response = await mediaService.list(params, false, true);
             const expected = {
                 id: 1,
@@ -223,10 +228,10 @@ describe("Media Service", () => {
                 },
                 popularity: 0,
             };
-    
+
             expect(response).toEqual([expected]);
         });
-    
+
         test("Should discover tv and go to page", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -234,7 +239,7 @@ describe("Media Service", () => {
                 year: 1999,
                 page: 5,
             });
-    
+
             const response = await mediaService.list(params, false, true);
             const expected = {
                 id: 1,
@@ -251,10 +256,10 @@ describe("Media Service", () => {
                 },
                 popularity: 0,
             };
-    
+
             expect(response).toEqual([expected]);
         });
-    
+
         test("Should save new TV series into the Media database", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -268,15 +273,14 @@ describe("Media Service", () => {
             mediaRepositoryMock.save.mockReturnValue({
                 Id: 1,
             });
-    
+
             await mediaService.list(params, false, true);
-    
+
             expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
         });
     });
-    
-    describe("list - Movie + TV", () => {
 
+    describe("list - Movie + TV", () => {
         test("Should discover movie + tv by year, genres and vote ranges", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -288,7 +292,7 @@ describe("Media Service", () => {
                 minVoteCount: 5,
                 page: 5,
             });
-    
+
             const response = await mediaService.list(params, true, true);
             const expected = [
                 {
@@ -322,16 +326,16 @@ describe("Media Service", () => {
                     popularity: 0,
                 },
             ];
-    
+
             expect(response).toEqual(expected);
         });
-    
+
         test("Should search movie + tv by name", async () => {
             const params = makeMediaParamsMock({
                 name: "X",
                 page: 3,
             });
-    
+
             const response = await mediaService.list(params, true, true);
             const expected = [
                 {
@@ -355,10 +359,10 @@ describe("Media Service", () => {
                     popularity: 0,
                 },
             ];
-    
+
             expect(response).toEqual(expected);
         });
-    
+
         test("Should discover movie + tv and go to page", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -366,7 +370,7 @@ describe("Media Service", () => {
                 year: 1999,
                 page: 6,
             });
-    
+
             const response = await mediaService.list(params, true, true);
             const expected = [
                 {
@@ -400,11 +404,11 @@ describe("Media Service", () => {
                     popularity: 0,
                 },
             ];
-    
+
             expect(response).toEqual(expected);
         });
     });
-    
+
     describe("getMedia", () => {
         beforeEach(() => {
             const getMockFunction = jest.fn();
@@ -443,7 +447,9 @@ describe("Media Service", () => {
         test("Should throw MediaNotFoundError when given non-existing id", async () => {
             mediaRepositoryMock.findOne.mockReturnValue(undefined);
 
-            await expect(mediaService.getMedia(1)).rejects.toThrow(MediaNotFoundError);
+            await expect(mediaService.getMedia(1)).rejects.toThrow(
+                MediaNotFoundError
+            );
         });
     });
 });
