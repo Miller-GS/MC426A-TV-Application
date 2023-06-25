@@ -58,6 +58,7 @@ describe("TMDB Service - Movies", () => {
 
         const response = await tmdbService.list(params, true, false);
         const expected = {
+            id: 1,
             path: "/discover/movie",
             params: {
                 with_genres: "0,1,2",
@@ -84,6 +85,7 @@ describe("TMDB Service - Movies", () => {
 
         const response = await tmdbService.list(params, true, false);
         const expected = {
+            id: 1,
             path: "/search/movie",
             params: {
                 query: "X",
@@ -108,6 +110,7 @@ describe("TMDB Service - Movies", () => {
 
         const response = await tmdbService.list(params, true, false);
         const expected = {
+            id: 1,
             path: "/discover/movie",
             params: {
                 with_genres: "0",
@@ -155,6 +158,7 @@ describe("TMDB Service - TV", () => {
 
         const response = await tmdbService.list(params, false, true);
         const expected = {
+            id: 1,
             path: "/discover/tv",
             params: {
                 with_genres: "0,1,2",
@@ -180,6 +184,7 @@ describe("TMDB Service - TV", () => {
 
         const response = await tmdbService.list(params, false, true);
         const expected = {
+            id: 1,
             path: "/search/tv",
             params: {
                 query: "X",
@@ -202,6 +207,7 @@ describe("TMDB Service - TV", () => {
 
         const response = await tmdbService.list(params, false, true);
         const expected = {
+            id: 1,
             path: "/discover/tv",
             params: {
                 with_genres: "0",
