@@ -16,7 +16,11 @@ TMDBMediaParser.parseMovie = (obj) => obj;
 
 class MediaServiceTest extends MediaService {
     protected async get(path: String, params: Object) {
-        return {results: [{ path: path, params: params, popularity: 0 } as TMDBMedia]};
+        return {
+            results: [
+                { path: path, params: params, popularity: 0 } as TMDBMedia,
+            ],
+        };
     }
 }
 

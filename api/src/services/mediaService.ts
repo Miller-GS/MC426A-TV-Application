@@ -30,22 +30,26 @@ export default class MediaService {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
-            data = (await this.get("/search/movie", {
-                query: params.name,
-                year: params.year,
-                page: params.page,
-            })).results;
+            data = (
+                await this.get("/search/movie", {
+                    query: params.name,
+                    year: params.year,
+                    page: params.page,
+                })
+            ).results;
         } else {
-            data = (await this.get("/discover/movie", {
-                with_genres: params.genres,
-                year: params.year,
-                sort_by: "popularity.desc",
-                page: params.page,
-                "vote_average.gte": params.minVoteAverage,
-                "vote_average.lte": params.maxVoteAverage,
-                "vote_count.gte": params.minVoteCount,
-                "vote_count.lte": params.maxVoteCount,
-            })).results;
+            data = (
+                await this.get("/discover/movie", {
+                    with_genres: params.genres,
+                    year: params.year,
+                    sort_by: "popularity.desc",
+                    page: params.page,
+                    "vote_average.gte": params.minVoteAverage,
+                    "vote_average.lte": params.maxVoteAverage,
+                    "vote_count.gte": params.minVoteCount,
+                    "vote_count.lte": params.maxVoteCount,
+                })
+            ).results;
         }
 
         const response: TMDBMedia[] = data.map(TMDBMediaParser.parseMovie);
@@ -57,22 +61,26 @@ export default class MediaService {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
-            data = (await this.get("/search/tv", {
-                query: params.name,
-                first_air_date_year: params.year,
-                page: params.page,
-            })).results;
+            data = (
+                await this.get("/search/tv", {
+                    query: params.name,
+                    first_air_date_year: params.year,
+                    page: params.page,
+                })
+            ).results;
         } else {
-            data = (await this.get("/discover/tv", {
-                with_genres: params.genres,
-                first_air_date_year: params.year,
-                sort_by: "popularity.desc",
-                page: params.page,
-                "vote_average.gte": params.minVoteAverage,
-                "vote_average.lte": params.maxVoteAverage,
-                "vote_count.gte": params.minVoteCount,
-                "vote_count.lte": params.maxVoteCount,
-            })).results;
+            data = (
+                await this.get("/discover/tv", {
+                    with_genres: params.genres,
+                    first_air_date_year: params.year,
+                    sort_by: "popularity.desc",
+                    page: params.page,
+                    "vote_average.gte": params.minVoteAverage,
+                    "vote_average.lte": params.maxVoteAverage,
+                    "vote_count.gte": params.minVoteCount,
+                    "vote_count.lte": params.maxVoteCount,
+                })
+            ).results;
         }
 
         const response: TMDBMedia[] = data.map(TMDBMediaParser.parseTv);
@@ -132,12 +140,18 @@ export default class MediaService {
         console.log(internalMedia);
 
         if (internalMedia.Type == MediaTypeEnum.MOVIE) {
-            const tmdbMedia = await this.get("/movie/" + internalMedia.ExternalId, {});
+            const tmdbMedia = await this.get(
+                "/movie/" + internalMedia.ExternalId,
+                {}
+            );
             tmdbMedia.id = internalMedia.Id;
             return TMDBMediaParser.parseMovie(tmdbMedia);
         }
         if (internalMedia.Type == MediaTypeEnum.TV) {
-            const tmdbMedia = await this.get("/tv/" + internalMedia.ExternalId, {});
+            const tmdbMedia = await this.get(
+                "/tv/" + internalMedia.ExternalId,
+                {}
+            );
             tmdbMedia.id = internalMedia.Id;
             return TMDBMediaParser.parseTv(tmdbMedia);
         }

@@ -87,8 +87,7 @@ export class MediaController {
             const media = await this.tmdbService.getMedia(parseInt(mediaId));
 
             return res.status(200).json(media);
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
         }
