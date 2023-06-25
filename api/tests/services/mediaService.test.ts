@@ -42,6 +42,9 @@ describe("TMDB Service - Movies", () => {
             findOne: jest.fn(),
             save: jest.fn(),
         };
+        mediaRepositoryMock.findOne.mockReturnValue({
+            Id: 1,
+        });
         tmdbService = new MediaServiceTest(mediaRepositoryMock);
     });
 
@@ -132,6 +135,9 @@ describe("TMDB Service - TV", () => {
             findOne: jest.fn(),
             save: jest.fn(),
         };
+        mediaRepositoryMock.findOne.mockReturnValue({
+            Id: 1,
+        });
         tmdbService = new MediaServiceTest(mediaRepositoryMock);
     });
 
@@ -223,6 +229,9 @@ describe("TMDB Service - Movie + TV", () => {
             findOne: jest.fn(),
             save: jest.fn(),
         };
+        mediaRepositoryMock.findOne.mockReturnValue({
+            Id: 1,
+        });
         tmdbService = new MediaServiceTest(mediaRepositoryMock);
     });
 
@@ -241,6 +250,7 @@ describe("TMDB Service - Movie + TV", () => {
         const response = await tmdbService.list(params, true, true);
         const expected = [
             {
+                id: 1,
                 path: "/discover/tv",
                 params: {
                     with_genres: "0,1,2",
@@ -255,6 +265,7 @@ describe("TMDB Service - Movie + TV", () => {
                 popularity: 0,
             },
             {
+                id: 1,
                 path: "/discover/movie",
                 params: {
                     with_genres: "0,1,2",
@@ -282,6 +293,7 @@ describe("TMDB Service - Movie + TV", () => {
         const response = await tmdbService.list(params, true, true);
         const expected = [
             {
+                id: 1,
                 path: "/search/tv",
                 params: {
                     query: "X",
@@ -291,6 +303,7 @@ describe("TMDB Service - Movie + TV", () => {
                 popularity: 0,
             },
             {
+                id: 1,
                 path: "/search/movie",
                 params: {
                     query: "X",
@@ -315,6 +328,7 @@ describe("TMDB Service - Movie + TV", () => {
         const response = await tmdbService.list(params, true, true);
         const expected = [
             {
+                id: 1,
                 path: "/discover/tv",
                 params: {
                     with_genres: "0",
@@ -329,6 +343,7 @@ describe("TMDB Service - Movie + TV", () => {
                 popularity: 0,
             },
             {
+                id: 1,
                 path: "/discover/movie",
                 params: {
                     with_genres: "0",
