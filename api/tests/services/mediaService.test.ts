@@ -1,4 +1,4 @@
-// The idea of this test module is to check whether the correct parameters arrive at the get method in the TMDBService object.
+// The idea of this test module is to check whether the correct parameters arrive at the get method in the mediaService object.
 // The point is to assume the axios request and the API are working and only test if we are using them correctly.
 
 import MediaService from "../../src/services/mediaService";
@@ -34,7 +34,7 @@ const makeMediaParamsMock = (params = {} as any) => {
 };
 
 describe("TMDB Service - Movies", () => {
-    let tmdbService: MediaServiceTest;
+    let mediaService: MediaServiceTest;
     let mediaRepositoryMock: any;
 
     beforeEach(() => {
@@ -45,7 +45,7 @@ describe("TMDB Service - Movies", () => {
         mediaRepositoryMock.findOne.mockReturnValue({
             Id: 1,
         });
-        tmdbService = new MediaServiceTest(mediaRepositoryMock);
+        mediaService = new MediaServiceTest(mediaRepositoryMock);
     });
 
     test("Should discover movie by year and genres", async () => {
@@ -56,7 +56,7 @@ describe("TMDB Service - Movies", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, true, false);
+        const response = await mediaService.list(params, true, false);
         const expected = {
             id: 1,
             path: "/discover/movie",
@@ -83,7 +83,7 @@ describe("TMDB Service - Movies", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, true, false);
+        const response = await mediaService.list(params, true, false);
         const expected = {
             id: 1,
             path: "/search/movie",
@@ -108,7 +108,7 @@ describe("TMDB Service - Movies", () => {
             page: 4,
         });
 
-        const response = await tmdbService.list(params, true, false);
+        const response = await mediaService.list(params, true, false);
         const expected = {
             id: 1,
             path: "/discover/movie",
@@ -142,14 +142,14 @@ describe("TMDB Service - Movies", () => {
             Id: 1,
         });
 
-        await tmdbService.list(params, true, false);
+        await mediaService.list(params, true, false);
 
         expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
     });
 });
 
 describe("TMDB Service - TV", () => {
-    let tmdbService: MediaServiceTest;
+    let mediaService: MediaServiceTest;
     let mediaRepositoryMock: any;
 
     beforeEach(() => {
@@ -160,7 +160,7 @@ describe("TMDB Service - TV", () => {
         mediaRepositoryMock.findOne.mockReturnValue({
             Id: 1,
         });
-        tmdbService = new MediaServiceTest(mediaRepositoryMock);
+        mediaService = new MediaServiceTest(mediaRepositoryMock);
     });
 
     test("Should discover tv by year, genres and vote ranges", async () => {
@@ -175,7 +175,7 @@ describe("TMDB Service - TV", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, false, true);
+        const response = await mediaService.list(params, false, true);
         const expected = {
             id: 1,
             path: "/discover/tv",
@@ -201,7 +201,7 @@ describe("TMDB Service - TV", () => {
             page: 1,
         });
 
-        const response = await tmdbService.list(params, false, true);
+        const response = await mediaService.list(params, false, true);
         const expected = {
             id: 1,
             path: "/search/tv",
@@ -224,7 +224,7 @@ describe("TMDB Service - TV", () => {
             page: 5,
         });
 
-        const response = await tmdbService.list(params, false, true);
+        const response = await mediaService.list(params, false, true);
         const expected = {
             id: 1,
             path: "/discover/tv",
@@ -258,14 +258,14 @@ describe("TMDB Service - TV", () => {
             Id: 1,
         });
 
-        await tmdbService.list(params, false, true);
+        await mediaService.list(params, false, true);
 
         expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
     });
 });
 
 describe("TMDB Service - Movie + TV", () => {
-    let tmdbService: MediaServiceTest;
+    let mediaService: MediaServiceTest;
     let mediaRepositoryMock: any;
 
     beforeEach(() => {
@@ -276,7 +276,7 @@ describe("TMDB Service - Movie + TV", () => {
         mediaRepositoryMock.findOne.mockReturnValue({
             Id: 1,
         });
-        tmdbService = new MediaServiceTest(mediaRepositoryMock);
+        mediaService = new MediaServiceTest(mediaRepositoryMock);
     });
 
     test("Should discover movie + tv by year, genres and vote ranges", async () => {
@@ -291,7 +291,7 @@ describe("TMDB Service - Movie + TV", () => {
             page: 5,
         });
 
-        const response = await tmdbService.list(params, true, true);
+        const response = await mediaService.list(params, true, true);
         const expected = [
             {
                 id: 1,
@@ -334,7 +334,7 @@ describe("TMDB Service - Movie + TV", () => {
             page: 3,
         });
 
-        const response = await tmdbService.list(params, true, true);
+        const response = await mediaService.list(params, true, true);
         const expected = [
             {
                 id: 1,
@@ -369,7 +369,7 @@ describe("TMDB Service - Movie + TV", () => {
             page: 6,
         });
 
-        const response = await tmdbService.list(params, true, true);
+        const response = await mediaService.list(params, true, true);
         const expected = [
             {
                 id: 1,
