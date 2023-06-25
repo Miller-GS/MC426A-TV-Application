@@ -127,6 +127,25 @@ describe("TMDB Service - Movies", () => {
 
         expect(response).toEqual([expected]);
     });
+
+    test("Should save new movies into the Media database", async () => {
+        const params = makeMediaParamsMock({
+            name: "",
+            genres: "0",
+            year: 1999,
+            minVoteAverage: 5.0,
+            minVoteCount: 5,
+            page: 4,
+        });
+        mediaRepositoryMock.findOne.mockReturnValue(undefined);
+        mediaRepositoryMock.save.mockReturnValue({
+            Id: 1,
+        });
+
+        await tmdbService.list(params, true, false);
+
+        expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
+    });
 });
 
 describe("TMDB Service - TV", () => {
@@ -223,6 +242,25 @@ describe("TMDB Service - TV", () => {
         };
 
         expect(response).toEqual([expected]);
+    });
+
+    test("Should save new TV series into the Media database", async () => {
+        const params = makeMediaParamsMock({
+            name: "",
+            genres: "0",
+            year: 1999,
+            minVoteAverage: 5.0,
+            minVoteCount: 5,
+            page: 4,
+        });
+        mediaRepositoryMock.findOne.mockReturnValue(undefined);
+        mediaRepositoryMock.save.mockReturnValue({
+            Id: 1,
+        });
+
+        await tmdbService.list(params, false, true);
+
+        expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
     });
 });
 
