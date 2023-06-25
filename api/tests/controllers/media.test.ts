@@ -50,8 +50,10 @@ describe("Tv controller", () => {
         mediaRepositoryMock = {
             find: jest.fn(),
             save: jest.fn(),
-        }
-        mediaController = new MediaController(new TMDBServiceMock(mediaRepositoryMock));
+        };
+        mediaController = new MediaController(
+            new TMDBServiceMock(mediaRepositoryMock)
+        );
     });
 
     test("Should return 200 with list of tv shows", async () => {
