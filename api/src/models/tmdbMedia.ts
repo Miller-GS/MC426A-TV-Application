@@ -7,7 +7,8 @@ export class MediaTypeEnum {
 }
 
 export interface TMDBMedia {
-    id: number;
+    id: number | null;
+    externalId: number;
     name: string;
     genres: number[];
     mediaType: string;
@@ -29,7 +30,7 @@ export class TMDBMediaParser {
         if (ValidationUtils.isNull(tvObj)) return {} as TMDBMedia;
 
         const tvShow = {
-            id: tvObj.id,
+            externalId: tvObj.id,
             name: tvObj.original_title,
             genres: tvObj.genre_ids,
             description: tvObj.overview,
@@ -59,7 +60,7 @@ export class TMDBMediaParser {
         if (ValidationUtils.isNull(movieObj)) return {} as TMDBMedia;
 
         const movie = {
-            id: movieObj.id,
+            externalId: movieObj.id,
             name: movieObj.original_title,
             genres: movieObj.genre_ids,
             description: movieObj.overview,
