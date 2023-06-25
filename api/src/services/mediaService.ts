@@ -137,23 +137,24 @@ export default class MediaService {
         if (!internalMedia) {
             throw new MediaNotFoundError();
         }
-        console.log(internalMedia);
 
         if (internalMedia.Type == MediaTypeEnum.MOVIE) {
             const tmdbMedia = await this.get(
                 "/movie/" + internalMedia.ExternalId,
                 {}
             );
-            tmdbMedia.id = internalMedia.Id;
-            return TMDBMediaParser.parseMovie(tmdbMedia);
+            const media = TMDBMediaParser.parseMovie(tmdbMedia);
+            media.id = internalMedia.Id;
+            return media;
         }
         if (internalMedia.Type == MediaTypeEnum.TV) {
             const tmdbMedia = await this.get(
                 "/tv/" + internalMedia.ExternalId,
                 {}
             );
-            tmdbMedia.id = internalMedia.Id;
-            return TMDBMediaParser.parseTv(tmdbMedia);
+            const media = TMDBMediaParser.parseTv(tmdbMedia);
+            media.id = internalMedia.Id;
+            return media;
         }
     }
 }
