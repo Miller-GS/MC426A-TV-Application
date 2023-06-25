@@ -1,11 +1,11 @@
 import { Response, Request } from "express";
-import TMDBService from "../services/tmdbService";
+import MediaService from "../services/mediaService";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 import { ParseUtils } from "../utils/parseUtils";
 
 export class MediaController {
-    constructor(private readonly tmdbService: TMDBService) {}
+    constructor(private readonly tmdbService: MediaService) {}
 
     public async listMedias(req: Request, res: Response) {
         if (ValidationUtils.isNull(req.query)) {

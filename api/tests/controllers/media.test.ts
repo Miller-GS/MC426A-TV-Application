@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 
 import { MediaController } from "../../src/controllers/media";
-import TMDBService from "../../src/services/tmdbService";
+import MediaService from "../../src/services/mediaService";
 import { TMDBMediaParser, TMDBMedia } from "../../src/models/tmdbMedia";
 import { ListMediasParams } from "../../src/models/listMediasParams";
 
-class TMDBServiceMock extends TMDBService {
+class TMDBServiceMock extends MediaService {
     static tvShows = [
         TMDBMediaParser.parseTv({ id: 1 }),
         TMDBMediaParser.parseTv({ id: 2 }),
@@ -31,7 +31,7 @@ class TMDBServiceMock extends TMDBService {
     }
 }
 
-class TMDBServiceMockError extends TMDBService {
+class TMDBServiceMockError extends MediaService {
     public async list(
         params: ListMediasParams,
         includeMovie: boolean,
@@ -44,9 +44,14 @@ class TMDBServiceMockError extends TMDBService {
 
 describe("Tv controller", () => {
     let mediaController: MediaController;
+    let mediaRepositoryMock: any;
 
     beforeEach(() => {
-        mediaController = new MediaController(new TMDBServiceMock());
+        mediaRepositoryMock = {
+            find: jest.fn(),
+            save: jest.fn(),
+        }
+        mediaController = new MediaController(new TMDBServiceMock(mediaRepositoryMock));
     });
 
     test("Should return 200 with list of tv shows", async () => {
@@ -160,7 +165,7 @@ describe("Tv controller", () => {
 
     test("Should return 500 with error in service", async () => {
         const mediaControllerError = new MediaController(
-            new TMDBServiceMockError()
+            new TMDBServiceMockError(mediaRepositoryMock)
         );
         const mockRequest = {
             query: {
