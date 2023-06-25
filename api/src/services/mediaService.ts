@@ -3,10 +3,11 @@ import env from "../../environment";
 import { Repository } from "typeorm";
 
 import { MediaEntity } from "../entity/media.entity";
-import { TMDBMedia, TMDBMediaParser } from "../models/tmdbMedia";
+import { TMDBMedia, TMDBMediaParser, MediaTypeEnum } from "../models/tmdbMedia";
 import { HttpUtils } from "../utils/httpUtils";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
+import { MediaNotFoundError } from "../errors/MediaNotFoundError";
 
 export default class MediaService {
     private mediaRepository: any;
@@ -22,20 +23,20 @@ export default class MediaService {
 
         const response = await axios.get(url);
 
-        return response.data.results;
+        return response.data;
     }
 
     private async listMovies(params: ListMediasParams) {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
-            data = await this.get("/search/movie", {
+            data = (await this.get("/search/movie", {
                 query: params.name,
                 year: params.year,
                 page: params.page,
-            });
+            })).results;
         } else {
-            data = await this.get("/discover/movie", {
+            data = (await this.get("/discover/movie", {
                 with_genres: params.genres,
                 year: params.year,
                 sort_by: "popularity.desc",
@@ -44,7 +45,7 @@ export default class MediaService {
                 "vote_average.lte": params.maxVoteAverage,
                 "vote_count.gte": params.minVoteCount,
                 "vote_count.lte": params.maxVoteCount,
-            });
+            })).results;
         }
 
         const response: TMDBMedia[] = data.map(TMDBMediaParser.parseMovie);
@@ -56,13 +57,13 @@ export default class MediaService {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
-            data = await this.get("/search/tv", {
+            data = (await this.get("/search/tv", {
                 query: params.name,
                 first_air_date_year: params.year,
                 page: params.page,
-            });
+            })).results;
         } else {
-            data = await this.get("/discover/tv", {
+            data = (await this.get("/discover/tv", {
                 with_genres: params.genres,
                 first_air_date_year: params.year,
                 sort_by: "popularity.desc",
@@ -71,12 +72,32 @@ export default class MediaService {
                 "vote_average.lte": params.maxVoteAverage,
                 "vote_count.gte": params.minVoteCount,
                 "vote_count.lte": params.maxVoteCount,
-            });
+            })).results;
         }
 
         const response: TMDBMedia[] = data.map(TMDBMediaParser.parseTv);
 
         return response;
+    }
+
+    private async getInternalIds(tmdbMedias: TMDBMedia[]) {
+        for (const tmdbMedia of tmdbMedias) {
+            const internalMedia = await this.mediaRepository.findOne({
+                where: {
+                    ExternalId: tmdbMedia.externalId,
+                    Type: tmdbMedia.mediaType,
+                },
+            });
+            if (internalMedia) {
+                tmdbMedia.id = internalMedia.Id;
+            } else {
+                const newMedia = await this.mediaRepository.save({
+                    ExternalId: tmdbMedia.externalId,
+                    Type: tmdbMedia.mediaType,
+                });
+                tmdbMedia.id = newMedia.Id;
+            }
+        }
     }
 
     public async list(
@@ -98,23 +119,27 @@ export default class MediaService {
         return medias.sort((a, b) => b.popularity - a.popularity);
     }
 
-    private async getInternalIds(tmdbMedias: TMDBMedia[]) {
-        for (const tmdbMedia of tmdbMedias) {
-            const internalMedia = await this.mediaRepository.findOne({
-                where: {
-                    ExternalId: tmdbMedia.externalId,
-                    Type: tmdbMedia.mediaType,
-                },
-            });
-            if (internalMedia) {
-                tmdbMedia.id = internalMedia.Id;
-            } else {
-                const newMedia = await this.mediaRepository.save({
-                    ExternalId: tmdbMedia.externalId,
-                    Type: tmdbMedia.mediaType,
-                });
-                tmdbMedia.id = newMedia.Id;
-            }
+    public async getMedia(mediaId: number) {
+        const internalMedia = await this.mediaRepository.findOne({
+            where: {
+                Id: mediaId,
+            },
+        });
+
+        if (!internalMedia) {
+            throw new MediaNotFoundError();
+        }
+        console.log(internalMedia);
+
+        if (internalMedia.Type == MediaTypeEnum.MOVIE) {
+            const tmdbMedia = await this.get("/movie/" + internalMedia.ExternalId, {});
+            tmdbMedia.id = internalMedia.Id;
+            return TMDBMediaParser.parseMovie(tmdbMedia);
+        }
+        if (internalMedia.Type == MediaTypeEnum.TV) {
+            const tmdbMedia = await this.get("/tv/" + internalMedia.ExternalId, {});
+            tmdbMedia.id = internalMedia.Id;
+            return TMDBMediaParser.parseTv(tmdbMedia);
         }
     }
 }

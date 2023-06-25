@@ -15,4 +15,9 @@ mediaRouter.get(
     async (req, res) => await controller.listMedias(req, res)
 );
 
+mediaRouter.get(
+    "/:id",
+    async (req, res) => await controller.getMedia(req, res)
+);
+
 export default mediaRouter;
