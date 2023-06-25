@@ -1,7 +1,7 @@
 // The idea of this test module is to check whether the correct parameters arrive at the get method in the TMDBService object.
 // The point is to assume the axios request and the API are working and only test if we are using them correctly.
 
-import TMDBService from "../../src/services/tmdbService";
+import MediaService from "../../src/services/mediaService";
 import { TMDBMediaParser } from "../../src/models/tmdbMedia";
 import { ListMediasParams } from "../../src/models/listMediasParams";
 
@@ -14,7 +14,7 @@ interface TMDBMedia {
 TMDBMediaParser.parseTv = (obj) => obj;
 TMDBMediaParser.parseMovie = (obj) => obj;
 
-class TMDBServiceTest extends TMDBService {
+class MediaServiceTest extends MediaService {
     protected async get(path: String, params: Object) {
         return [{ path: path, params: params, popularity: 0 } as TMDBMedia];
     }
@@ -34,10 +34,15 @@ const makeMediaParamsMock = (params = {} as any) => {
 };
 
 describe("TMDB Service - Movies", () => {
-    let tmdbService: TMDBServiceTest;
+    let tmdbService: MediaServiceTest;
+    let mediaRepositoryMock: any;
 
     beforeEach(() => {
-        tmdbService = new TMDBServiceTest();
+        mediaRepositoryMock = {
+            findOne: jest.fn(),
+            save: jest.fn(),
+        };
+        tmdbService = new MediaServiceTest(mediaRepositoryMock);
     });
 
     test("Should discover movie by year and genres", async () => {
@@ -119,10 +124,15 @@ describe("TMDB Service - Movies", () => {
 });
 
 describe("TMDB Service - TV", () => {
-    let tmdbService: TMDBServiceTest;
+    let tmdbService: MediaServiceTest;
+    let mediaRepositoryMock: any;
 
     beforeEach(() => {
-        tmdbService = new TMDBServiceTest();
+        mediaRepositoryMock = {
+            findOne: jest.fn(),
+            save: jest.fn(),
+        };
+        tmdbService = new MediaServiceTest(mediaRepositoryMock);
     });
 
     test("Should discover tv by year, genres and vote ranges", async () => {
@@ -205,10 +215,15 @@ describe("TMDB Service - TV", () => {
 });
 
 describe("TMDB Service - Movie + TV", () => {
-    let tmdbService: TMDBServiceTest;
+    let tmdbService: MediaServiceTest;
+    let mediaRepositoryMock: any;
 
     beforeEach(() => {
-        tmdbService = new TMDBServiceTest();
+        mediaRepositoryMock = {
+            findOne: jest.fn(),
+            save: jest.fn(),
+        };
+        tmdbService = new MediaServiceTest(mediaRepositoryMock);
     });
 
     test("Should discover movie + tv by year, genres and vote ranges", async () => {
