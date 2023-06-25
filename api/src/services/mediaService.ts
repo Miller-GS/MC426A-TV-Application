@@ -1,13 +1,19 @@
 import axios, { AxiosError } from "axios";
 import env from "../../environment";
+import { Repository } from "typeorm";
 
+import { MediaEntity } from "../entity/media.entity";
 import { TMDBMedia, TMDBMediaParser } from "../models/tmdbMedia";
 import { HttpUtils } from "../utils/httpUtils";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 
-export default class TMDBService {
-    constructor() {}
+export default class MediaService {
+    private mediaRepository: any;
+
+    constructor(mediaRepository: Repository<MediaEntity>) {
+        this.mediaRepository = mediaRepository;
+    }
 
     protected async get(path: String, params: Object) {
         params = HttpUtils.buildQuery({ ...params, api_key: env.TMDB_KEY });
@@ -87,7 +93,28 @@ export default class TMDBService {
         if (includeMovies) {
             medias = medias.concat(await this.listMovies(params));
         }
+        await this.getInternalIds(medias);
 
         return medias.sort((a, b) => b.popularity - a.popularity);
+    }
+
+    private async getInternalIds(tmdbMedias: TMDBMedia[]) {
+        for (const tmdbMedia of tmdbMedias) {
+            const internalMedia = await this.mediaRepository.findOne({
+                where: {
+                    ExternalId: tmdbMedia.externalId,
+                    Type: tmdbMedia.mediaType,
+                },
+            });
+            if (internalMedia) {
+                tmdbMedia.id = internalMedia.Id;
+            } else {
+                const newMedia = await this.mediaRepository.save({
+                    ExternalId: tmdbMedia.externalId,
+                    Type: tmdbMedia.mediaType,
+                });
+                tmdbMedia.id = newMedia.Id;
+            }
+        }
     }
 }
