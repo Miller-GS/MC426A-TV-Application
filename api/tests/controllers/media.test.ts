@@ -44,9 +44,11 @@ class TMDBServiceMockError extends TMDBService {
 
 describe("Tv controller", () => {
     let mediaController: MediaController;
+    let tmdbRepositoryMock: any;
 
     beforeEach(() => {
-        mediaController = new MediaController(new TMDBServiceMock());
+        tmdbRepositoryMock = {};
+        mediaController = new MediaController(new TMDBServiceMock(tmdbRepositoryMock));
     });
 
     test("Should return 200 with list of tv shows", async () => {
@@ -160,7 +162,7 @@ describe("Tv controller", () => {
 
     test("Should return 500 with error in service", async () => {
         const mediaControllerError = new MediaController(
-            new TMDBServiceMockError()
+            new TMDBServiceMockError(tmdbRepositoryMock)
         );
         const mockRequest = {
             query: {
