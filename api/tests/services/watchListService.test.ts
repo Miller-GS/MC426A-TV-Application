@@ -1,7 +1,10 @@
 import { WatchListPrivacyType } from "../../src/entity/watchList.entity";
 import { EmptyWatchListDescriptionError } from "../../src/errors/EmptyWatchListDescriptionError";
 import { EmptyWatchListTitleError } from "../../src/errors/EmptyWatchListTitleError";
+import { MediaNotFoundError } from "../../src/errors/MediaNotFoundError";
 import { UserNotExistsError } from "../../src/errors/UserNotExistsError";
+import { WatchListNotFoundError } from "../../src/errors/WatchListNotFoundError";
+import { WatchListNotOwnedError } from "../../src/errors/WatchListNotOwnedError";
 import WatchListService from "../../src/services/watchListService";
 
 const makeWatchListEntityMock = (entity = {} as any) => {
@@ -32,13 +35,18 @@ describe("WatchList Service", () => {
             findOne: jest.fn(),
         };
 
-        watchListItemRepositoryMock = {};
+        watchListItemRepositoryMock = {
+            exist: jest.fn(),
+            save: jest.fn(),
+        };
 
         userRepositoryMock = {
             exist: jest.fn(),
         };
 
-        mediaRepositoryMock = {};
+        mediaRepositoryMock = {
+            exist: jest.fn(),
+        };
 
         watchListService = new WatchListService(
             watchListRepositoryMock,
@@ -107,6 +115,134 @@ describe("WatchList Service", () => {
                 Title: "WatchList title",
                 Description: "WatchList description",
                 PrivacyType: WatchListPrivacyType.PUBLIC,
+            });
+        });
+    });
+
+    describe("Add watch list items", () => {
+        test("Should throw UserNotExistsError if user does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.addWatchListItems(
+                    1,
+                    1,
+                    [1, 2, 3],
+                )
+            ).rejects.toThrow(UserNotExistsError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce(undefined);
+
+            await expect(
+                watchListService.addWatchListItems(
+                    1,
+                    1,
+                    [1, 2, 3],
+                )
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should throw WatchListNotOwnedError if watch list does not belong to user", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 2,
+                },
+            });
+
+            await expect(
+                watchListService.addWatchListItems(
+                    1,
+                    1,
+                    [1, 2, 3],
+                )
+            ).rejects.toThrow(WatchListNotOwnedError);
+        });
+
+        test("Should throw MediaNotFoundError if media does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+            mediaRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.addWatchListItems(
+                    1,
+                    1,
+                    [1, 2, 3],
+                )
+            ).rejects.toThrow(MediaNotFoundError);
+        });
+
+        test("Should do nothing if media already exists in watch list", async () => {
+            userRepositoryMock.exist.mockReturnValue(true);
+            watchListRepositoryMock.findOne.mockReturnValue({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+            mediaRepositoryMock.exist.mockReturnValue(true);
+            watchListItemRepositoryMock.exist.mockReturnValue(true);
+
+            await watchListService.addWatchListItems(
+                1,
+                1,
+                [1, 2, 3],
+            );
+
+            expect(watchListItemRepositoryMock.save).toHaveBeenCalledTimes(0);
+        });
+
+        test("Should add media to watch list if media exists and watch list exists and belongs to user", async () => {
+            userRepositoryMock.exist.mockReturnValue(true);
+            watchListRepositoryMock.findOne.mockReturnValue({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+            mediaRepositoryMock.exist.mockReturnValue(true);
+            watchListItemRepositoryMock.exist.mockReturnValue(false);
+
+            await watchListService.addWatchListItems(
+                1,
+                1,
+                [1, 2, 3],
+            );
+
+            expect(watchListItemRepositoryMock.save).toHaveBeenCalledTimes(3);
+            expect(watchListItemRepositoryMock.save).toHaveBeenCalledWith({
+                WatchList: {
+                    Id: 1,
+                },
+                Media: {
+                    Id: 1,
+                },
+            });
+            expect(watchListItemRepositoryMock.save).toHaveBeenCalledWith({
+                WatchList: {
+                    Id: 1,
+                },
+                Media: {
+                    Id: 2,
+                },
+            });
+            expect(watchListItemRepositoryMock.save).toHaveBeenCalledWith({
+                WatchList: {
+                    Id: 1,
+                },
+                Media: {
+                    Id: 3,
+                },
             });
         });
     });
