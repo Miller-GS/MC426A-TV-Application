@@ -1,10 +1,12 @@
 import express from "express";
 import { MediaController } from "../controllers/media";
 import TMDBService from "../services/tmdbService";
+import TMDBRepository from "../repositories/tmdbRepository";
 
 const mediaRouter = express.Router();
 
-const controller = new MediaController(new TMDBService());
+const repository = new TMDBRepository();
+const controller = new MediaController(new TMDBService(repository));
 
 mediaRouter.get(
     "/list",
