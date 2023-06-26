@@ -10,6 +10,7 @@ describe("WatchListController", () => {
     beforeEach(() => {
         watchListService = {
             createWatchList: jest.fn(),
+            addWatchListItems: jest.fn(),
         };
         watchListController = new WatchListController(watchListService);
         defaultResponseMock = {
@@ -114,6 +115,96 @@ describe("WatchListController", () => {
 
             expect(defaultResponseMock.status).toHaveBeenCalledWith(201);
             expect(defaultResponseMock.json).toHaveBeenCalledWith(watchListMock);
+        });
+    });
+
+    describe("addWatchListItems", () => {
+        test("Should return 401 if user not logged in", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaId: 1,
+                },
+            };
+            await watchListController.addWatchListItems(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Unauthorized",
+            });
+        });
+
+        test("Should return 400 if watch list id not provided", async () => {
+            const req: any = {
+                body: {
+                    mediaIds: [1],
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.addWatchListItems(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list id not provided in body",
+            });
+        });
+
+        test("Should return 400 if media ids not provided", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.addWatchListItems(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Media ids array not provided in body",
+            });
+        });
+
+        test("Should return 400 if media ids not an array", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaIds: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.addWatchListItems(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Media ids array not provided in body",
+            });
+        });
+
+        test("Should add watch list items", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaIds: [1],
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            const watchListItemsMock = [
+                {
+                    id: 1,
+                    watchListId: 1,
+                    mediaId: 1,
+                },
+            ];
+            watchListService.addWatchListItems.mockResolvedValueOnce(watchListItemsMock);
+
+            await watchListController.addWatchListItems(req, defaultResponseMock);
+
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(201);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith(watchListItemsMock);
         });
     });
 });

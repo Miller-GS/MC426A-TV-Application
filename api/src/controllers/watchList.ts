@@ -52,12 +52,12 @@ export class WatchListController {
                 throw new MediaIdsNotProvidedError();
 
             const userId = req["user"].id;
-            await this.watchListService.addWatchListItems(
+            const items = await this.watchListService.addWatchListItems(
                 userId,
                 watchListId,
                 mediaIds
             );
-            return res.status(201).json();
+            return res.status(201).json(items);
         }
         catch (err: any) {
             console.error(err.message);
