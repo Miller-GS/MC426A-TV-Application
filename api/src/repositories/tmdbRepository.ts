@@ -4,7 +4,7 @@ import env from "../../environment";
 import axios from "axios";
 import { ValidationUtils } from "../utils/validationUtils";
 import { TMDBMedia, TMDBMediaParser, MediaTypeEnum } from "../models/tmdbMedia";
-import { InvalidMediaTypeError } from "../errors/InvalidMediaType";
+import { InvalidMediaTypeError } from "../errors/InvalidMediaTypeError";
 
 export default class TMDBRepository {
     protected async get(path: String, params: Object) {
@@ -14,29 +14,34 @@ export default class TMDBRepository {
 
         const response = await axios.get(url);
 
-        return response.data.results;
+        return response.data;
     }
 
     public async listMovies(params: ListMediasParams) {
         let data: Object[] = [];
 
+
         if (!ValidationUtils.isEmpty(params.name)) {
-            data = await this.get("/search/movie", {
-                query: params.name,
-                year: params.year,
-                page: params.page,
-            });
+            data = (
+                await this.get("/search/movie", {
+                    query: params.name,
+                    year: params.year,
+                    page: params.page,
+                })
+            ).results;
         } else {
-            data = await this.get("/discover/movie", {
-                with_genres: params.genres,
-                year: params.year,
-                sort_by: "popularity.desc",
-                page: params.page,
-                "vote_average.gte": params.minVoteAverage,
-                "vote_average.lte": params.maxVoteAverage,
-                "vote_count.gte": params.minVoteCount,
-                "vote_count.lte": params.maxVoteCount,
-            });
+            data = (
+                await this.get("/discover/movie", {
+                    with_genres: params.genres,
+                    year: params.year,
+                    sort_by: "popularity.desc",
+                    page: params.page,
+                    "vote_average.gte": params.minVoteAverage,
+                    "vote_average.lte": params.maxVoteAverage,
+                    "vote_count.gte": params.minVoteCount,
+                    "vote_count.lte": params.maxVoteCount,
+                })
+            ).results;
         }
 
         const response: TMDBMedia[] = data.map(TMDBMediaParser.parseMovie);
@@ -48,22 +53,26 @@ export default class TMDBRepository {
         let data: Object[] = [];
 
         if (!ValidationUtils.isEmpty(params.name)) {
-            data = await this.get("/search/tv", {
-                query: params.name,
-                first_air_date_year: params.year,
-                page: params.page,
-            });
+            data = (
+                await this.get("/search/tv", {
+                    query: params.name,
+                    first_air_date_year: params.year,
+                    page: params.page,
+                })
+            ).results;
         } else {
-            data = await this.get("/discover/tv", {
-                with_genres: params.genres,
-                first_air_date_year: params.year,
-                sort_by: "popularity.desc",
-                page: params.page,
-                "vote_average.gte": params.minVoteAverage,
-                "vote_average.lte": params.maxVoteAverage,
-                "vote_count.gte": params.minVoteCount,
-                "vote_count.lte": params.maxVoteCount,
-            });
+            data = (
+                await this.get("/discover/tv", {
+                    with_genres: params.genres,
+                    first_air_date_year: params.year,
+                    sort_by: "popularity.desc",
+                    page: params.page,
+                    "vote_average.gte": params.minVoteAverage,
+                    "vote_average.lte": params.maxVoteAverage,
+                    "vote_count.gte": params.minVoteCount,
+                    "vote_count.lte": params.maxVoteCount,
+                })
+            ).results;
         }
 
         const response: TMDBMedia[] = data.map(TMDBMediaParser.parseTv);
@@ -88,10 +97,10 @@ export default class TMDBRepository {
     }
 
     public async getMedia(id: number, mediaType: MediaTypeEnum) {
-        if (mediaType == MediaTypeEnum.MOVIE) 
-            return this.getMovie(id);
+        if (mediaType == MediaTypeEnum.MOVIE)
+            return await this.getMovie(id);
         if (mediaType == MediaTypeEnum.TV)
-            return this.getTVShow(id);
+            return await this.getTVShow(id);
         throw new InvalidMediaTypeError();
     }
 }
