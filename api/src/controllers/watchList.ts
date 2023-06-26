@@ -4,6 +4,8 @@ import { Request, Response } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
 import { WatchListPrivacyType } from "../entity/watchList.entity";
 import { InvalidPrivacyTypeError } from "../errors/InvalidPrivacyType";
+import { WatchListIdNotProvidedError } from "../errors/WatchListIdNotProvided";
+import { MediaIdsNotProvidedError } from "../errors/MediaIdsNotProvidedError";
 
 export class WatchListController {
     private watchListService: WatchListService;
@@ -37,5 +39,29 @@ export class WatchListController {
     private validatePrivacyType(privacyType: string) {
         if (!(<any>Object).values(WatchListPrivacyType).includes(privacyType))
             throw new InvalidPrivacyTypeError();
+    }
+
+    public async addWatchListItems(req: Request, res: Response) {
+        const { watchListId, mediaIds } = req.body;
+
+        try {
+            if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
+            if (ValidationUtils.isEmpty(watchListId))
+                throw new WatchListIdNotProvidedError();
+            if (ValidationUtils.isEmpty(mediaIds) || !Array.isArray(mediaIds))
+                throw new MediaIdsNotProvidedError();
+
+            const userId = req["user"].id;
+            await this.watchListService.addWatchListItems(
+                userId,
+                watchListId,
+                mediaIds
+            );
+            return res.status(201).json();
+        }
+        catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
     }
 }

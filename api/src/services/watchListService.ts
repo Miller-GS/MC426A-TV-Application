@@ -84,6 +84,7 @@ export default class WatchListService {
 
         const watchList = await this.watchListRepository.findOne({
             where: { Id: watchListId },
+            relations: ["Owner"],
         });
         if (!watchList) throw new WatchListNotFoundError();
 

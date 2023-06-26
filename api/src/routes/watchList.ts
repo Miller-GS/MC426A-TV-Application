@@ -29,3 +29,9 @@ watchListRouter.post(
     auth,
     async (req, res) => await controller.createWatchList(req, res)
 );
+
+watchListRouter.post(
+    "/add/",
+    auth,
+    async (req, res) => await controller.addWatchListItems(req, res)
+);
