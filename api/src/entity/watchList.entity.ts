@@ -6,8 +6,10 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
     OneToMany,
+    ManyToOne,
 } from "typeorm";
 import { WatchListItemEntity } from "./watchListItem.entity";
+import { UserEntity } from "./user.entity";
 
 export enum WatchListPrivacyType {
     PUBLIC = "Public",
@@ -32,6 +34,12 @@ export class WatchListEntity {
         default: WatchListPrivacyType.PUBLIC,
     })
     PrivacyType: WatchListPrivacyType;
+
+    @ManyToOne(
+        () => UserEntity,
+        (user: UserEntity) => user.WatchLists
+    )
+    Owner: UserEntity;
 
     @OneToMany(
         () => WatchListItemEntity,

@@ -9,20 +9,25 @@ import { UserEntity } from "../entity/user.entity";
 import { ValidationUtils } from "../utils/validationUtils";
 import { EmptyWatchListTitleError } from "../errors/EmptyWatchListTitleError";
 import { EmptyWatchListDescriptionError } from "../errors/EmptyWatchListDescriptionError";
+import { WatchListNotFoundError } from "../errors/WatchListNotFoundError";
+import { MediaEntity } from "../entity/media.entity";
 
 export default class WatchListService {
     private watchListRepository: Repository<WatchListEntity>;
     private watchListItemRepository: Repository<WatchListItemEntity>;
     private userRepository: Repository<UserEntity>;
+    private mediaRepository: Repository<MediaEntity>;
 
     public constructor(
         watchListRepository: Repository<WatchListEntity>,
         watchListItemRepository: Repository<WatchListItemEntity>,
-        userRepository: Repository<UserEntity>
+        userRepository: Repository<UserEntity>,
+        mediaRepository: Repository<MediaEntity>
     ) {
         this.watchListRepository = watchListRepository;
         this.watchListItemRepository = watchListItemRepository;
         this.userRepository = userRepository;
+        this.mediaRepository = mediaRepository;
     }
 
     public async createWatchList(
@@ -43,7 +48,7 @@ export default class WatchListService {
         if (!userExists) throw new UserNotExistsError();
 
         const watchList = await this.watchListRepository.save({
-            User: {
+            Owner: {
                 Id: userId,
             },
             Title: title,

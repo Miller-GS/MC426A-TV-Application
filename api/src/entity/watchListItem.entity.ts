@@ -1,7 +1,6 @@
 import {
     Entity,
     PrimaryGeneratedColumn,
-    Column,
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
@@ -24,11 +23,6 @@ export class WatchListItemEntity {
 
     @ManyToOne(() => MediaEntity, (media: MediaEntity) => media.WatchListItems)
     Media: MediaEntity;
-
-    @Column({
-        default: 0,
-    })
-    Order: number;
 
     @CreateDateColumn()
     CreatedAt: Date;

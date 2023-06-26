@@ -24,10 +24,12 @@ describe("WatchList Service", () => {
     let watchListRepositoryMock: any;
     let watchListItemRepositoryMock: any;
     let userRepositoryMock: any;
+    let mediaRepositoryMock: any;
 
     beforeEach(() => {
         watchListRepositoryMock = {
             save: jest.fn(),
+            findOne: jest.fn(),
         };
 
         watchListItemRepositoryMock = {};
@@ -36,10 +38,13 @@ describe("WatchList Service", () => {
             exist: jest.fn(),
         };
 
+        mediaRepositoryMock = {};
+
         watchListService = new WatchListService(
             watchListRepositoryMock,
             watchListItemRepositoryMock,
-            userRepositoryMock
+            userRepositoryMock,
+            mediaRepositoryMock,
         );
     });
 
@@ -96,7 +101,7 @@ describe("WatchList Service", () => {
             expect(response).toEqual(watchListEntityMock);
             expect(watchListRepositoryMock.save).toHaveBeenCalledTimes(1);
             expect(watchListRepositoryMock.save).toHaveBeenCalledWith({
-                User: {
+                Owner: {
                     Id: 1,
                 },
                 Title: "WatchList title",
