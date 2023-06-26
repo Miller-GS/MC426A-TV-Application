@@ -28,6 +28,7 @@ describe("WatchList Service", () => {
     let watchListItemRepositoryMock: any;
     let userRepositoryMock: any;
     let mediaRepositoryMock: any;
+    let tmdbRepositoryMock: any;
 
     beforeEach(() => {
         watchListRepositoryMock = {
@@ -48,11 +49,16 @@ describe("WatchList Service", () => {
             exist: jest.fn(),
         };
 
+        tmdbRepositoryMock = {
+            getMedia: jest.fn(),
+        }
+
         watchListService = new WatchListService(
             watchListRepositoryMock,
             watchListItemRepositoryMock,
             userRepositoryMock,
             mediaRepositoryMock,
+            tmdbRepositoryMock,
         );
     });
 
