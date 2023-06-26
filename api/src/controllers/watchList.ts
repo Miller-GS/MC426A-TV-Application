@@ -3,8 +3,8 @@ import { ValidationUtils } from "../utils/validationUtils";
 import { Request, Response } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
 import { WatchListPrivacyType } from "../entity/watchList.entity";
-import { InvalidPrivacyTypeError } from "../errors/InvalidPrivacyType";
-import { WatchListIdNotProvidedError } from "../errors/WatchListIdNotProvided";
+import { InvalidPrivacyTypeError } from "../errors/InvalidPrivacyTypeError";
+import { WatchListIdNotProvidedError } from "../errors/WatchListIdNotProvidedError";
 import { MediaIdsNotProvidedError } from "../errors/MediaIdsNotProvidedError";
 
 export class WatchListController {
@@ -58,6 +58,26 @@ export class WatchListController {
                 mediaIds
             );
             return res.status(201).json(items);
+        }
+        catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
+    }
+
+    public async getWatchList(req: Request, res: Response) {
+        const { id } = req.params;
+
+        try {
+            if (!ValidationUtils.isPositiveNumber(id))
+                throw new WatchListIdNotProvidedError();
+
+            const userId = req["user"]?.id;
+            const watchList = await this.watchListService.getWatchListItems(
+                userId,
+                parseInt(id)
+            );
+            return res.status(200).json(watchList);
         }
         catch (err: any) {
             console.error(err.message);

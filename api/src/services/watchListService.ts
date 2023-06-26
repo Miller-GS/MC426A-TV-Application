@@ -13,23 +13,28 @@ import { WatchListNotFoundError } from "../errors/WatchListNotFoundError";
 import { MediaEntity } from "../entity/media.entity";
 import { WatchListNotOwnedError } from "../errors/WatchListNotOwnedError";
 import { MediaNotFoundError } from "../errors/MediaNotFoundError";
+import { WatchListParser } from "../models/watchList";
+import TMDBRepository from "../repositories/tmdbRepository";
 
 export default class WatchListService {
     private watchListRepository: Repository<WatchListEntity>;
     private watchListItemRepository: Repository<WatchListItemEntity>;
     private userRepository: Repository<UserEntity>;
     private mediaRepository: Repository<MediaEntity>;
+    private tmdbRepository: TMDBRepository;
 
     public constructor(
         watchListRepository: Repository<WatchListEntity>,
         watchListItemRepository: Repository<WatchListItemEntity>,
         userRepository: Repository<UserEntity>,
-        mediaRepository: Repository<MediaEntity>
+        mediaRepository: Repository<MediaEntity>,
+        tmdbRepository: TMDBRepository
     ) {
         this.watchListRepository = watchListRepository;
         this.watchListItemRepository = watchListItemRepository;
         this.userRepository = userRepository;
         this.mediaRepository = mediaRepository;
+        this.tmdbRepository = tmdbRepository;
     }
 
     public async createWatchList(
@@ -66,14 +71,40 @@ export default class WatchListService {
         watchListId: number,
         mediaIds: number[]
     ) {
-        await this.validateWatchListArguments(userId, watchListId);
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
         const promises = mediaIds.map((mediaId) =>
             this.saveMediaIntoWatchList(watchListId, mediaId)
         );
         return await Promise.all(promises);
     }
 
-    private async validateWatchListArguments(
+    public async getWatchListItems(userId: number | undefined, watchListId: number) {
+        if (userId) {
+            const userExists = await this.userRepository.exist({
+                where: { Id: userId },
+            });
+            if (!userExists) throw new UserNotExistsError();
+        }
+
+        const watchList = await this.watchListRepository.findOne({
+            where: { Id: watchListId },
+            relations: ["Owner", "WatchListItems", "WatchListItems.Media"],
+        });
+        if (!watchList) throw new WatchListNotFoundError();
+
+        const isOwner = watchList.Owner.Id === userId;
+        const isFriend = true; // Insert friendship logic here
+
+        if (!isOwner && watchList.PrivacyType == WatchListPrivacyType.PRIVATE)
+            throw new WatchListNotFoundError();
+        if (!isOwner && !isFriend && watchList.PrivacyType == WatchListPrivacyType.FRIENDS_ONLY)
+            throw new WatchListNotFoundError();
+
+        // return watchList;
+        return WatchListParser.parseWatchList(watchList, this.tmdbRepository);
+    };
+
+    private async validateAddWatchListItemsArguments(
         userId: number,
         watchListId: number
     ) {

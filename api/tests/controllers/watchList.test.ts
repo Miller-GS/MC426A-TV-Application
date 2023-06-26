@@ -145,7 +145,7 @@ describe("WatchListController", () => {
             await watchListController.addWatchListItems(req, defaultResponseMock);
             expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({
-                message: "Watch list id not provided in body",
+                message: "Watch list id not provided",
             });
         });
 
