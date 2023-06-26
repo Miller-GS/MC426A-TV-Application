@@ -3,7 +3,10 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
+    OneToMany,
 } from "typeorm";
+
+import { WatchListItemEntity } from "./watch_list_item";
 
 @Entity("media")
 export class MediaEntity {
@@ -12,6 +15,9 @@ export class MediaEntity {
 
     @Column()
     ExternalId: number;
+
+    @OneToMany(() => WatchListItemEntity, (watchListItem: WatchListItemEntity) => watchListItem.Media)
+    WatchListItems: WatchListItemEntity[];
 
     @Column()
     Type: string;
