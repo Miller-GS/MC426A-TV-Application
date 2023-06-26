@@ -16,7 +16,10 @@ export class WatchListItemEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
-    @ManyToOne(() => WatchListEntity, (watchList: WatchListEntity) => watchList.WatchListItems)
+    @ManyToOne(
+        () => WatchListEntity,
+        (watchList: WatchListEntity) => watchList.WatchListItems
+    )
     WatchList: WatchListEntity;
 
     @ManyToOne(() => MediaEntity, (media: MediaEntity) => media.WatchListItems)

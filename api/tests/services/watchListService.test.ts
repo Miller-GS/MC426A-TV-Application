@@ -45,25 +45,53 @@ describe("WatchList Service", () => {
 
     describe("Create WatchList", () => {
         test("Should throw EmptyWatchListTitleError if title is empty", async () => {
-            await expect(watchListService.createWatchList(1, "", "description", WatchListPrivacyType.PUBLIC)).rejects.toThrow(EmptyWatchListTitleError);
+            await expect(
+                watchListService.createWatchList(
+                    1,
+                    "",
+                    "description",
+                    WatchListPrivacyType.PUBLIC
+                )
+            ).rejects.toThrow(EmptyWatchListTitleError);
         });
 
         test("Should throw EmptyWatchListDescriptionError if description is empty", async () => {
-            await expect(watchListService.createWatchList(1, "title", "", WatchListPrivacyType.PUBLIC)).rejects.toThrow(EmptyWatchListDescriptionError);
+            await expect(
+                watchListService.createWatchList(
+                    1,
+                    "title",
+                    "",
+                    WatchListPrivacyType.PUBLIC
+                )
+            ).rejects.toThrow(EmptyWatchListDescriptionError);
         });
 
         test("Should throw UserNotExistsError if user does not exist", async () => {
             userRepositoryMock.exist.mockReturnValueOnce(false);
 
-            await expect(watchListService.createWatchList(1, "title", "description", WatchListPrivacyType.PUBLIC)).rejects.toThrow(UserNotExistsError);
+            await expect(
+                watchListService.createWatchList(
+                    1,
+                    "title",
+                    "description",
+                    WatchListPrivacyType.PUBLIC
+                )
+            ).rejects.toThrow(UserNotExistsError);
         });
 
         test("Should create and return watchList if user exists and title and description are not empty", async () => {
             userRepositoryMock.exist.mockReturnValueOnce(true);
             const watchListEntityMock = makeWatchListEntityMock();
-            watchListRepositoryMock.save.mockReturnValueOnce(watchListEntityMock);
+            watchListRepositoryMock.save.mockReturnValueOnce(
+                watchListEntityMock
+            );
 
-            const response = await watchListService.createWatchList(1, "WatchList title", "WatchList description", WatchListPrivacyType.PUBLIC);
+            const response = await watchListService.createWatchList(
+                1,
+                "WatchList title",
+                "WatchList description",
+                WatchListPrivacyType.PUBLIC
+            );
 
             expect(response).toEqual(watchListEntityMock);
             expect(watchListRepositoryMock.save).toHaveBeenCalledTimes(1);

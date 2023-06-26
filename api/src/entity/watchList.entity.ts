@@ -33,7 +33,10 @@ export class WatchListEntity {
     })
     PrivacyType: WatchListPrivacyType;
 
-    @OneToMany(() => WatchListItemEntity, (watchListItem: WatchListItemEntity) => watchListItem.WatchList)
+    @OneToMany(
+        () => WatchListItemEntity,
+        (watchListItem: WatchListItemEntity) => watchListItem.WatchList
+    )
     WatchListItems: WatchListItemEntity[];
 
     @CreateDateColumn()
@@ -41,7 +44,7 @@ export class WatchListEntity {
 
     @UpdateDateColumn()
     UpdatedAt: Date;
-    
+
     @DeleteDateColumn()
     DeletedAt: Date;
 }

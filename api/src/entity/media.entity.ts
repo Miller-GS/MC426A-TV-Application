@@ -16,7 +16,10 @@ export class MediaEntity {
     @Column()
     ExternalId: number;
 
-    @OneToMany(() => WatchListItemEntity, (watchListItem: WatchListItemEntity) => watchListItem.Media)
+    @OneToMany(
+        () => WatchListItemEntity,
+        (watchListItem: WatchListItemEntity) => watchListItem.Media
+    )
     WatchListItems: WatchListItemEntity[];
 
     @Column()
