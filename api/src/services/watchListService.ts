@@ -11,6 +11,8 @@ import { EmptyWatchListTitleError } from "../errors/EmptyWatchListTitleError";
 import { EmptyWatchListDescriptionError } from "../errors/EmptyWatchListDescriptionError";
 import { WatchListNotFoundError } from "../errors/WatchListNotFoundError";
 import { MediaEntity } from "../entity/media.entity";
+import { WatchListNotOwnedError } from "../errors/WatchListNotOwnedError";
+import { MediaNotFoundError } from "../errors/MediaNotFoundError";
 
 export default class WatchListService {
     private watchListRepository: Repository<WatchListEntity>;
@@ -57,5 +59,57 @@ export default class WatchListService {
         } as unknown as WatchListEntity);
 
         return watchList;
+    }
+
+    public async addWatchListItems(
+        userId: number,
+        watchListId: number,
+        mediaIds: number[]
+    ) {
+        await this.validateWatchListArguments(userId, watchListId);
+        const promises = mediaIds.map((mediaId) =>
+            this.saveMediaIntoWatchList(watchListId, mediaId)
+        );
+        return await Promise.all(promises);
+    }
+
+    private async validateWatchListArguments(
+        userId: number,
+        watchListId: number
+    ) {
+        const userExists = await this.userRepository.exist({
+            where: { Id: userId },
+        });
+        if (!userExists) throw new UserNotExistsError();
+
+        const watchList = await this.watchListRepository.findOne({
+            where: { Id: watchListId },
+        });
+        if (!watchList) throw new WatchListNotFoundError();
+
+        if (watchList.Owner.Id !== userId) throw new WatchListNotOwnedError();
+    }
+
+    private async saveMediaIntoWatchList(watchListId: number, mediaId: number) {
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
+        if (!mediaExists) throw new MediaNotFoundError();
+
+        if (
+            await this.watchListItemRepository.exist({
+                where: { WatchList: { Id: watchListId }, Media: { Id: mediaId } },
+            })
+        )
+            return;
+
+        return await this.watchListItemRepository.save({
+            WatchList: {
+                Id: watchListId,
+            },
+            Media: {
+                Id: mediaId,
+            },
+        } as WatchListItemEntity);
     }
 }
