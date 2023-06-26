@@ -22,22 +22,26 @@ describe("TMDB Service", () => {
             listMovies: jest.fn(),
             listTvShows: jest.fn(),
         };
-        tmdbRepositoryMock.listMovies.mockResolvedValue([{
-            title: "movie1",
-            popularity: 1,
-        },
-        {
-            title: "movie2",
-            popularity: 3,
-        }]);
-        tmdbRepositoryMock.listTvShows.mockResolvedValue([{
-            title: "tv1",
-            popularity: 2,
-        },
-        {
-            title: "tv2",
-            popularity: 4,
-        }]);
+        tmdbRepositoryMock.listMovies.mockResolvedValue([
+            {
+                title: "movie1",
+                popularity: 1,
+            },
+            {
+                title: "movie2",
+                popularity: 3,
+            },
+        ]);
+        tmdbRepositoryMock.listTvShows.mockResolvedValue([
+            {
+                title: "tv1",
+                popularity: 2,
+            },
+            {
+                title: "tv2",
+                popularity: 4,
+            },
+        ]);
         tmdbService = new TMDBService(tmdbRepositoryMock);
     });
 
@@ -46,16 +50,20 @@ describe("TMDB Service", () => {
             const paramsMock = makeMediaParamsMock();
             const result = await tmdbService.list(paramsMock, true, false);
 
-            expect(result).toEqual([{
-                title: "movie2",
-                popularity: 3,
-            },
-            {
-                title: "movie1",
-                popularity: 1,
-            }]);
+            expect(result).toEqual([
+                {
+                    title: "movie2",
+                    popularity: 3,
+                },
+                {
+                    title: "movie1",
+                    popularity: 1,
+                },
+            ]);
 
-            expect(tmdbRepositoryMock.listMovies).toHaveBeenCalledWith(paramsMock);
+            expect(tmdbRepositoryMock.listMovies).toHaveBeenCalledWith(
+                paramsMock
+            );
             expect(tmdbRepositoryMock.listTvShows).not.toHaveBeenCalled();
         });
 
@@ -63,17 +71,21 @@ describe("TMDB Service", () => {
             const paramsMock = makeMediaParamsMock();
             const result = await tmdbService.list(paramsMock, false, true);
 
-            expect(result).toEqual([{
-                title: "tv2",
-                popularity: 4,
-            },
-            {
-                title: "tv1",
-                popularity: 2,
-            }]);
+            expect(result).toEqual([
+                {
+                    title: "tv2",
+                    popularity: 4,
+                },
+                {
+                    title: "tv1",
+                    popularity: 2,
+                },
+            ]);
 
             expect(tmdbRepositoryMock.listMovies).not.toHaveBeenCalled();
-            expect(tmdbRepositoryMock.listTvShows).toHaveBeenCalledWith(paramsMock);
+            expect(tmdbRepositoryMock.listTvShows).toHaveBeenCalledWith(
+                paramsMock
+            );
         });
 
         test("Should return movies and tv shows when includeMovies and includeTvShows are true, sorted by popularity", async () => {
@@ -81,25 +93,30 @@ describe("TMDB Service", () => {
             const result = await tmdbService.list(paramsMock, true, true);
 
             expect(result).toEqual([
-            {
-                title: "tv2",
-                popularity: 4,
-            },
-            {
-                title: "movie2",
-                popularity: 3,
-            },
-            {
-                title: "tv1",
-                popularity: 2,
-            },
-            {
-                title: "movie1",
-                popularity: 1,
-            }]);
+                {
+                    title: "tv2",
+                    popularity: 4,
+                },
+                {
+                    title: "movie2",
+                    popularity: 3,
+                },
+                {
+                    title: "tv1",
+                    popularity: 2,
+                },
+                {
+                    title: "movie1",
+                    popularity: 1,
+                },
+            ]);
 
-            expect(tmdbRepositoryMock.listMovies).toHaveBeenCalledWith(paramsMock);
-            expect(tmdbRepositoryMock.listTvShows).toHaveBeenCalledWith(paramsMock);
+            expect(tmdbRepositoryMock.listMovies).toHaveBeenCalledWith(
+                paramsMock
+            );
+            expect(tmdbRepositoryMock.listTvShows).toHaveBeenCalledWith(
+                paramsMock
+            );
         });
 
         test("Should return empty array when includeMovies and includeTvShows are false", async () => {

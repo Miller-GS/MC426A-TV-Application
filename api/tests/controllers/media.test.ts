@@ -48,7 +48,9 @@ describe("Tv controller", () => {
 
     beforeEach(() => {
         tmdbRepositoryMock = {};
-        mediaController = new MediaController(new TMDBServiceMock(tmdbRepositoryMock));
+        mediaController = new MediaController(
+            new TMDBServiceMock(tmdbRepositoryMock)
+        );
     });
 
     test("Should return 200 with list of tv shows", async () => {

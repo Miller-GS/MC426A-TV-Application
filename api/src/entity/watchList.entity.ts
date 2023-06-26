@@ -35,10 +35,7 @@ export class WatchListEntity {
     })
     PrivacyType: WatchListPrivacyType;
 
-    @ManyToOne(
-        () => UserEntity,
-        (user: UserEntity) => user.WatchLists
-    )
+    @ManyToOne(() => UserEntity, (user: UserEntity) => user.WatchLists)
     Owner: UserEntity;
 
     @OneToMany(

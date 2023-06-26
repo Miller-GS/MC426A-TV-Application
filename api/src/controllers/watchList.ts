@@ -20,7 +20,7 @@ export class WatchListController {
         try {
             this.validatePrivacyType(privacyType);
             if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
-            
+
             const userId = req["user"].id;
             const watchList = await this.watchListService.createWatchList(
                 userId,
@@ -29,8 +29,7 @@ export class WatchListController {
                 privacyType
             );
             return res.status(201).json(watchList);
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
         }
@@ -58,8 +57,7 @@ export class WatchListController {
                 mediaIds
             );
             return res.status(201).json(items);
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
         }
@@ -78,8 +76,7 @@ export class WatchListController {
                 parseInt(id)
             );
             return res.status(200).json(watchList);
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
         }

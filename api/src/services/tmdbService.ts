@@ -23,11 +23,15 @@ export default class TMDBService {
         let medias: TMDBMedia[] = [];
 
         if (includeTvShows) {
-            medias = medias.concat(await this.tmdbRepository.listTvShows(params));
+            medias = medias.concat(
+                await this.tmdbRepository.listTvShows(params)
+            );
         }
 
         if (includeMovies) {
-            medias = medias.concat(await this.tmdbRepository.listMovies(params));
+            medias = medias.concat(
+                await this.tmdbRepository.listMovies(params)
+            );
         }
 
         return medias.sort((a, b) => b.popularity - a.popularity);

@@ -51,14 +51,14 @@ describe("WatchList Service", () => {
 
         tmdbRepositoryMock = {
             getMedia: jest.fn(),
-        }
+        };
 
         watchListService = new WatchListService(
             watchListRepositoryMock,
             watchListItemRepositoryMock,
             userRepositoryMock,
             mediaRepositoryMock,
-            tmdbRepositoryMock,
+            tmdbRepositoryMock
         );
     });
 
@@ -130,11 +130,7 @@ describe("WatchList Service", () => {
             userRepositoryMock.exist.mockReturnValueOnce(false);
 
             await expect(
-                watchListService.addWatchListItems(
-                    1,
-                    1,
-                    [1, 2, 3],
-                )
+                watchListService.addWatchListItems(1, 1, [1, 2, 3])
             ).rejects.toThrow(UserNotExistsError);
         });
 
@@ -143,11 +139,7 @@ describe("WatchList Service", () => {
             watchListRepositoryMock.findOne.mockReturnValueOnce(undefined);
 
             await expect(
-                watchListService.addWatchListItems(
-                    1,
-                    1,
-                    [1, 2, 3],
-                )
+                watchListService.addWatchListItems(1, 1, [1, 2, 3])
             ).rejects.toThrow(WatchListNotFoundError);
         });
 
@@ -161,11 +153,7 @@ describe("WatchList Service", () => {
             });
 
             await expect(
-                watchListService.addWatchListItems(
-                    1,
-                    1,
-                    [1, 2, 3],
-                )
+                watchListService.addWatchListItems(1, 1, [1, 2, 3])
             ).rejects.toThrow(WatchListNotOwnedError);
         });
 
@@ -180,11 +168,7 @@ describe("WatchList Service", () => {
             mediaRepositoryMock.exist.mockReturnValueOnce(false);
 
             await expect(
-                watchListService.addWatchListItems(
-                    1,
-                    1,
-                    [1, 2, 3],
-                )
+                watchListService.addWatchListItems(1, 1, [1, 2, 3])
             ).rejects.toThrow(MediaNotFoundError);
         });
 
@@ -199,11 +183,7 @@ describe("WatchList Service", () => {
             mediaRepositoryMock.exist.mockReturnValue(true);
             watchListItemRepositoryMock.exist.mockReturnValue(true);
 
-            await watchListService.addWatchListItems(
-                1,
-                1,
-                [1, 2, 3],
-            );
+            await watchListService.addWatchListItems(1, 1, [1, 2, 3]);
 
             expect(watchListItemRepositoryMock.save).toHaveBeenCalledTimes(0);
         });
@@ -219,11 +199,7 @@ describe("WatchList Service", () => {
             mediaRepositoryMock.exist.mockReturnValue(true);
             watchListItemRepositoryMock.exist.mockReturnValue(false);
 
-            await watchListService.addWatchListItems(
-                1,
-                1,
-                [1, 2, 3],
-            );
+            await watchListService.addWatchListItems(1, 1, [1, 2, 3]);
 
             expect(watchListItemRepositoryMock.save).toHaveBeenCalledTimes(3);
             expect(watchListItemRepositoryMock.save).toHaveBeenCalledWith({

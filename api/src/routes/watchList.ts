@@ -13,7 +13,8 @@ export const watchListRouter = express.Router();
 
 const userRepository = appDataSource.getRepository(UserEntity);
 const watchListRepository = appDataSource.getRepository(WatchListEntity);
-const watchListItemRepository = appDataSource.getRepository(WatchListItemEntity);
+const watchListItemRepository =
+    appDataSource.getRepository(WatchListItemEntity);
 const mediaRepository = appDataSource.getRepository(MediaEntity);
 const tmdbRepository = new TMDBRepository();
 
@@ -22,7 +23,7 @@ const service = new WatchListService(
     watchListItemRepository,
     userRepository,
     mediaRepository,
-    tmdbRepository,
+    tmdbRepository
 );
 
 const controller = new WatchListController(service);

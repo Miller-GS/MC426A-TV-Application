@@ -17,12 +17,10 @@ export default function auth(req, res, next) {
 
 export function optionalAuth(req, res, next) {
     const token = getAuthToken(req);
-    if (!token)
-        return next();
+    if (!token) return next();
 
     jwt.verify(token, env.ACCESS_TOKEN_SECRET, (err, user_token) => {
-        if (!err)
-            req.user = user_token;
+        if (!err) req.user = user_token;
         next();
     });
 }

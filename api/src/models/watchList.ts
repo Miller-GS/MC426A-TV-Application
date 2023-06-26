@@ -15,7 +15,10 @@ export interface WatchListItem {
 }
 
 export class WatchListParser {
-    static async parseWatchList(watchListObj: any, tmdbRepository: TMDBRepository) {
+    static async parseWatchList(
+        watchListObj: any,
+        tmdbRepository: TMDBRepository
+    ) {
         const watchList: WatchList = {
             id: watchListObj.Id,
             title: watchListObj.Title,
@@ -27,7 +30,10 @@ export class WatchListParser {
         for (const item of watchListObj.WatchListItems) {
             const watchListItem: WatchListItem = {
                 id: item.Id,
-                media: await tmdbRepository.getMedia(item.Media.ExternalId, item.Media.Type),
+                media: await tmdbRepository.getMedia(
+                    item.Media.ExternalId,
+                    item.Media.Type
+                ),
             };
 
             watchList.items.push(watchListItem);

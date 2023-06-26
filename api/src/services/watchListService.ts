@@ -78,7 +78,10 @@ export default class WatchListService {
         return await Promise.all(promises);
     }
 
-    public async getWatchListItems(userId: number | undefined, watchListId: number) {
+    public async getWatchListItems(
+        userId: number | undefined,
+        watchListId: number
+    ) {
         if (userId) {
             const userExists = await this.userRepository.exist({
                 where: { Id: userId },
@@ -97,12 +100,16 @@ export default class WatchListService {
 
         if (!isOwner && watchList.PrivacyType == WatchListPrivacyType.PRIVATE)
             throw new WatchListNotFoundError();
-        if (!isOwner && !isFriend && watchList.PrivacyType == WatchListPrivacyType.FRIENDS_ONLY)
+        if (
+            !isOwner &&
+            !isFriend &&
+            watchList.PrivacyType == WatchListPrivacyType.FRIENDS_ONLY
+        )
             throw new WatchListNotFoundError();
 
         // return watchList;
         return WatchListParser.parseWatchList(watchList, this.tmdbRepository);
-    };
+    }
 
     private async validateAddWatchListItemsArguments(
         userId: number,
@@ -130,7 +137,10 @@ export default class WatchListService {
 
         if (
             await this.watchListItemRepository.exist({
-                where: { WatchList: { Id: watchListId }, Media: { Id: mediaId } },
+                where: {
+                    WatchList: { Id: watchListId },
+                    Media: { Id: mediaId },
+                },
             })
         )
             return;

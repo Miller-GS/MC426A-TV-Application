@@ -31,7 +31,8 @@ describe("WatchListController", () => {
             await watchListController.createWatchList(req, defaultResponseMock);
             expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({
-                message: "Invalid privacy type. Valid values are \"Public\", \"Private\" or \"FriendsOnly\"",
+                message:
+                    'Invalid privacy type. Valid values are "Public", "Private" or "FriendsOnly"',
             });
         });
 
@@ -61,7 +62,9 @@ describe("WatchListController", () => {
                     id: 1,
                 },
             };
-            watchListService.createWatchList.mockRejectedValueOnce(new EmptyWatchListTitleError());
+            watchListService.createWatchList.mockRejectedValueOnce(
+                new EmptyWatchListTitleError()
+            );
 
             await watchListController.createWatchList(req, defaultResponseMock);
 
@@ -82,7 +85,9 @@ describe("WatchListController", () => {
                     id: 1,
                 },
             };
-            watchListService.createWatchList.mockRejectedValueOnce(new EmptyWatchListDescriptionError());
+            watchListService.createWatchList.mockRejectedValueOnce(
+                new EmptyWatchListDescriptionError()
+            );
 
             await watchListController.createWatchList(req, defaultResponseMock);
 
@@ -109,12 +114,16 @@ describe("WatchListController", () => {
                 description: "description",
                 privacyType: "Public",
             };
-            watchListService.createWatchList.mockResolvedValueOnce(watchListMock);
+            watchListService.createWatchList.mockResolvedValueOnce(
+                watchListMock
+            );
 
             await watchListController.createWatchList(req, defaultResponseMock);
 
             expect(defaultResponseMock.status).toHaveBeenCalledWith(201);
-            expect(defaultResponseMock.json).toHaveBeenCalledWith(watchListMock);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith(
+                watchListMock
+            );
         });
     });
 
@@ -126,7 +135,10 @@ describe("WatchListController", () => {
                     mediaId: 1,
                 },
             };
-            await watchListController.addWatchListItems(req, defaultResponseMock);
+            await watchListController.addWatchListItems(
+                req,
+                defaultResponseMock
+            );
             expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({
                 message: "Unauthorized",
@@ -142,7 +154,10 @@ describe("WatchListController", () => {
                     id: 1,
                 },
             };
-            await watchListController.addWatchListItems(req, defaultResponseMock);
+            await watchListController.addWatchListItems(
+                req,
+                defaultResponseMock
+            );
             expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({
                 message: "Watch list id not provided",
@@ -158,7 +173,10 @@ describe("WatchListController", () => {
                     id: 1,
                 },
             };
-            await watchListController.addWatchListItems(req, defaultResponseMock);
+            await watchListController.addWatchListItems(
+                req,
+                defaultResponseMock
+            );
             expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({
                 message: "Media ids array not provided in body",
@@ -175,7 +193,10 @@ describe("WatchListController", () => {
                     id: 1,
                 },
             };
-            await watchListController.addWatchListItems(req, defaultResponseMock);
+            await watchListController.addWatchListItems(
+                req,
+                defaultResponseMock
+            );
             expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({
                 message: "Media ids array not provided in body",
@@ -199,12 +220,19 @@ describe("WatchListController", () => {
                     mediaId: 1,
                 },
             ];
-            watchListService.addWatchListItems.mockResolvedValueOnce(watchListItemsMock);
+            watchListService.addWatchListItems.mockResolvedValueOnce(
+                watchListItemsMock
+            );
 
-            await watchListController.addWatchListItems(req, defaultResponseMock);
+            await watchListController.addWatchListItems(
+                req,
+                defaultResponseMock
+            );
 
             expect(defaultResponseMock.status).toHaveBeenCalledWith(201);
-            expect(defaultResponseMock.json).toHaveBeenCalledWith(watchListItemsMock);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith(
+                watchListItemsMock
+            );
         });
     });
 });

@@ -20,7 +20,6 @@ export default class TMDBRepository {
     public async listMovies(params: ListMediasParams) {
         let data: Object[] = [];
 
-
         if (!ValidationUtils.isEmpty(params.name)) {
             data = (
                 await this.get("/search/movie", {
@@ -81,26 +80,18 @@ export default class TMDBRepository {
     }
 
     public async getMovie(id: number) {
-        const tmdbMedia = await this.get(
-            "/movie/" + id,
-            {}
-        );
+        const tmdbMedia = await this.get("/movie/" + id, {});
         return TMDBMediaParser.parseMovie(tmdbMedia);
     }
 
     public async getTVShow(id: number) {
-        const tmdbMedia = await this.get(
-            "/tv/" + id,
-            {}
-        );
+        const tmdbMedia = await this.get("/tv/" + id, {});
         return TMDBMediaParser.parseTv(tmdbMedia);
     }
 
     public async getMedia(id: number, mediaType: MediaTypeEnum) {
-        if (mediaType == MediaTypeEnum.MOVIE)
-            return await this.getMovie(id);
-        if (mediaType == MediaTypeEnum.TV)
-            return await this.getTVShow(id);
+        if (mediaType == MediaTypeEnum.MOVIE) return await this.getMovie(id);
+        if (mediaType == MediaTypeEnum.TV) return await this.getTVShow(id);
         throw new InvalidMediaTypeError();
     }
 }
