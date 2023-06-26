@@ -8,7 +8,7 @@ import {
     ManyToOne,
 } from "typeorm";
 
-import { WatchListEntity } from "./watch_list.entity";
+import { WatchListEntity } from "./watchList.entity";
 import { MediaEntity } from "./media.entity";
 
 @Entity("watch_list_item")

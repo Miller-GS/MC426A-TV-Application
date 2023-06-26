@@ -7,7 +7,7 @@ import {
     DeleteDateColumn,
     OneToMany,
 } from "typeorm";
-import { WatchListItemEntity } from "./watch_list_item";
+import { WatchListItemEntity } from "./watchListItem.entity";
 
 export enum WatchListPrivacyType {
     PUBLIC = "Public",

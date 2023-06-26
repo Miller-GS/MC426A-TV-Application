@@ -6,7 +6,7 @@ import {
     OneToMany,
 } from "typeorm";
 
-import { WatchListItemEntity } from "./watch_list_item";
+import { WatchListItemEntity } from "./watchListItem.entity";
 
 @Entity("media")
 export class MediaEntity {
