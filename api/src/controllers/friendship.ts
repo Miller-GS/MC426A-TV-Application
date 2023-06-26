@@ -1,6 +1,8 @@
 import FriendshipService from "../services/friendshipService";
 import { Response, Request } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
+import { InvalidUserParamsError } from "../errors/InvalidUserParamsError";
+import { ConvertionUtils } from "../utils/convertionUtils";
 import {
     FriendshipEntity,
     FriendshipStatus,
@@ -14,10 +16,15 @@ export class FriendshipController {
     }
 
     public async listFriends(req: Request, res: Response) {
-        const userId = req.params["userId"];
+        const userId = parseInt(req.params["userId"]);
+
+        if (isNaN(userId) || userId < 0) {
+            throw new InvalidUserParamsError()
+        }
+
         try {
             const friends = await this.friendshipService.listFriends(
-                parseInt(userId)
+                userId
             );
             return res.status(200).json(friends);
         } catch (err: any) {
@@ -37,19 +44,17 @@ export class FriendshipController {
             actionUserId: askedUserId,
         });
 
-        // TODO: Check if the friendship doesn't exist already
-
         return res.status(201).json(friendship);
     }
 
     public async acceptFriend(req: Request, res: Response) {
-        const accepterUserId = parseInt(req["user"].id);
-        const acceptedUserId = parseInt(req.params["userId"]);
-        const accepted = !!req.body["accepted"];
+        const requestingUserId = req["user"].id;
+        const acceptingUserId = parseInt(req.params["userId"]);
+        const accepted = ConvertionUtils.stringToBoolean(req.body["accepted"]);
 
         const friendship = await this.friendshipService.acceptFriendship({
-            accepterUserId,
-            acceptedUserId,
+            requestingUserId,
+            acceptingUserId,
             accepted,
         });
 

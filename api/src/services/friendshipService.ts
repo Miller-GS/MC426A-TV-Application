@@ -21,16 +21,16 @@ export default class CommentService {
     }
 
     public async acceptFriendship({
-        accepterUserId,
-        acceptedUserId,
+        requestingUserId,
+        acceptingUserId,
         accepted,
     }: {
-        accepterUserId: number;
-        acceptedUserId: number;
+        requestingUserId: number;
+        acceptingUserId: number;
         accepted: boolean;
     }) {
         const friendship = await this.friendshipRepository.findOne({
-            where: { UserId1: accepterUserId, UserId2: acceptedUserId },
+            where: { UserId1: requestingUserId, UserId2: acceptingUserId },
         });
 
         if (!friendship) {

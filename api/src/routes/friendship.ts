@@ -20,13 +20,13 @@ friendshipRouter.get(
 );
 
 friendshipRouter.post(
-    "/add-friend/:userId",
+    "/add/:userId",
     auth,
     async (req, res) => await controller.addFriend(req, res)
 );
 
 friendshipRouter.post(
-    "/accept-friend/:userId",
+    "/accept/:userId",
     auth,
     async (req, res) => await controller.acceptFriend(req, res)
 );
