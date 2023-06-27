@@ -84,6 +84,33 @@ export class WatchListController {
         }
     }
 
+    public async updateWatchList(req: Request, res: Response) {
+        const { title, description, privacyType } = req.body;
+
+        try {
+            if (!ValidationUtils.isPositiveNumber(req.params.id))
+                throw new WatchListIdNotProvidedError();
+            if (!this.validatePrivacyType(privacyType))
+                throw new InvalidPrivacyTypeError();
+
+            if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
+
+            const watchListId = parseInt(req.params.id);
+            const userId = req["user"].id;
+            const watchList = await this.watchListService.updateWatchList(
+                userId,
+                watchListId,
+                title,
+                description,
+                privacyType
+            );
+            return res.status(201).json(watchList);
+        } catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
+    }
+
     public async deleteWatchList(req: Request, res: Response) {
         try {
             if (!ValidationUtils.isPositiveNumber(req.params.id))

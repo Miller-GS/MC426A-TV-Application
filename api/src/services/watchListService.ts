@@ -161,6 +161,48 @@ export default class WatchListService {
         } as WatchListItemEntity);
     }
 
+    private createWatchListEntity(
+        id: number,
+        title: string,
+        description: string,
+        privacyType: WatchListPrivacyType
+    ) {
+        const watchListEntity = {
+            Id: id,
+            Title: title,
+            Description: description,
+            PrivacyType: privacyType,
+        };
+
+        Object.keys(watchListEntity).forEach(
+            (key) =>
+                ValidationUtils.isNull(watchListEntity[key]) &&
+                delete watchListEntity[key]
+        );
+
+        return watchListEntity;
+    }
+
+    public async updateWatchList(
+        userId: number,
+        watchListId: number,
+        title: string,
+        description: string,
+        privacyType: WatchListPrivacyType
+    ) {
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
+
+        const watchListEntity = this.createWatchListEntity(
+            watchListId,
+            title,
+            description,
+            privacyType
+        );
+
+        const watchList = await this.watchListRepository.save(watchListEntity);
+        return watchList;
+    }
+
     private async removeMediaFromWatchList(
         watchListId: number,
         mediaId: number
