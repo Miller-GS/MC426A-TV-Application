@@ -1,3 +1,5 @@
+import { FriendshipStatus } from "../entity/friendship.entity";
+
 export class ValidationUtils {
     static isNull(obj: any) {
         return obj == undefined || obj == null;
@@ -36,10 +38,20 @@ export class ValidationUtils {
     }
 
     static async areFriends(friendshipRepository, userId1, userId2) {
+        if (this.isNull(userId1) || this.isNull(userId2)) return false;
+
         return await friendshipRepository.exist({
             where: [
-                { UserId1: userId1, UserId2: userId2 },
-                { UserId1: userId2, UserId2: userId1 },
+                {
+                    UserId1: userId1,
+                    UserId2: userId2,
+                    Status: FriendshipStatus.ACCEPTED,
+                },
+                {
+                    UserId1: userId2,
+                    UserId2: userId1,
+                    Status: FriendshipStatus.ACCEPTED,
+                },
             ],
         });
     }

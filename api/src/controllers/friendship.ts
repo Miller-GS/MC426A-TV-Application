@@ -57,8 +57,8 @@ export class FriendshipController {
         try {
             const friendship =
                 await this.friendshipService.replyFriendshipRequest(
-                    requestingUserId,
                     acceptingUserId,
+                    requestingUserId,
                     accepted
                 );
 
