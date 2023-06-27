@@ -24,8 +24,19 @@ export default class RatingService {
         rating: number,
         review: string
     ) {
-        this.validadeMediaExists(mediaId);
-        this.validadeDuplicatedRating(userId, mediaId);
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
+        if (!mediaExists) {
+            throw new MediaNotFoundError();
+        }
+
+        const ratingExists = await this.ratingRepository.exist({
+            where: { UserId: userId, MediaId: mediaId },
+        });
+        if (ratingExists) {
+            throw new DuplicatedRatingError();
+        }
 
         await this.ratingRepository.save({
             UserId: userId,
@@ -77,7 +88,12 @@ export default class RatingService {
     }
 
     public async getUserRating(userId: number, mediaId: number) {
-        this.validadeMediaExists(mediaId);
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
+        if (!mediaExists) {
+            throw new MediaNotFoundError();
+        }
 
         return await this.ratingRepository.findOne({
             where: { UserId: userId, MediaId: mediaId },
@@ -85,28 +101,15 @@ export default class RatingService {
     }
 
     public async listRatings(mediaId: number) {
-        this.validadeMediaExists(mediaId);
-
-        return await this.ratingRepository.find({
-            where: { MediaId: mediaId },
-        });
-    }
-
-    private async validadeMediaExists(mediaId: number) {
         const mediaExists = await this.mediaRepository.exist({
             where: { Id: mediaId },
         });
         if (!mediaExists) {
             throw new MediaNotFoundError();
         }
-    }
 
-    private async validadeDuplicatedRating(userId: number, mediaId: number) {
-        const ratingExists = await this.ratingRepository.exist({
-            where: { UserId: userId, MediaId: mediaId },
+        return await this.ratingRepository.find({
+            where: { MediaId: mediaId },
         });
-        if (ratingExists) {
-            throw new DuplicatedRatingError();
-        }
     }
 }

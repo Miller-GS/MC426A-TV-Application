@@ -25,6 +25,7 @@ ratingRouter.get(
 
 ratingRouter.get(
     "/media/:mediaId",
+    auth,
     async (req, res) => await controller.getUserRating(req, res)
 );
 

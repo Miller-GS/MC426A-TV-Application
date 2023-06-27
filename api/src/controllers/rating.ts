@@ -21,7 +21,7 @@ export class RatingController {
         const userId = req["user"].id;
         try {
             await this.ratingService.createRating(userId, mediaId, rating, review);
-            return res.status(201);
+            return res.status(201).send();
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
@@ -29,7 +29,8 @@ export class RatingController {
     }
 
     public async updateRating(req: Request, res: Response) {
-        const { rating, review, ratingId } = req.body;
+        const ratingId = req.params["ratingId"];
+        const { rating, review } = req.body;
         if (!this.validateRatingId(ratingId, res)) return res;
         if (!this.validateRating(rating, res)) return res;
         if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
@@ -37,8 +38,8 @@ export class RatingController {
         const userId = req["user"].id;
 
         try {
-            await this.ratingService.updateRating(userId, ratingId, rating, review);
-            return res.status(204);
+            await this.ratingService.updateRating(userId, ParseUtils.parseIntOrUndefined(ratingId) as number, rating, review);
+            return res.status(204).send();
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
@@ -46,15 +47,15 @@ export class RatingController {
     }
 
     public async deleteRating(req: Request, res: Response) {
-        const { ratingId } = req.body;
+        const ratingId = req.params["ratingId"];
         if (!this.validateRatingId(ratingId, res)) return res;
         if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
 
         const userId = req["user"].id;
 
         try {
-            await this.ratingService.deleteRating(userId, ratingId);
-            return res.status(204);
+            await this.ratingService.deleteRating(userId, ParseUtils.parseIntOrUndefined(ratingId) as number);
+            return res.status(204).send();
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
