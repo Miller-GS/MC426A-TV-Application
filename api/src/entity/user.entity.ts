@@ -8,6 +8,7 @@ import {
     OneToMany,
 } from "typeorm";
 import { NotificationEntity } from "./notification.entity";
+import { WatchListEntity } from "./watchList.entity";
 
 @Entity("user")
 export class UserEntity {
@@ -43,4 +44,10 @@ export class UserEntity {
         (notification: NotificationEntity) => notification.User
     )
     Notifications: NotificationEntity[];
+
+    @OneToMany(
+        () => WatchListEntity,
+        (watchList: WatchListEntity) => watchList.Owner
+    )
+    WatchLists: WatchListEntity[];
 }

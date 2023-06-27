@@ -6,7 +6,7 @@ import { TMDBMediaParser, TMDBMedia } from "../../src/models/tmdbMedia";
 import { ListMediasParams } from "../../src/models/listMediasParams";
 import { MediaNotFoundError } from "../../src/errors/MediaNotFoundError";
 
-class TMDBServiceMock extends MediaService {
+class MediaServiceMock extends MediaService {
     static tvShows = [
         TMDBMediaParser.parseTv({ id: 1 }),
         TMDBMediaParser.parseTv({ id: 2 }),
@@ -16,7 +16,7 @@ class TMDBServiceMock extends MediaService {
         TMDBMediaParser.parseMovie({ id: 4 }),
     ];
 
-    static medias = TMDBServiceMock.tvShows.concat(TMDBServiceMock.movies);
+    static medias = MediaServiceMock.tvShows.concat(MediaServiceMock.movies);
 
     public async list(
         params: ListMediasParams,
@@ -25,18 +25,18 @@ class TMDBServiceMock extends MediaService {
     ) {
         let ret: TMDBMedia[] = [];
 
-        if (includeTvShows) ret = ret.concat(TMDBServiceMock.tvShows);
-        if (includeMovie) ret = ret.concat(TMDBServiceMock.movies);
+        if (includeTvShows) ret = ret.concat(MediaServiceMock.tvShows);
+        if (includeMovie) ret = ret.concat(MediaServiceMock.movies);
 
         return ret;
     }
 
     public async getMedia(mediaId: number) {
-        return TMDBServiceMock.tvShows[0];
+        return MediaServiceMock.tvShows[0];
     }
 }
 
-class TMDBServiceMockError extends MediaService {
+class MediaServiceMockError extends MediaService {
     public async list(
         params: ListMediasParams,
         includeMovie: boolean,
@@ -54,15 +54,17 @@ class TMDBServiceMockError extends MediaService {
 
 describe("Tv controller", () => {
     let mediaController: MediaController;
+    let tmdbRepositoryMock: any;
     let mediaRepositoryMock: any;
 
     beforeEach(() => {
+        tmdbRepositoryMock = {};
         mediaRepositoryMock = {
             find: jest.fn(),
             save: jest.fn(),
         };
         mediaController = new MediaController(
-            new TMDBServiceMock(mediaRepositoryMock)
+            new MediaServiceMock(mediaRepositoryMock, tmdbRepositoryMock)
         );
     });
 
@@ -83,7 +85,7 @@ describe("Tv controller", () => {
 
             expect(mockResponse.status).toHaveBeenCalledWith(200);
             expect(mockResponse.json).toHaveBeenCalledWith(
-                TMDBServiceMock.tvShows
+                MediaServiceMock.tvShows
             );
         });
 
@@ -102,7 +104,7 @@ describe("Tv controller", () => {
 
             expect(mockResponse.status).toHaveBeenCalledWith(200);
             expect(mockResponse.json).toHaveBeenCalledWith(
-                TMDBServiceMock.movies
+                MediaServiceMock.movies
             );
         });
 
@@ -122,7 +124,7 @@ describe("Tv controller", () => {
 
             expect(mockResponse.status).toHaveBeenCalledWith(200);
             expect(mockResponse.json).toHaveBeenCalledWith(
-                TMDBServiceMock.medias
+                MediaServiceMock.medias
             );
         });
 
@@ -184,7 +186,10 @@ describe("Tv controller", () => {
 
         test("Should return 500 with error in service", async () => {
             const mediaControllerError = new MediaController(
-                new TMDBServiceMockError(mediaRepositoryMock)
+                new MediaServiceMockError(
+                    tmdbRepositoryMock,
+                    mediaRepositoryMock
+                )
             );
             const mockRequest = {
                 query: {
@@ -219,7 +224,7 @@ describe("Tv controller", () => {
 
             expect(mockResponse.status).toHaveBeenCalledWith(200);
             expect(mockResponse.json).toHaveBeenCalledWith(
-                TMDBServiceMock.tvShows[0]
+                MediaServiceMock.tvShows[0]
             );
         });
 
@@ -252,7 +257,10 @@ describe("Tv controller", () => {
             mockResponse.status = jest.fn(() => mockResponse);
 
             const mediaControllerError = new MediaController(
-                new TMDBServiceMockError(mediaRepositoryMock)
+                new MediaServiceMockError(
+                    tmdbRepositoryMock,
+                    mediaRepositoryMock
+                )
             );
 
             await mediaControllerError.getMedia(mockRequest, mockResponse);

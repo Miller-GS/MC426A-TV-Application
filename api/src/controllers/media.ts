@@ -6,7 +6,7 @@ import { ParseUtils } from "../utils/parseUtils";
 import { ErrorUtils } from "../utils/errorUtils";
 
 export class MediaController {
-    constructor(private readonly tmdbService: MediaService) {}
+    constructor(private readonly mediaService: MediaService) {}
 
     public async listMedias(req: Request, res: Response) {
         if (ValidationUtils.isNull(req.query)) {
@@ -62,7 +62,7 @@ export class MediaController {
                 page: ParseUtils.parseIntOrUndefined(page as string) ?? 1,
             } as ListMediasParams;
 
-            const medias = await this.tmdbService.list(
+            const medias = await this.mediaService.list(
                 params,
                 includeMoviesBool,
                 includeTvShowsBool
@@ -84,7 +84,7 @@ export class MediaController {
         }
 
         try {
-            const media = await this.tmdbService.getMedia(parseInt(mediaId));
+            const media = await this.mediaService.getMedia(parseInt(mediaId));
 
             return res.status(200).json(media);
         } catch (err: any) {
