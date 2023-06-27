@@ -176,7 +176,7 @@ export default class WatchListService {
 
         Object.keys(watchListEntity).forEach(
             (key) =>
-                ValidationUtils.isNull(watchListEntity[key]) &&
+                ValidationUtils.isEmpty(watchListEntity[key]) &&
                 delete watchListEntity[key]
         );
 
@@ -198,6 +198,13 @@ export default class WatchListService {
             description,
             privacyType
         );
+
+        if (
+            !watchListEntity.Title &&
+            !watchListEntity.Description &&
+            !watchListEntity.PrivacyType
+        )
+            return;
 
         const watchList = await this.watchListRepository.save(watchListEntity);
         return watchList;

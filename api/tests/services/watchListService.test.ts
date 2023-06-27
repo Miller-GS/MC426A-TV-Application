@@ -430,6 +430,149 @@ describe("WatchList Service", () => {
         });
     });
 
+    describe("Update watchlist", () => {
+        test("Should throw UserNotExistsError if user does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.updateWatchList(
+                    1,
+                    1,
+                    "",
+                    "",
+                    WatchListPrivacyType.PUBLIC
+                )
+            ).rejects.toThrow(UserNotExistsError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce(undefined);
+
+            await expect(
+                watchListService.updateWatchList(
+                    1,
+                    1,
+                    "",
+                    "",
+                    WatchListPrivacyType.PUBLIC
+                )
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should throw WatchListNotOwnedError if watch list does not belong to user", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 2,
+                },
+            });
+
+            await expect(
+                watchListService.updateWatchList(
+                    1,
+                    1,
+                    "",
+                    "",
+                    WatchListPrivacyType.PUBLIC
+                )
+            ).rejects.toThrow(WatchListNotOwnedError);
+        });
+
+        test("Should do nothing if nothing is to be changed", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+
+            await watchListService.updateWatchList(
+                1,
+                1,
+                "",
+                "",
+                "" as WatchListPrivacyType
+            );
+
+            expect(watchListRepositoryMock.save).not.toHaveBeenCalled();
+        });
+
+        test("Should update only title", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+
+            await watchListService.updateWatchList(
+                1,
+                1,
+                "New title",
+                "",
+                "" as WatchListPrivacyType
+            );
+
+            expect(watchListRepositoryMock.save).toHaveBeenCalledWith({
+                Id: 1,
+                Title: "New title",
+            });
+        });
+
+        test("Should update title and description", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+
+            await watchListService.updateWatchList(
+                1,
+                1,
+                "New title",
+                "New description",
+                "" as WatchListPrivacyType
+            );
+
+            expect(watchListRepositoryMock.save).toHaveBeenCalledWith({
+                Id: 1,
+                Title: "New title",
+                Description: "New description",
+            });
+        });
+
+        test("Should update title, description and privacy type", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+
+            await watchListService.updateWatchList(
+                1,
+                1,
+                "New title",
+                "New description",
+                WatchListPrivacyType.FRIENDS_ONLY
+            );
+
+            expect(watchListRepositoryMock.save).toHaveBeenCalledWith({
+                Id: 1,
+                Title: "New title",
+                Description: "New description",
+                PrivacyType: WatchListPrivacyType.FRIENDS_ONLY,
+            });
+        });
+    });
+
     describe("Delete watchlist", () => {
         test("Should throw UserNotExistsError if user does not exist", async () => {
             userRepositoryMock.exist.mockReturnValueOnce(false);
