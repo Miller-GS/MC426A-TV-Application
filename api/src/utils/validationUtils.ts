@@ -34,4 +34,8 @@ export class ValidationUtils {
         }
         return true;
     }
+
+    static areFriends(friendshipRepository, userId1, userId2) {
+        return true;
+    }
 }

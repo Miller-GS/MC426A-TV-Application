@@ -31,7 +31,7 @@ export class TMDBMediaParser {
 
         const tvShow = {
             externalId: tvObj.id,
-            name: tvObj.original_title,
+            name: tvObj.original_name,
             genres: tvObj.genre_ids,
             description: tvObj.overview,
             language: tvObj.original_language,

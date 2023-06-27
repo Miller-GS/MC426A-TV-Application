@@ -17,7 +17,7 @@ describe("parseTv", () => {
 
     test("Should return images tv", () => {
         const obj = {
-            original_title: "NAME",
+            original_name: "NAME",
             backdrop_path: "/BG",
             poster_path: "/POSTER",
         };
