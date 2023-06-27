@@ -15,6 +15,7 @@ describe("WatchListController", () => {
             createWatchList: jest.fn(),
             addWatchListItems: jest.fn(),
             getWatchListItems: jest.fn(),
+            updateWatchList: jest.fn(),
             removeWatchListItems: jest.fn(),
             deleteWatchList: jest.fn(),
         };
@@ -353,6 +354,180 @@ describe("WatchListController", () => {
                 watchListMock
             );
             await watchListController.getWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(200);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith(
+                watchListMock
+            );
+        });
+    });
+
+    describe("updateWatchList", () => {
+        test("Should return 400 if watch list id not provided", async () => {
+            const req: any = { params: {}, body: {} };
+            await watchListController.updateWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list id not provided",
+            });
+        });
+
+        test("Should return 401 if user is not logged in", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                body: {},
+            };
+
+            await watchListController.updateWatchList(req, defaultResponseMock);
+
+            expect(watchListService.updateWatchList).not.toHaveBeenCalled();
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Unauthorized",
+            });
+        });
+
+        test("Should return 400 if privacy type is invalid", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+                body: {
+                    privacyType: "invalid",
+                },
+            };
+
+            await watchListController.updateWatchList(req, defaultResponseMock);
+
+            expect(watchListService.updateWatchList).not.toHaveBeenCalled();
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message:
+                    'Invalid privacy type. Valid values are "Public", "Private" or "FriendsOnly"',
+            });
+        });
+
+        test("Should return 401 if logged in user does not exist", async () => {
+            const req: any = {
+                user: {
+                    id: 1,
+                },
+                params: {
+                    id: 1,
+                },
+                body: {},
+            };
+            watchListService.updateWatchList.mockRejectedValueOnce(
+                new UserNotExistsError()
+            );
+            await watchListController.updateWatchList(req, defaultResponseMock);
+
+            expect(watchListService.updateWatchList).toHaveBeenCalledWith(
+                1,
+                1,
+                undefined,
+                undefined,
+                undefined
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "User does not exist",
+            });
+        });
+
+        test("Should return 404 if watch list does not exist", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+                body: {},
+            };
+            watchListService.updateWatchList.mockRejectedValueOnce(
+                new WatchListNotFoundError()
+            );
+            await watchListController.updateWatchList(req, defaultResponseMock);
+
+            expect(watchListService.updateWatchList).toHaveBeenCalledWith(
+                1,
+                1,
+                undefined,
+                undefined,
+                undefined
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(404);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list not found",
+            });
+        });
+
+        test("Should return 403 if user not watch list owner", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+                body: {},
+            };
+            watchListService.updateWatchList.mockRejectedValueOnce(
+                new WatchListNotOwnedError()
+            );
+
+            await watchListController.updateWatchList(req, defaultResponseMock);
+
+            expect(watchListService.updateWatchList).toHaveBeenCalledWith(
+                1,
+                1,
+                undefined,
+                undefined,
+                undefined
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(403);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list not owned by logged in user",
+            });
+        });
+
+        test("Should return 200 if watch list updated", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                body: {
+                    description: "description",
+                    privacyType: "Public",
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            const watchListMock = {
+                id: 1,
+                title: "title",
+                description: "description",
+                privacyType: "Public",
+            };
+            watchListService.updateWatchList.mockResolvedValueOnce(
+                watchListMock
+            );
+
+            await watchListController.updateWatchList(req, defaultResponseMock);
+
+            expect(watchListService.updateWatchList).toHaveBeenCalledWith(
+                1,
+                1,
+                undefined,
+                "description",
+                "Public"
+            );
             expect(defaultResponseMock.status).toHaveBeenCalledWith(200);
             expect(defaultResponseMock.json).toHaveBeenCalledWith(
                 watchListMock

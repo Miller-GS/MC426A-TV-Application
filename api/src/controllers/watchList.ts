@@ -90,10 +90,13 @@ export class WatchListController {
         try {
             if (!ValidationUtils.isPositiveNumber(req.params.id))
                 throw new WatchListIdNotProvidedError();
-            if (!this.validatePrivacyType(privacyType))
-                throw new InvalidPrivacyTypeError();
-
             if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
+
+            if (
+                !ValidationUtils.isEmpty(privacyType) &&
+                !this.validatePrivacyType(privacyType)
+            )
+                throw new InvalidPrivacyTypeError();
 
             const watchListId = parseInt(req.params.id);
             const userId = req["user"].id;
@@ -104,7 +107,7 @@ export class WatchListController {
                 description,
                 privacyType
             );
-            return res.status(201).json(watchList);
+            return res.status(200).json(watchList);
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
