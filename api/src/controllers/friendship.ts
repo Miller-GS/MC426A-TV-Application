@@ -2,7 +2,6 @@ import FriendshipService from "../services/friendshipService";
 import { Response, Request } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
 import {
-    FriendshipEntity,
     FriendshipStatus,
 } from "../entity/friendship.entity";
 import { ParseUtils } from "../utils/parseUtils";
@@ -53,12 +52,17 @@ export class FriendshipController {
         const acceptingUserId = parseInt(req.params["userId"]);
         const accepted = ParseUtils.parseBoolean(req.body["accepted"]);
 
-        const friendship = await this.friendshipService.acceptFriendship({
-            requestingUserId,
-            acceptingUserId,
-            accepted,
-        });
+        try {
+            const friendship = await this.friendshipService.acceptFriendship({
+                requestingUserId,
+                acceptingUserId,
+                accepted,
+            });
 
-        return res.status(201).json(friendship);
-    }
+            return res.status(201).json(friendship);
+        } catch (err: any) {
+            return ErrorUtils.handleError(err, res);
+        }
+
+   }
 }
