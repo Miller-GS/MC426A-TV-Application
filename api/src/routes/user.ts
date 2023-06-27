@@ -23,7 +23,7 @@ userRouter.get(
     async (req, res) => await controller.handleRefreshToken(req, res)
 );
 
-userRouter.get(
+userRouter.post(
     "/logout",
     async (req, res) => await controller.logout(req, res)
 );
