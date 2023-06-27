@@ -35,12 +35,12 @@ export class FriendshipController {
         const askerUserId = parseInt(req["user"].id);
         const askedUserId = parseInt(req.params["userId"]);
         try {
-            const friendship = await this.friendshipService.createFriendship({
-                userId1: askerUserId,
-                userId2: askedUserId,
-                status: FriendshipStatus.PENDING,
-                actionUserId: askedUserId,
-            });
+            const friendship = await this.friendshipService.createFriendship(
+                askerUserId,
+                askedUserId,
+                FriendshipStatus.PENDING,
+                askedUserId
+            );
 
             return res.status(201).json(friendship);
         } catch (err: any) {
@@ -55,11 +55,11 @@ export class FriendshipController {
         const accepted = ParseUtils.parseBoolean(req.body["accepted"]);
 
         try {
-            const friendship = await this.friendshipService.acceptFriendship({
+            const friendship = await this.friendshipService.acceptFriendship(
                 requestingUserId,
                 acceptingUserId,
-                accepted,
-            });
+                accepted
+            );
 
             return res.status(201).json(friendship);
         } catch (err: any) {

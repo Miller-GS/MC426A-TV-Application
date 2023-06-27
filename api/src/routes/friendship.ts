@@ -1,7 +1,6 @@
 import express from "express";
 import { FriendshipController } from "../controllers/friendship";
 import { FriendshipEntity } from "../entity/friendship.entity";
-import { UserEntity } from "../entity/user.entity";
 import FriendshipService from "../services/friendshipService";
 import auth from "../middleware/auth";
 
@@ -11,12 +10,10 @@ import { NotificationEntity } from "../entity/notification.entity";
 const friendshipRouter = express.Router();
 
 const friendshipRepository = appDataSource.getRepository(FriendshipEntity);
-const userRepository = appDataSource.getRepository(UserEntity);
 const notificationRepository = appDataSource.getRepository(NotificationEntity);
 
 const service = new FriendshipService(
     friendshipRepository,
-    userRepository,
     notificationRepository
 );
 const controller = new FriendshipController(service);
