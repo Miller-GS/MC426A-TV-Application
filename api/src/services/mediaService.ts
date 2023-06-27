@@ -14,7 +14,10 @@ export default class MediaService {
     private mediaRepository: Repository<MediaEntity>;
     private tmdbRepository: TMDBRepository;
 
-    constructor(mediaRepository: Repository<MediaEntity>, tmdbRepository: TMDBRepository) {
+    constructor(
+        mediaRepository: Repository<MediaEntity>,
+        tmdbRepository: TMDBRepository
+    ) {
         this.mediaRepository = mediaRepository;
         this.tmdbRepository = tmdbRepository;
     }
@@ -73,7 +76,10 @@ export default class MediaService {
         if (!internalMedia) {
             throw new MediaNotFoundError();
         }
-        const media = await this.tmdbRepository.getMedia(internalMedia.ExternalId, internalMedia.Type);
+        const media = await this.tmdbRepository.getMedia(
+            internalMedia.ExternalId,
+            internalMedia.Type
+        );
         media.id = internalMedia.Id;
         return media;
     }

@@ -186,7 +186,10 @@ describe("Tv controller", () => {
 
         test("Should return 500 with error in service", async () => {
             const mediaControllerError = new MediaController(
-                new MediaServiceMockError(tmdbRepositoryMock, mediaRepositoryMock)
+                new MediaServiceMockError(
+                    tmdbRepositoryMock,
+                    mediaRepositoryMock
+                )
             );
             const mockRequest = {
                 query: {
@@ -254,7 +257,10 @@ describe("Tv controller", () => {
             mockResponse.status = jest.fn(() => mockResponse);
 
             const mediaControllerError = new MediaController(
-                new MediaServiceMockError(tmdbRepositoryMock, mediaRepositoryMock)
+                new MediaServiceMockError(
+                    tmdbRepositoryMock,
+                    mediaRepositoryMock
+                )
             );
 
             await mediaControllerError.getMedia(mockRequest, mockResponse);

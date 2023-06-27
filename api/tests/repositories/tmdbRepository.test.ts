@@ -232,11 +232,13 @@ describe("TMDB Repository", () => {
         test("Should get movie by id", async () => {
             const response = await tmdbRepository.getMovie(1);
             const expected = {
-                "results": [{
-                    path: "/movie/1",
-                    params: {},
-                    popularity: 0,
-                }],
+                results: [
+                    {
+                        path: "/movie/1",
+                        params: {},
+                        popularity: 0,
+                    },
+                ],
             };
 
             expect(response).toEqual(expected);
@@ -247,11 +249,13 @@ describe("TMDB Repository", () => {
         test("Should get tv show by id", async () => {
             const response = await tmdbRepository.getTVShow(1);
             const expected = {
-                "results": [{
-                    path: "/tv/1",
-                    params: {},
-                    popularity: 0,
-                }],
+                results: [
+                    {
+                        path: "/tv/1",
+                        params: {},
+                        popularity: 0,
+                    },
+                ],
             };
 
             expect(response).toEqual(expected);
@@ -260,13 +264,18 @@ describe("TMDB Repository", () => {
 
     describe("getMedia", () => {
         test("Should get movie by id", async () => {
-            const response = await tmdbRepository.getMedia(1, MediaTypeEnum.MOVIE);
+            const response = await tmdbRepository.getMedia(
+                1,
+                MediaTypeEnum.MOVIE
+            );
             const expected = {
-                "results": [{
-                    path: "/movie/1",
-                    params: {},
-                    popularity: 0,
-                }],
+                results: [
+                    {
+                        path: "/movie/1",
+                        params: {},
+                        popularity: 0,
+                    },
+                ],
             };
 
             expect(response).toEqual(expected);
@@ -275,18 +284,22 @@ describe("TMDB Repository", () => {
         test("Should get tv show by id", async () => {
             const response = await tmdbRepository.getMedia(1, MediaTypeEnum.TV);
             const expected = {
-                "results": [{
-                    path: "/tv/1",
-                    params: {},
-                    popularity: 0,
-                }],
+                results: [
+                    {
+                        path: "/tv/1",
+                        params: {},
+                        popularity: 0,
+                    },
+                ],
             };
 
             expect(response).toEqual(expected);
         });
 
         test("Should throw error if media type is not supported", async () => {
-            await expect(tmdbRepository.getMedia(1, "Something Else")).rejects.toThrowError(InvalidMediaTypeError);
+            await expect(
+                tmdbRepository.getMedia(1, "Something Else")
+            ).rejects.toThrowError(InvalidMediaTypeError);
         });
     });
 });

@@ -6,12 +6,13 @@ import MediaService from "../services/mediaService";
 import { MediaEntity } from "../entity/media.entity";
 import appDataSource from "../config/ormconfig";
 
-
 const tmdbRepository = new TMDBRepository();
 const mediaRepository = appDataSource.getRepository(MediaEntity);
 
 const mediaRouter = express.Router();
-const controller = new MediaController(new MediaService(mediaRepository, tmdbRepository));
+const controller = new MediaController(
+    new MediaService(mediaRepository, tmdbRepository)
+);
 
 mediaRouter.get(
     "/list",

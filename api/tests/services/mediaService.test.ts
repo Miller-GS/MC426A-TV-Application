@@ -58,7 +58,10 @@ describe("TMDB Service", () => {
                 mediaType: MediaTypeEnum.TV,
             },
         ]);
-        mediaService = new MediaService(mediaRepositoryMock, tmdbRepositoryMock);
+        mediaService = new MediaService(
+            mediaRepositoryMock,
+            tmdbRepositoryMock
+        );
     });
 
     describe("list", () => {
