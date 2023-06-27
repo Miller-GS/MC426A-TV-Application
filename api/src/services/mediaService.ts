@@ -8,84 +8,42 @@ import { HttpUtils } from "../utils/httpUtils";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 import { MediaNotFoundError } from "../errors/MediaNotFoundError";
+import TMDBRepository from "../repositories/tmdbRepository";
 
 export default class MediaService {
-    private mediaRepository: any;
+    private mediaRepository: Repository<MediaEntity>;
+    private tmdbRepository: TMDBRepository;
 
-    constructor(mediaRepository: Repository<MediaEntity>) {
+    constructor(
+        mediaRepository: Repository<MediaEntity>,
+        tmdbRepository: TMDBRepository
+    ) {
         this.mediaRepository = mediaRepository;
+        this.tmdbRepository = tmdbRepository;
     }
 
-    protected async get(path: String, params: Object) {
-        params = HttpUtils.buildQuery({ ...params, api_key: env.TMDB_KEY });
+    public async list(
+        params: ListMediasParams,
+        includeMovies: boolean,
+        includeTvShows: boolean
+    ) {
+        let medias: TMDBMedia[] = [];
 
-        const url = env.TMDB_URL + path + "?" + params;
-
-        const response = await axios.get(url);
-
-        return response.data;
-    }
-
-    private async listMovies(params: ListMediasParams) {
-        let data: Object[] = [];
-
-        if (!ValidationUtils.isEmpty(params.name)) {
-            data = (
-                await this.get("/search/movie", {
-                    query: params.name,
-                    year: params.year,
-                    page: params.page,
-                })
-            ).results;
-        } else {
-            data = (
-                await this.get("/discover/movie", {
-                    with_genres: params.genres,
-                    year: params.year,
-                    sort_by: "popularity.desc",
-                    page: params.page,
-                    "vote_average.gte": params.minVoteAverage,
-                    "vote_average.lte": params.maxVoteAverage,
-                    "vote_count.gte": params.minVoteCount,
-                    "vote_count.lte": params.maxVoteCount,
-                })
-            ).results;
+        if (includeTvShows) {
+            medias = medias.concat(
+                await this.tmdbRepository.listTvShows(params)
+            );
         }
 
-        const response: TMDBMedia[] = data.map(TMDBMediaParser.parseMovie);
-
-        return response;
-    }
-
-    private async listTvShows(params: ListMediasParams) {
-        let data: Object[] = [];
-
-        if (!ValidationUtils.isEmpty(params.name)) {
-            data = (
-                await this.get("/search/tv", {
-                    query: params.name,
-                    first_air_date_year: params.year,
-                    page: params.page,
-                })
-            ).results;
-        } else {
-            data = (
-                await this.get("/discover/tv", {
-                    with_genres: params.genres,
-                    first_air_date_year: params.year,
-                    sort_by: "popularity.desc",
-                    page: params.page,
-                    "vote_average.gte": params.minVoteAverage,
-                    "vote_average.lte": params.maxVoteAverage,
-                    "vote_count.gte": params.minVoteCount,
-                    "vote_count.lte": params.maxVoteCount,
-                })
-            ).results;
+        if (includeMovies) {
+            medias = medias.concat(
+                await this.tmdbRepository.listMovies(params)
+            );
         }
 
-        const response: TMDBMedia[] = data.map(TMDBMediaParser.parseTv);
+        await this.getInternalIds(medias);
 
-        return response;
+        return medias.sort((a, b) => b.popularity - a.popularity);
     }
 
     private async getInternalIds(tmdbMedias: TMDBMedia[]) {
@@ -108,25 +66,6 @@ export default class MediaService {
         }
     }
 
-    public async list(
-        params: ListMediasParams,
-        includeMovies: boolean,
-        includeTvShows: boolean
-    ) {
-        let medias: TMDBMedia[] = [];
-
-        if (includeTvShows) {
-            medias = medias.concat(await this.listTvShows(params));
-        }
-
-        if (includeMovies) {
-            medias = medias.concat(await this.listMovies(params));
-        }
-        await this.getInternalIds(medias);
-
-        return medias.sort((a, b) => b.popularity - a.popularity);
-    }
-
     public async getMedia(mediaId: number) {
         const internalMedia = await this.mediaRepository.findOne({
             where: {
@@ -137,24 +76,11 @@ export default class MediaService {
         if (!internalMedia) {
             throw new MediaNotFoundError();
         }
-
-        if (internalMedia.Type == MediaTypeEnum.MOVIE) {
-            const tmdbMedia = await this.get(
-                "/movie/" + internalMedia.ExternalId,
-                {}
-            );
-            const media = TMDBMediaParser.parseMovie(tmdbMedia);
-            media.id = internalMedia.Id;
-            return media;
-        }
-        if (internalMedia.Type == MediaTypeEnum.TV) {
-            const tmdbMedia = await this.get(
-                "/tv/" + internalMedia.ExternalId,
-                {}
-            );
-            const media = TMDBMediaParser.parseTv(tmdbMedia);
-            media.id = internalMedia.Id;
-            return media;
-        }
+        const media = await this.tmdbRepository.getMedia(
+            internalMedia.ExternalId,
+            internalMedia.Type
+        );
+        media.id = internalMedia.Id;
+        return media;
     }
 }

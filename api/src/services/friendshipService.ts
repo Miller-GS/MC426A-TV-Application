@@ -9,6 +9,7 @@ import { FriendshipAlreadyExistError } from "../errors/FriendshipAlreadyExistErr
 import { FriendshipNotFoundError } from "../errors/FriendshipNotFoundError";
 import { FriendRequestNotification } from "./friendRequestNotification";
 import { NotificationEntity } from "../entity/notification.entity";
+import { ValidationUtils } from "../utils/validationUtils";
 
 export default class FriendshipService {
     private friendshipRepository: Repository<FriendshipEntity>;
@@ -61,14 +62,13 @@ export default class FriendshipService {
         status: FriendshipStatus;
         actionUserId: number;
     }) {
-        const friendshipAlreadyExist = await this.friendshipRepository.findOne({
-            where: [
-                { UserId1: userId1, UserId2: userId2 },
-                { UserId1: userId2, UserId2: userId1 },
-            ],
-        });
-
-        if (friendshipAlreadyExist) {
+        if (
+            await ValidationUtils.areFriends(
+                this.friendshipRepository,
+                userId1,
+                userId2
+            )
+        ) {
             throw new FriendshipAlreadyExistError();
         }
 

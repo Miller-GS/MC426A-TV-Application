@@ -5,6 +5,8 @@ import { CommentEntity } from "../entity/comment.entity";
 import { FriendshipEntity } from "../entity/friendship.entity";
 import env from "../../environment";
 import { NotificationEntity } from "../entity/notification.entity";
+import { WatchListEntity } from "../entity/watchList.entity";
+import { WatchListItemEntity } from "../entity/watchListItem.entity";
 
 const appDataSource = new DataSource({
     type: "postgres",
@@ -19,6 +21,8 @@ const appDataSource = new DataSource({
         CommentEntity,
         NotificationEntity,
         FriendshipEntity,
+        WatchListEntity,
+        WatchListItemEntity,
     ],
     migrations: ["src/migration/**/*.ts"],
     synchronize: true,
