@@ -4,6 +4,7 @@ import { MediaEntity } from "../entity/media.entity";
 import { CommentEntity } from "../entity/comment.entity";
 import env from "../../environment";
 import { NotificationEntity } from "../entity/notification.entity";
+import { RatingEntity } from "../entity/rating.entity";
 
 const appDataSource = new DataSource({
     type: "postgres",
@@ -12,7 +13,7 @@ const appDataSource = new DataSource({
     username: env.DB_USER,
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
-    entities: [UserEntity, MediaEntity, CommentEntity, NotificationEntity],
+    entities: [UserEntity, MediaEntity, CommentEntity, NotificationEntity, RatingEntity],
     migrations: ["src/migration/**/*.ts"],
     synchronize: true,
 });

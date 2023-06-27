@@ -12,7 +12,7 @@ export class RatingEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
-    @Column({ type: "integer" })
+    @Column()
     UserId: number;
 
     @Column()
@@ -21,8 +21,8 @@ export class RatingEntity {
     @Column()
     Rating: number;
 
-    @Column({ default: null })
-    Review: string | null;
+    @Column({ type: "text", nullable: true, default: null })
+    Review!: string;
 
     @CreateDateColumn()
     CreatedAt: Date;

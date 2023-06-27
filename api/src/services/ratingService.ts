@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { MediaNotFoundError } from "../errors/MediaNotFoundError";
 import { RatingNotFoundError } from "../errors/RatingNotFoundError";
 import { RatingNotOwnedError } from "../errors/RatingNotOwnedError";
+import { DuplicatedRatingError } from "../errors/DuplicatedRatingError";
 
 export default class RatingService {
     private ratingRepository: Repository<RatingEntity>;
@@ -24,8 +25,9 @@ export default class RatingService {
         review: string
     ) {
         this.validadeMediaExists(mediaId);
+        this.validadeDuplicatedRating(userId, mediaId);
 
-        return await this.ratingRepository.save({
+        await this.ratingRepository.save({
             UserId: userId,
             MediaId: mediaId,
             Rating: rating,
@@ -96,6 +98,15 @@ export default class RatingService {
         });
         if (!mediaExists) {
             throw new MediaNotFoundError();
+        }
+    }
+
+    private async validadeDuplicatedRating(userId: number, mediaId: number) {
+        const ratingExists = await this.ratingRepository.exist({
+            where: { UserId: userId, MediaId: mediaId },
+        });
+        if (ratingExists) {
+            throw new DuplicatedRatingError();
         }
     }
 }

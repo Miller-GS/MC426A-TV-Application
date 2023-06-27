@@ -20,10 +20,11 @@ export class RatingController {
 
         const userId = req["user"].id;
         try {
-            this.ratingService.createRating(userId, mediaId, rating, review);
+            await this.ratingService.createRating(userId, mediaId, rating, review);
+            return res.status(201);
         } catch (err: any) {
             console.error(err.message);
-            ErrorUtils.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -36,10 +37,11 @@ export class RatingController {
         const userId = req["user"].id;
 
         try {
-            this.ratingService.updateRating(userId, ratingId, rating, review);
+            await this.ratingService.updateRating(userId, ratingId, rating, review);
+            return res.status(204);
         } catch (err: any) {
             console.error(err.message);
-            ErrorUtils.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -51,10 +53,11 @@ export class RatingController {
         const userId = req["user"].id;
 
         try {
-            this.ratingService.deleteRating(userId, ratingId);
+            await this.ratingService.deleteRating(userId, ratingId);
+            return res.status(204);
         } catch (err: any) {
             console.error(err.message);
-            ErrorUtils.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -65,13 +68,14 @@ export class RatingController {
 
         const userId = req["user"].id;
         try {
-            this.ratingService.getUserRating(
+            const ratingResponse = await this.ratingService.getUserRating(
                 userId,
                 ParseUtils.parseIntOrUndefined(mediaId) as number
             );
+            return res.status(200).json(ratingResponse)
         } catch (err: any) {
             console.error(err.message);
-            ErrorUtils.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
@@ -80,12 +84,13 @@ export class RatingController {
         if (!this.validateMediaId(mediaId, res)) return res;
 
         try {
-            this.ratingService.listRatings(
+            const ratings = await this.ratingService.listRatings(
                 ParseUtils.parseIntOrUndefined(mediaId) as number
             );
+            return res.status(200).json(ratings)
         } catch (err: any) {
             console.error(err.message);
-            ErrorUtils.handleError(err, res);
+            return ErrorUtils.handleError(err, res);
         }
     }
 
