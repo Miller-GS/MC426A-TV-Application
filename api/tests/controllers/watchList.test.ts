@@ -15,6 +15,7 @@ describe("WatchListController", () => {
             createWatchList: jest.fn(),
             addWatchListItems: jest.fn(),
             getWatchListItems: jest.fn(),
+            removeWatchListItems: jest.fn(),
             deleteWatchList: jest.fn(),
         };
         watchListController = new WatchListController(watchListService);
@@ -356,6 +357,133 @@ describe("WatchListController", () => {
             expect(defaultResponseMock.json).toHaveBeenCalledWith(
                 watchListMock
             );
+        });
+    });
+
+    describe("removeWatchListItems", () => {
+        test("Should return 401 if user not logged in", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaId: 1,
+                },
+            };
+            await watchListController.removeWatchListItems(
+                req,
+                defaultResponseMock
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Unauthorized",
+            });
+        });
+
+        test("Should return 400 if watch list id not provided", async () => {
+            const req: any = {
+                body: {
+                    mediaIds: [1],
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.removeWatchListItems(
+                req,
+                defaultResponseMock
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list id not provided",
+            });
+        });
+
+        test("Should return 400 if media ids not provided", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.removeWatchListItems(
+                req,
+                defaultResponseMock
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Media ids array not provided in body",
+            });
+        });
+
+        test("Should return 400 if media ids not an array", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaIds: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.removeWatchListItems(
+                req,
+                defaultResponseMock
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Media ids array not provided in body",
+            });
+        });
+
+        test("Should return 403 if user not watch list owner", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaIds: [1],
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            watchListService.removeWatchListItems.mockRejectedValueOnce(
+                new WatchListNotOwnedError()
+            );
+
+            await watchListController.removeWatchListItems(
+                req,
+                defaultResponseMock
+            );
+
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(403);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list not owned by logged in user",
+            });
+        });
+
+        test("Should remove watch list items", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaIds: [1],
+                },
+                user: {
+                    id: 1,
+                },
+            };
+
+            await watchListController.removeWatchListItems(
+                req,
+                defaultResponseMock
+            );
+
+            expect(watchListService.removeWatchListItems).toHaveBeenCalledWith(
+                1,
+                1,
+                [1]
+            );
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(204);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith();
         });
     });
 

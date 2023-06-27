@@ -161,7 +161,10 @@ export default class WatchListService {
         } as WatchListItemEntity);
     }
 
-    private async removeMediaFromWatchList(watchListId: number, mediaId: number) {
+    private async removeMediaFromWatchList(
+        watchListId: number,
+        mediaId: number
+    ) {
         const mediaExists = await this.mediaRepository.exist({
             where: { Id: mediaId },
         });
@@ -186,7 +189,11 @@ export default class WatchListService {
         });
     }
 
-    public async removeWatchListItems(userId: number, watchListId: number, mediaIds: number[]) {
+    public async removeWatchListItems(
+        userId: number,
+        watchListId: number,
+        mediaIds: number[]
+    ) {
         await this.validateAddWatchListItemsArguments(userId, watchListId);
         const promises = mediaIds.map((mediaId) =>
             this.removeMediaFromWatchList(watchListId, mediaId)
