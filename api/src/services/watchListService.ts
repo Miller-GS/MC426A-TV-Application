@@ -160,4 +160,95 @@ export default class WatchListService {
             },
         } as WatchListItemEntity);
     }
+
+    private createWatchListEntity(
+        id: number,
+        title: string,
+        description: string,
+        privacyType: WatchListPrivacyType
+    ) {
+        const watchListEntity = {
+            Id: id,
+            Title: title,
+            Description: description,
+            PrivacyType: privacyType,
+        };
+
+        Object.keys(watchListEntity).forEach(
+            (key) =>
+                ValidationUtils.isEmpty(watchListEntity[key]) &&
+                delete watchListEntity[key]
+        );
+
+        return watchListEntity;
+    }
+
+    public async updateWatchList(
+        userId: number,
+        watchListId: number,
+        title: string,
+        description: string,
+        privacyType: WatchListPrivacyType
+    ) {
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
+
+        const watchListEntity = this.createWatchListEntity(
+            watchListId,
+            title,
+            description,
+            privacyType
+        );
+
+        if (
+            !watchListEntity.Title &&
+            !watchListEntity.Description &&
+            !watchListEntity.PrivacyType
+        )
+            return;
+
+        const watchList = await this.watchListRepository.save(watchListEntity);
+        return watchList;
+    }
+
+    private async removeMediaFromWatchList(
+        watchListId: number,
+        mediaId: number
+    ) {
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
+        if (!mediaExists) throw new MediaNotFoundError();
+
+        const watchListItem = await this.watchListItemRepository.findOne({
+            where: {
+                WatchList: { Id: watchListId },
+                Media: { Id: mediaId },
+            },
+        });
+
+        if (!watchListItem) return;
+
+        await this.watchListItemRepository.update(watchListItem.Id, {
+            DeletedAt: new Date(),
+        });
+    }
+
+    public async removeWatchListItems(
+        userId: number,
+        watchListId: number,
+        mediaIds: number[]
+    ) {
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
+        const promises = mediaIds.map((mediaId) =>
+            this.removeMediaFromWatchList(watchListId, mediaId)
+        );
+        return await Promise.all(promises);
+    }
+
+    public async deleteWatchList(userId: number, watchListId: number) {
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
+        await this.watchListRepository.update(watchListId, {
+            DeletedAt: new Date(),
+        });
+    }
 }

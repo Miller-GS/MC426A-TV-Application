@@ -48,3 +48,21 @@ watchListRouter.post(
     auth,
     async (req, res) => await controller.addWatchListItems(req, res)
 );
+
+watchListRouter.patch(
+    "/:id/",
+    auth,
+    async (req, res) => await controller.updateWatchList(req, res)
+);
+
+watchListRouter.delete(
+    "/delete/:id/",
+    auth,
+    async (req, res) => await controller.deleteWatchList(req, res)
+);
+
+watchListRouter.delete(
+    "/removeItems/",
+    auth,
+    async (req, res) => await controller.removeWatchListItems(req, res)
+);

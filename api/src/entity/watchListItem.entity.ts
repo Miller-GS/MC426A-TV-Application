@@ -21,7 +21,11 @@ export class WatchListItemEntity {
     )
     WatchList: WatchListEntity;
 
-    @ManyToOne(() => MediaEntity, (media: MediaEntity) => media.WatchListItems)
+    @ManyToOne(
+        () => MediaEntity,
+        (media: MediaEntity) => media.WatchListItems,
+        { onDelete: "CASCADE" }
+    )
     Media: MediaEntity;
 
     @CreateDateColumn()
