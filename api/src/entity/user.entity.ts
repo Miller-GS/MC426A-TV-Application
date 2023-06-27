@@ -1,4 +1,3 @@
-import { UUID } from "crypto";
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -6,10 +5,13 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
+    OneToMany,
 } from "typeorm";
+import { NotificationEntity } from "./notification.entity";
+import { WatchListEntity } from "./watchList.entity";
 
-@Entity()
-export class User {
+@Entity("user")
+export class UserEntity {
     @PrimaryGeneratedColumn()
     Id: number;
 
@@ -36,4 +38,16 @@ export class User {
 
     @DeleteDateColumn()
     DeletedAt: Date;
+
+    @OneToMany(
+        () => NotificationEntity,
+        (notification: NotificationEntity) => notification.User
+    )
+    Notifications: NotificationEntity[];
+
+    @OneToMany(
+        () => WatchListEntity,
+        (watchList: WatchListEntity) => watchList.Owner
+    )
+    WatchLists: WatchListEntity[];
 }

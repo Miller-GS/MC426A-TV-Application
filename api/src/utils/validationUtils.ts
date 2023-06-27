@@ -1,6 +1,10 @@
 export class ValidationUtils {
+    static isNull(obj: any) {
+        return obj == undefined || obj == null;
+    }
+
     static isEmpty(str) {
-        return str == "" || str == undefined;
+        return str == "" || ValidationUtils.isNull(str);
     }
 
     static isAnyStringEmpty(...strs) {
@@ -11,12 +15,32 @@ export class ValidationUtils {
     }
 
     static isPositiveNumber(str) {
-        var numberRegex = /^[1-9]+$/;
+        const numberRegex = /^[0-9]*[1-9][0-9]*$/;
         return numberRegex.test(str);
     }
 
     static isValidEmail(str) {
-        var emailRegex = /\S+@\S+\.\S+/;
+        const emailRegex = /\S+@\S+\.\S+/;
         return emailRegex.test(str);
+    }
+
+    static validateUserLoggedIn(req, res) {
+        const user = req["user"];
+        if (ValidationUtils.isEmpty(user)) {
+            res.status(401).json({
+                message: "Unauthorized",
+            });
+            return false;
+        }
+        return true;
+    }
+
+    static async areFriends(friendshipRepository, userId1, userId2) {
+        return await friendshipRepository.exist({
+            where: [
+                { UserId1: userId1, UserId2: userId2 },
+                { UserId1: userId2, UserId2: userId1 },
+            ],
+        });
     }
 }

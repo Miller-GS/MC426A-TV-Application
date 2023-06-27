@@ -12,6 +12,7 @@ This repository will be used in the course MC426 (Software Engineering) at Unica
 | MonicaOkAl       | Mônica Okamoto Albrecht    | 174928 |
 | GabrielleBarbosa | Gabrielle da Silva Barbosa | 233862 |
 | Vinschers        | Felipe Scherer Vicentin    | 248283 |
+| that-jpg         | Philipe Godoy              | 200073 |
 
 ## Introduction
 
@@ -25,6 +26,35 @@ This is done with the help of [TMDB API](https://www.themoviedb.org/documentatio
 -   Search and browse: Allow users to search and browse for TV series and movies based on title, genre, actors, directors, etc.
 -   Recommendations: Provide personalized recommendations to users based on their watch history, ratings, and preferences.
 -   Reviews and ratings: Allow users to rate and review TV series and movies they have watched.
+
+## Architecture
+
+The architectural style of this project is **layered**, as described below:
+![Level 3 of the C4 architecture diagram, showing the layers of the project](./docs/images/architecture_c4.png)
+
+### Front-End
+
+Not a goal of this project. However, we're developing an API thinking of a possible front-end that could interact with the rest of the system.
+
+### Back-End (REST API)
+
+We're developing a REST API using Node JS. It will supply every route that a hypothetical front-end would need, such as authentication,
+search, watchlists, notifications, reviews, and comments. Its architecture is clearly divided in four layers:
+
+-   **Routers**: Responsible for receiving the request and redirecting it to the corresponding controller.
+-   **Controllers**: Responsible for breaking down and interpreting the request, calling the appropriate service and formatting the response.
+-   **Services** : Where the logic is located. They receive the broken down request, call repositories for data access and apply the business rules.
+-   **Repositories**: Data access layer. Interact with the database or external APIs.
+
+### PostgreSQL Database
+
+Where the application data is located, such as users, comments, reviews, watchlists, and others. Everything except the movie and series database,
+which comes from the TMDB external API.
+
+### TMDB API
+
+Short for [The Movie Database](https://www.themoviedb.org/documentation/api), the TMDB API is our source of data about movies and TV series. A repository
+will send get requests to it.
 
 ## Build and Run
 

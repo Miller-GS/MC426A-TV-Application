@@ -1,5 +1,27 @@
 import { ValidationUtils } from "../../src/utils/validationUtils";
 
+describe("isNull", () => {
+    test("Should return true if object is undefined", () => {
+        const response = ValidationUtils.isNull(undefined);
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if object is null", () => {
+        const response = ValidationUtils.isNull(null);
+        expect(response).toEqual(true);
+    });
+
+    test("Should return false if object is empty", () => {
+        const response = ValidationUtils.isNull({});
+        expect(response).toEqual(false);
+    });
+
+    test("Should return false if object is filled", () => {
+        const response = ValidationUtils.isNull({ test: 1 });
+        expect(response).toEqual(false);
+    });
+});
+
 describe("isEmpty", () => {
     test("Should return true if string is empty", () => {
         const response = ValidationUtils.isEmpty("");
@@ -8,6 +30,11 @@ describe("isEmpty", () => {
 
     test("Should return true if string is undefined", () => {
         const response = ValidationUtils.isEmpty(undefined);
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if string is null", () => {
+        const response = ValidationUtils.isEmpty(null);
         expect(response).toEqual(true);
     });
 
@@ -28,6 +55,11 @@ describe("isAnyStringEmpty", () => {
         expect(response).toEqual(true);
     });
 
+    test("Should return true if any string is null", () => {
+        const response = ValidationUtils.isAnyStringEmpty(null, "test");
+        expect(response).toEqual(true);
+    });
+
     test("Should return false if no string is empty", () => {
         const response = ValidationUtils.isAnyStringEmpty("test", "test");
         expect(response).toEqual(false);
@@ -37,6 +69,11 @@ describe("isAnyStringEmpty", () => {
 describe("isNumber", () => {
     test("Should return true if string is number 1", () => {
         const response = ValidationUtils.isPositiveNumber("1");
+        expect(response).toEqual(true);
+    });
+
+    test("Should return true if string is number 10", () => {
+        const response = ValidationUtils.isPositiveNumber("10");
         expect(response).toEqual(true);
     });
 

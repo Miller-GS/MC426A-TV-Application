@@ -1,50 +1,50 @@
-import { ShowParser } from "../../src/models/show";
+import { TMDBMediaParser } from "../../src/models/tmdbMedia";
 
 describe("parseTv", () => {
-    test("Should return showType TV from empty object", () => {
+    test("Should return mediaType TV from empty object", () => {
         const obj = {};
-        const show = ShowParser.parseTv(obj);
+        const tvShow = TMDBMediaParser.parseTv(obj);
 
-        expect(show).toEqual({ showType: "TV" });
+        expect(tvShow).toEqual({ mediaType: "TV" });
     });
 
     test("Should return empty tv from undefined object", () => {
         const obj = undefined;
-        const show = ShowParser.parseTv(obj);
+        const tvShow = TMDBMediaParser.parseTv(obj);
 
-        expect(show).toEqual({});
+        expect(tvShow).toEqual({});
     });
 
     test("Should return images tv", () => {
         const obj = {
-            original_title: "NAME",
+            original_name: "NAME",
             backdrop_path: "/BG",
             poster_path: "/POSTER",
         };
-        const show = ShowParser.parseTv(obj);
+        const tvShow = TMDBMediaParser.parseTv(obj);
 
-        expect(show).toEqual({
+        expect(tvShow).toEqual({
             name: "NAME",
             backgroundImageUrl: "https://image.tmdb.org/t/p/original/BG",
             posterImageUrl: "https://image.tmdb.org/t/p/original/POSTER",
-            showType: "TV",
+            mediaType: "TV",
         });
     });
 });
 
 describe("parseMovie", () => {
-    test("Should return showType Movie from empty object", () => {
+    test("Should return mediaType Movie from empty object", () => {
         const obj = {};
-        const show = ShowParser.parseMovie(obj);
+        const movie = TMDBMediaParser.parseMovie(obj);
 
-        expect(show).toEqual({ showType: "Movie" });
+        expect(movie).toEqual({ mediaType: "Movie" });
     });
 
     test("Should return empty movie from undefined object", () => {
         const obj = undefined;
-        const show = ShowParser.parseMovie(obj);
+        const movie = TMDBMediaParser.parseMovie(obj);
 
-        expect(show).toEqual({});
+        expect(movie).toEqual({});
     });
 
     test("Should return images movie", () => {
@@ -53,13 +53,13 @@ describe("parseMovie", () => {
             backdrop_path: "/BG",
             poster_path: "/POSTER",
         };
-        const show = ShowParser.parseMovie(obj);
+        const movie = TMDBMediaParser.parseMovie(obj);
 
-        expect(show).toEqual({
+        expect(movie).toEqual({
             name: "NAME",
             backgroundImageUrl: "https://image.tmdb.org/t/p/original/BG",
             posterImageUrl: "https://image.tmdb.org/t/p/original/POSTER",
-            showType: "Movie",
+            mediaType: "Movie",
         });
     });
 });
