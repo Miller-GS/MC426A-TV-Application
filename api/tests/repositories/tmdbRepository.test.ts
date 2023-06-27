@@ -1,9 +1,9 @@
-// The idea of this test module is to check whether the correct parameters arrive at the get method in the mediaService object.
+// The idea of this test module is to check whether the correct parameters arrive at the get method in the tmdbRepository object.
 // The point is to assume the axios request and the API are working and only test if we are using them correctly.
 
-import MediaService from "../../src/services/mediaService";
+import TMDBRepository from "../../src/repositories/tmdbRepository";
 import { MediaTypeEnum, TMDBMediaParser } from "../../src/models/tmdbMedia";
-import { MediaNotFoundError } from "../../src/errors/MediaNotFoundError";
+import { InvalidMediaTypeError } from "../../src/errors/InvalidMediaTypeError";
 
 interface TMDBMedia {
     path: string;
@@ -14,11 +14,11 @@ interface TMDBMedia {
 TMDBMediaParser.parseTv = (obj) => obj;
 TMDBMediaParser.parseMovie = (obj) => obj;
 
-class MediaServiceTest extends MediaService {
+class TMDBRepositoryTest extends TMDBRepository {
     private mockGetFunction: jest.Mock;
 
-    constructor(mediaRepository: any) {
-        super(mediaRepository);
+    constructor() {
+        super();
         this.mockGetFunction = jest.fn();
     }
 
@@ -48,21 +48,13 @@ const makeMediaParamsMock = (params = {} as any) => {
     };
 };
 
-describe("Media Service", () => {
-    let mediaService: MediaServiceTest;
-    let mediaRepositoryMock: any;
+describe("TMDB Repository", () => {
+    let tmdbRepository: TMDBRepositoryTest;
 
     beforeEach(() => {
-        mediaRepositoryMock = {
-            findOne: jest.fn(),
-            save: jest.fn(),
-        };
-        mediaRepositoryMock.findOne.mockReturnValue({
-            Id: 1,
-        });
-        mediaService = new MediaServiceTest(mediaRepositoryMock);
+        tmdbRepository = new TMDBRepositoryTest();
 
-        mediaService
+        tmdbRepository
             .getMock()
             .mockImplementation((path: String, params: Object) => {
                 return {
@@ -77,7 +69,7 @@ describe("Media Service", () => {
             });
     });
 
-    describe("list - Movies", () => {
+    describe("listMovies", () => {
         test("Should discover movie by year and genres", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -86,9 +78,8 @@ describe("Media Service", () => {
                 page: 1,
             });
 
-            const response = await mediaService.list(params, true, false);
+            const response = await tmdbRepository.listMovies(params);
             const expected = {
-                id: 1,
                 path: "/discover/movie",
                 params: {
                     with_genres: "0,1,2",
@@ -113,9 +104,8 @@ describe("Media Service", () => {
                 page: 1,
             });
 
-            const response = await mediaService.list(params, true, false);
+            const response = await tmdbRepository.listMovies(params);
             const expected = {
-                id: 1,
                 path: "/search/movie",
                 params: {
                     query: "X",
@@ -138,9 +128,8 @@ describe("Media Service", () => {
                 page: 4,
             });
 
-            const response = await mediaService.list(params, true, false);
+            const response = await tmdbRepository.listMovies(params);
             const expected = {
-                id: 1,
                 path: "/discover/movie",
                 params: {
                     with_genres: "0",
@@ -157,28 +146,9 @@ describe("Media Service", () => {
 
             expect(response).toEqual([expected]);
         });
-
-        test("Should save new movies into the Media database", async () => {
-            const params = makeMediaParamsMock({
-                name: "",
-                genres: "0",
-                year: 1999,
-                minVoteAverage: 5.0,
-                minVoteCount: 5,
-                page: 4,
-            });
-            mediaRepositoryMock.findOne.mockReturnValue(undefined);
-            mediaRepositoryMock.save.mockReturnValue({
-                Id: 1,
-            });
-
-            await mediaService.list(params, true, false);
-
-            expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
-        });
     });
 
-    describe("list - TV", () => {
+    describe("listTvShows", () => {
         test("Should discover tv by year, genres and vote ranges", async () => {
             const params = makeMediaParamsMock({
                 name: "",
@@ -191,9 +161,8 @@ describe("Media Service", () => {
                 page: 1,
             });
 
-            const response = await mediaService.list(params, false, true);
+            const response = await tmdbRepository.listTvShows(params);
             const expected = {
-                id: 1,
                 path: "/discover/tv",
                 params: {
                     with_genres: "0,1,2",
@@ -217,9 +186,8 @@ describe("Media Service", () => {
                 page: 1,
             });
 
-            const response = await mediaService.list(params, false, true);
+            const response = await tmdbRepository.listTvShows(params);
             const expected = {
-                id: 1,
                 path: "/search/tv",
                 params: {
                     query: "X",
@@ -240,9 +208,8 @@ describe("Media Service", () => {
                 page: 5,
             });
 
-            const response = await mediaService.list(params, false, true);
+            const response = await tmdbRepository.listTvShows(params);
             const expected = {
-                id: 1,
                 path: "/discover/tv",
                 params: {
                     with_genres: "0",
@@ -259,197 +226,67 @@ describe("Media Service", () => {
 
             expect(response).toEqual([expected]);
         });
+    });
 
-        test("Should save new TV series into the Media database", async () => {
-            const params = makeMediaParamsMock({
-                name: "",
-                genres: "0",
-                year: 1999,
-                minVoteAverage: 5.0,
-                minVoteCount: 5,
-                page: 4,
-            });
-            mediaRepositoryMock.findOne.mockReturnValue(undefined);
-            mediaRepositoryMock.save.mockReturnValue({
-                Id: 1,
-            });
+    describe("getMovie", () => {
+        test("Should get movie by id", async () => {
+            const response = await tmdbRepository.getMovie(1);
+            const expected = {
+                "results": [{
+                    path: "/movie/1",
+                    params: {},
+                    popularity: 0,
+                }],
+            };
 
-            await mediaService.list(params, false, true);
-
-            expect(mediaRepositoryMock.save).toHaveBeenCalledTimes(1);
+            expect(response).toEqual(expected);
         });
     });
 
-    describe("list - Movie + TV", () => {
-        test("Should discover movie + tv by year, genres and vote ranges", async () => {
-            const params = makeMediaParamsMock({
-                name: "",
-                genres: "0,1,2",
-                year: 2016,
-                maxVoteAverage: 6.9,
-                minVoteAverage: 5.0,
-                maxVoteCount: 100,
-                minVoteCount: 5,
-                page: 5,
-            });
-
-            const response = await mediaService.list(params, true, true);
-            const expected = [
-                {
-                    id: 1,
-                    path: "/discover/tv",
-                    params: {
-                        with_genres: "0,1,2",
-                        first_air_date_year: 2016,
-                        sort_by: "popularity.desc",
-                        page: 5,
-                        "vote_average.gte": 5.0,
-                        "vote_average.lte": 6.9,
-                        "vote_count.gte": 5,
-                        "vote_count.lte": 100,
-                    },
+    describe("getTVShow", () => {
+        test("Should get tv show by id", async () => {
+            const response = await tmdbRepository.getTVShow(1);
+            const expected = {
+                "results": [{
+                    path: "/tv/1",
+                    params: {},
                     popularity: 0,
-                },
-                {
-                    id: 1,
-                    path: "/discover/movie",
-                    params: {
-                        with_genres: "0,1,2",
-                        year: 2016,
-                        sort_by: "popularity.desc",
-                        page: 5,
-                        "vote_average.gte": 5.0,
-                        "vote_average.lte": 6.9,
-                        "vote_count.gte": 5,
-                        "vote_count.lte": 100,
-                    },
-                    popularity: 0,
-                },
-            ];
-
-            expect(response).toEqual(expected);
-        });
-
-        test("Should search movie + tv by name", async () => {
-            const params = makeMediaParamsMock({
-                name: "X",
-                page: 3,
-            });
-
-            const response = await mediaService.list(params, true, true);
-            const expected = [
-                {
-                    id: 1,
-                    path: "/search/tv",
-                    params: {
-                        query: "X",
-                        first_air_date_year: undefined,
-                        page: 3,
-                    },
-                    popularity: 0,
-                },
-                {
-                    id: 1,
-                    path: "/search/movie",
-                    params: {
-                        query: "X",
-                        year: undefined,
-                        page: 3,
-                    },
-                    popularity: 0,
-                },
-            ];
-
-            expect(response).toEqual(expected);
-        });
-
-        test("Should discover movie + tv and go to page", async () => {
-            const params = makeMediaParamsMock({
-                name: "",
-                genres: "0",
-                year: 1999,
-                page: 6,
-            });
-
-            const response = await mediaService.list(params, true, true);
-            const expected = [
-                {
-                    id: 1,
-                    path: "/discover/tv",
-                    params: {
-                        with_genres: "0",
-                        first_air_date_year: 1999,
-                        sort_by: "popularity.desc",
-                        page: 6,
-                        "vote_average.gte": undefined,
-                        "vote_average.lte": undefined,
-                        "vote_count.gte": undefined,
-                        "vote_count.lte": undefined,
-                    },
-                    popularity: 0,
-                },
-                {
-                    id: 1,
-                    path: "/discover/movie",
-                    params: {
-                        with_genres: "0",
-                        year: 1999,
-                        sort_by: "popularity.desc",
-                        page: 6,
-                        "vote_average.gte": undefined,
-                        "vote_average.lte": undefined,
-                        "vote_count.gte": undefined,
-                        "vote_count.lte": undefined,
-                    },
-                    popularity: 0,
-                },
-            ];
+                }],
+            };
 
             expect(response).toEqual(expected);
         });
     });
 
     describe("getMedia", () => {
-        beforeEach(() => {
-            const getMockFunction = jest.fn();
-            getMockFunction.mockReturnValue({
-                id: 1,
-            });
-            mediaService.setMock(getMockFunction);
+        test("Should get movie by id", async () => {
+            const response = await tmdbRepository.getMedia(1, MediaTypeEnum.MOVIE);
+            const expected = {
+                "results": [{
+                    path: "/movie/1",
+                    params: {},
+                    popularity: 0,
+                }],
+            };
+
+            expect(response).toEqual(expected);
         });
 
-        test("Should return movie when given existing id", async () => {
-            mediaRepositoryMock.findOne.mockReturnValue({
-                Id: 1,
-                Type: MediaTypeEnum.MOVIE,
-            });
+        test("Should get tv show by id", async () => {
+            const response = await tmdbRepository.getMedia(1, MediaTypeEnum.TV);
+            const expected = {
+                "results": [{
+                    path: "/tv/1",
+                    params: {},
+                    popularity: 0,
+                }],
+            };
 
-            const response = await mediaService.getMedia(1);
-
-            expect(response).toEqual({
-                id: 1,
-            });
+            expect(response).toEqual(expected);
         });
 
-        test("Should return TV series when given existing id", async () => {
-            mediaRepositoryMock.findOne.mockReturnValue({
-                Id: 1,
-                Type: MediaTypeEnum.TV,
-            });
-
-            const response = await mediaService.getMedia(1);
-
-            expect(response).toEqual({
-                id: 1,
-            });
-        });
-
-        test("Should throw MediaNotFoundError when given non-existing id", async () => {
-            mediaRepositoryMock.findOne.mockReturnValue(undefined);
-
-            await expect(mediaService.getMedia(1)).rejects.toThrow(
-                MediaNotFoundError
-            );
+        test("Should throw error if media type is not supported", async () => {
+            await expect(tmdbRepository.getMedia(1, "Something Else")).rejects.toThrowError(InvalidMediaTypeError);
         });
     });
 });
