@@ -15,6 +15,7 @@ describe("WatchListController", () => {
             createWatchList: jest.fn(),
             addWatchListItems: jest.fn(),
             getWatchListItems: jest.fn(),
+            deleteWatchList: jest.fn(),
         };
         watchListController = new WatchListController(watchListService);
         defaultResponseMock = {
@@ -355,6 +356,69 @@ describe("WatchListController", () => {
             expect(defaultResponseMock.json).toHaveBeenCalledWith(
                 watchListMock
             );
+        });
+    });
+
+    describe("deleteWatchList", () => {
+        test("Should return 400 if watch list id not provided", async () => {
+            const req: any = { params: {} };
+            await watchListController.deleteWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list id not provided",
+            });
+        });
+
+        test("Should return 401 if logged in user does not exist", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            watchListService.deleteWatchList.mockRejectedValueOnce(
+                new UserNotExistsError()
+            );
+            await watchListController.deleteWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "User does not exist",
+            });
+        });
+
+        test("Should return 404 if watch list does not exist", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            watchListService.deleteWatchList.mockRejectedValueOnce(
+                new WatchListNotFoundError()
+            );
+            await watchListController.deleteWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(404);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list not found",
+            });
+        });
+
+        test("Should return 204 if watch list is deleted", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            await watchListController.deleteWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(204);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith();
         });
     });
 });

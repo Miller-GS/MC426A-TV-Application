@@ -83,4 +83,21 @@ export class WatchListController {
             return ErrorUtils.handleError(err, res);
         }
     }
+
+    public async deleteWatchList(req: Request, res: Response) {
+        try {
+            if (!ValidationUtils.isPositiveNumber(req.params.id))
+                throw new WatchListIdNotProvidedError();
+
+            const userId = parseInt(req["user"].id);
+            const watchListId = parseInt(req.params.id);
+
+            await this.watchListService.deleteWatchList(userId, watchListId);
+
+            return res.status(204).json();
+        } catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
+    }
 }

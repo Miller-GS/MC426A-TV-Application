@@ -36,6 +36,7 @@ describe("WatchList Service", () => {
         watchListRepositoryMock = {
             save: jest.fn(),
             findOne: jest.fn(),
+            delete: jest.fn(),
         };
 
         watchListItemRepositoryMock = {
@@ -321,6 +322,53 @@ describe("WatchList Service", () => {
 
             watchListEntityMock.parsed = true;
             expect(response).toEqual(watchListEntityMock);
+        });
+    });
+
+    describe("Delete watchlist", () => {
+        test("Should throw UserNotExistsError if user does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.deleteWatchList(1, 1)
+            ).rejects.toThrow(UserNotExistsError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce(undefined);
+
+            await expect(
+                watchListService.deleteWatchList(1, 1)
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should throw WatchListNotOwnedError if watch list does not belong to user", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 2,
+                },
+            });
+
+            await expect(
+                watchListService.deleteWatchList(1, 1)
+            ).rejects.toThrow(WatchListNotOwnedError);
+        });
+
+        test("Should delete watchlist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+
+            await watchListService.deleteWatchList(1, 1);
+
+            expect(watchListRepositoryMock.delete).toHaveBeenCalledWith(1);
         });
     });
 });

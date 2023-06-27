@@ -160,4 +160,9 @@ export default class WatchListService {
             },
         } as WatchListItemEntity);
     }
+
+    public async deleteWatchList(userId: number, watchListId: number) {
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
+        this.watchListRepository.delete(watchListId);
+    }
 }
