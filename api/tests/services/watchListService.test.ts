@@ -42,6 +42,7 @@ describe("WatchList Service", () => {
         watchListItemRepositoryMock = {
             exist: jest.fn(),
             save: jest.fn(),
+            delete: jest.fn(),
         };
 
         userRepositoryMock = {
@@ -322,6 +323,110 @@ describe("WatchList Service", () => {
 
             watchListEntityMock.parsed = true;
             expect(response).toEqual(watchListEntityMock);
+        });
+    });
+
+    describe("removeWatchListItems", () => {
+        test("Should throw UserNotExistsError if user does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.removeWatchListItems(1, 1, [1, 2, 3])
+            ).rejects.toThrow(UserNotExistsError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce(undefined);
+
+            await expect(
+                watchListService.removeWatchListItems(1, 1, [1, 2, 3])
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should throw WatchListNotOwnedError if watch list does not belong to user", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 2,
+                },
+            });
+
+            await expect(
+                watchListService.removeWatchListItems(1, 1, [1, 2, 3])
+            ).rejects.toThrow(WatchListNotOwnedError);
+        });
+
+        test("Should throw MediaNotFoundError if media does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+            mediaRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.removeWatchListItems(1, 1, [1, 2, 3])
+            ).rejects.toThrow(MediaNotFoundError);
+        });
+
+        test("Should do nothing if media does not exists in watch list", async () => {
+            userRepositoryMock.exist.mockReturnValue(true);
+            watchListRepositoryMock.findOne.mockReturnValue({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+            mediaRepositoryMock.exist.mockReturnValue(true);
+            watchListItemRepositoryMock.exist.mockReturnValue(false);
+
+            await watchListService.removeWatchListItems(1, 1, [1, 2, 3]);
+
+            expect(watchListItemRepositoryMock.save).toHaveBeenCalledTimes(0);
+        });
+
+        test("Should remove media from watch list if media exists and watch list exists and belongs to user", async () => {
+            userRepositoryMock.exist.mockReturnValue(true);
+            watchListRepositoryMock.findOne.mockReturnValue({
+                Id: 1,
+                Owner: {
+                    Id: 1,
+                },
+            });
+            mediaRepositoryMock.exist.mockReturnValue(true);
+            watchListItemRepositoryMock.exist.mockReturnValue(true);
+
+            await watchListService.removeWatchListItems(1, 1, [1, 2, 3]);
+
+            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledTimes(3);
+            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledWith({
+                WatchList: {
+                    Id: 1,
+                },
+                Media: {
+                    Id: 1,
+                },
+            });
+            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledWith({
+                WatchList: {
+                    Id: 1,
+                },
+                Media: {
+                    Id: 2,
+                },
+            });
+            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledWith({
+                WatchList: {
+                    Id: 1,
+                },
+                Media: {
+                    Id: 3,
+                },
+            });
         });
     });
 

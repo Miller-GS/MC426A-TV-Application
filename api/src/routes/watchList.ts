@@ -54,3 +54,9 @@ watchListRouter.delete(
     auth,
     async (req, res) => await controller.deleteWatchList(req, res)
 );
+
+watchListRouter.delete(
+    "/removeItems/",
+    auth,
+    async (req, res) => await controller.removeWatchListItems(req, res)
+);

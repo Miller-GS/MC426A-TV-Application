@@ -161,6 +161,39 @@ export default class WatchListService {
         } as WatchListItemEntity);
     }
 
+    private async removeMediaFromWatchList(watchListId: number, mediaId: number) {
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
+        if (!mediaExists) throw new MediaNotFoundError();
+
+        const watchListItemExists = await this.watchListItemRepository.exist({
+            where: {
+                WatchList: { Id: watchListId },
+                Media: { Id: mediaId },
+            },
+        });
+
+        if (!watchListItemExists) return;
+
+        await this.watchListItemRepository.delete({
+            WatchList: {
+                Id: watchListId,
+            },
+            Media: {
+                Id: mediaId,
+            },
+        });
+    }
+
+    public async removeWatchListItems(userId: number, watchListId: number, mediaIds: number[]) {
+        await this.validateAddWatchListItemsArguments(userId, watchListId);
+        const promises = mediaIds.map((mediaId) =>
+            this.removeMediaFromWatchList(watchListId, mediaId)
+        );
+        return await Promise.all(promises);
+    }
+
     public async deleteWatchList(userId: number, watchListId: number) {
         await this.validateAddWatchListItemsArguments(userId, watchListId);
         this.watchListRepository.delete(watchListId);

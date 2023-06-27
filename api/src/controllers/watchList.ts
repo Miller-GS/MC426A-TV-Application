@@ -100,4 +100,27 @@ export class WatchListController {
             return ErrorUtils.handleError(err, res);
         }
     }
+
+    public async removeWatchListItems(req: Request, res: Response) {
+        const { watchListId, mediaIds } = req.body;
+
+        try {
+            if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
+            if (ValidationUtils.isEmpty(watchListId))
+                throw new WatchListIdNotProvidedError();
+            if (ValidationUtils.isEmpty(mediaIds) || !Array.isArray(mediaIds))
+                throw new MediaIdsNotProvidedError();
+
+            const userId = req["user"].id;
+            await this.watchListService.removeWatchListItems(
+                userId,
+                watchListId,
+                mediaIds
+            );
+            return res.status(204).json();
+        } catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
+    }
 }
