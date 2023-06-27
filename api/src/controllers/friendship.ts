@@ -50,15 +50,15 @@ export class FriendshipController {
     }
 
     public async replyFriendshipRequest(req: Request, res: Response) {
-        const requestingUserId = req["user"].id;
-        const acceptingUserId = parseInt(req.params["userId"]);
+        const acceptingUserId = req["user"].id;
+        const requestingUserId = parseInt(req.params["userId"]);
         const accepted = ParseUtils.parseBoolean(req.query.accepted as string);
 
         try {
             const friendship =
                 await this.friendshipService.replyFriendshipRequest(
-                    acceptingUserId,
                     requestingUserId,
+                    acceptingUserId,
                     accepted
                 );
 

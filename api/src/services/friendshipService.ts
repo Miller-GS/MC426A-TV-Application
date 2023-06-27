@@ -86,7 +86,10 @@ export default class FriendshipService {
 
     public async listFriends(userId: number) {
         const friendships = await this.friendshipRepository.find({
-            where: { UserId1: userId, Status: FriendshipStatus.ACCEPTED },
+            where: [
+                { UserId1: userId, Status: FriendshipStatus.ACCEPTED },
+                { UserId2: userId, Status: FriendshipStatus.ACCEPTED },
+            ],
         });
 
         return friendships.map((f) => f.UserId2);
