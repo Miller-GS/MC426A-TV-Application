@@ -97,23 +97,24 @@ describe("TMDB Service", () => {
 
         test("Should return only tv shows when includeTvShows is true, with Media ID when it exists, sorted by popularity", async () => {
             const paramsMock = makeMediaParamsMock();
-            const result = await mediaService.list(paramsMock, false, true);
-
             mediaRepositoryMock.findOne.mockResolvedValueOnce({
                 Id: 3,
             });
             mediaRepositoryMock.findOne.mockResolvedValueOnce({
                 Id: 4,
             });
+            const result = await mediaService.list(paramsMock, false, true);
 
             expect(result).toEqual([
                 {
+                    externalId: 2001,
                     id: 4,
                     title: "tv2",
                     popularity: 4,
                     mediaType: MediaTypeEnum.TV,
                 },
                 {
+                    externalId: 2000,
                     id: 3,
                     title: "tv1",
                     popularity: 2,
@@ -129,8 +130,6 @@ describe("TMDB Service", () => {
 
         test("Should return movies and tv shows when both flags are true, with Media ID when it exists, sorted by popularity", async () => {
             const paramsMock = makeMediaParamsMock();
-            const result = await mediaService.list(paramsMock, true, true);
-
             mediaRepositoryMock.findOne.mockResolvedValueOnce({
                 Id: 3,
             });
@@ -143,27 +142,32 @@ describe("TMDB Service", () => {
             mediaRepositoryMock.findOne.mockResolvedValueOnce({
                 Id: 2,
             });
+            const result = await mediaService.list(paramsMock, true, true);
 
             expect(result).toEqual([
                 {
+                    externalId: 2001,
                     id: 4,
                     title: "tv2",
                     popularity: 4,
                     mediaType: MediaTypeEnum.TV,
                 },
                 {
+                    externalId: 1001,
                     id: 2,
                     title: "movie2",
                     popularity: 3,
                     mediaType: MediaTypeEnum.MOVIE,
                 },
                 {
+                    externalId: 2000,
                     id: 3,
                     title: "tv1",
                     popularity: 2,
                     mediaType: MediaTypeEnum.TV,
                 },
                 {
+                    externalId: 1000,
                     id: 1,
                     title: "movie1",
                     popularity: 1,
