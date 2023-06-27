@@ -5,6 +5,8 @@ import { MediaNotFoundError } from "../errors/MediaNotFoundError";
 import { RatingNotFoundError } from "../errors/RatingNotFoundError";
 import { RatingNotOwnedError } from "../errors/RatingNotOwnedError";
 import { DuplicatedRatingError } from "../errors/DuplicatedRatingError";
+import { ValidationUtils } from "../utils/validationUtils";
+import { ParseUtils } from "../utils/parseUtils";
 
 export default class RatingService {
     private ratingRepository: Repository<RatingEntity>;
@@ -108,5 +110,26 @@ export default class RatingService {
         return await this.ratingRepository.find({
             where: { MediaId: mediaId },
         });
+    }
+
+    public async getMediaAvgRating(mediaId: number) {
+        const mediaExists = await this.mediaRepository.exist({
+            where: { Id: mediaId },
+        });
+        if (!mediaExists) {
+            throw new MediaNotFoundError();
+        }
+
+        const averageRating = await this.ratingRepository
+                            .createQueryBuilder("rating")
+                            .select('AVG(coalesce(rating.Rating,0))', 'avgRating')
+                            .addSelect('COUNT(*)', 'ratingsCount')
+                            .where('rating.MediaId = :mediaId', { mediaId })
+                            .getRawOne();
+
+        return {
+            avgRating: ParseUtils.parseFloatOrUndefined(averageRating["avgRating"]) || 0,
+            ratingsCount: ParseUtils.parseIntOrUndefined(averageRating["ratingsCount"]) || 0
+        }
     }
 }

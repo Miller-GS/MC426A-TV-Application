@@ -20,6 +20,11 @@ ratingRouter.get(
 );
 
 ratingRouter.get(
+    "/average/media/:mediaId",
+    async (req, res) => await controller.getMediaAvgRating(req, res)
+);
+
+ratingRouter.get(
     "/media/:mediaId",
     auth,
     async (req, res) => await controller.getUserRating(req, res)

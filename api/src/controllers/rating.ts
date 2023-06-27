@@ -108,6 +108,21 @@ export class RatingController {
         }
     }
 
+    public async getMediaAvgRating(req: Request, res: Response) {
+        const mediaId = req.params["mediaId"];
+        if (!this.validateMediaId(mediaId, res)) return res;
+
+        try {
+            const avgRating = await this.ratingService.getMediaAvgRating(
+                ParseUtils.parseIntOrUndefined(mediaId) as number
+            );
+            return res.status(200).json(avgRating);
+        } catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
+        }
+    }
+
     private validateMediaId(mediaId: any, res: Response) {
         if (ValidationUtils.isEmpty(mediaId) || isNaN(mediaId)) {
             res.status(400).json({
