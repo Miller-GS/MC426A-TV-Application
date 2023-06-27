@@ -3,6 +3,7 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    DeleteDateColumn,
     ManyToOne,
 } from "typeorm";
 
@@ -32,4 +33,7 @@ export class WatchListItemEntity {
 
     @UpdateDateColumn()
     UpdatedAt: Date;
+
+    @DeleteDateColumn()
+    DeletedAt: Date;
 }

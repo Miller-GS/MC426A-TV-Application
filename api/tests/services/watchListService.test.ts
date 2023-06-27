@@ -37,12 +37,15 @@ describe("WatchList Service", () => {
             save: jest.fn(),
             findOne: jest.fn(),
             delete: jest.fn(),
+            update: jest.fn(),
         };
 
         watchListItemRepositoryMock = {
             exist: jest.fn(),
             save: jest.fn(),
             delete: jest.fn(),
+            findOne: jest.fn(),
+            update: jest.fn(),
         };
 
         userRepositoryMock = {
@@ -382,11 +385,11 @@ describe("WatchList Service", () => {
                 },
             });
             mediaRepositoryMock.exist.mockReturnValue(true);
-            watchListItemRepositoryMock.exist.mockReturnValue(false);
+            watchListItemRepositoryMock.findOne.mockReturnValue(null);
 
             await watchListService.removeWatchListItems(1, 1, [1, 2, 3]);
 
-            expect(watchListItemRepositoryMock.save).toHaveBeenCalledTimes(0);
+            expect(watchListItemRepositoryMock.update).toHaveBeenCalledTimes(0);
         });
 
         test("Should remove media from watch list if media exists and watch list exists and belongs to user", async () => {
@@ -398,34 +401,13 @@ describe("WatchList Service", () => {
                 },
             });
             mediaRepositoryMock.exist.mockReturnValue(true);
-            watchListItemRepositoryMock.exist.mockReturnValue(true);
+            watchListItemRepositoryMock.findOne.mockReturnValue({ Id: 1 });
 
-            await watchListService.removeWatchListItems(1, 1, [1, 2, 3]);
+            await watchListService.removeWatchListItems(1, 1, [1]);
 
-            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledTimes(3);
-            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledWith({
-                WatchList: {
-                    Id: 1,
-                },
-                Media: {
-                    Id: 1,
-                },
-            });
-            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledWith({
-                WatchList: {
-                    Id: 1,
-                },
-                Media: {
-                    Id: 2,
-                },
-            });
-            expect(watchListItemRepositoryMock.delete).toHaveBeenCalledWith({
-                WatchList: {
-                    Id: 1,
-                },
-                Media: {
-                    Id: 3,
-                },
+            expect(watchListItemRepositoryMock.update).toHaveBeenCalledTimes(1);
+            expect(watchListItemRepositoryMock.update).toHaveBeenCalledWith(1, {
+                DeletedAt: expect.any(Date),
             });
         });
     });
@@ -616,7 +598,9 @@ describe("WatchList Service", () => {
 
             await watchListService.deleteWatchList(1, 1);
 
-            expect(watchListRepositoryMock.delete).toHaveBeenCalledWith(1);
+            expect(watchListRepositoryMock.update).toHaveBeenCalledWith(1, {
+                DeletedAt: expect.any(Date),
+            });
         });
     });
 });

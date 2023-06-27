@@ -219,22 +219,17 @@ export default class WatchListService {
         });
         if (!mediaExists) throw new MediaNotFoundError();
 
-        const watchListItemExists = await this.watchListItemRepository.exist({
+        const watchListItem = await this.watchListItemRepository.findOne({
             where: {
                 WatchList: { Id: watchListId },
                 Media: { Id: mediaId },
             },
         });
 
-        if (!watchListItemExists) return;
+        if (!watchListItem) return;
 
-        await this.watchListItemRepository.delete({
-            WatchList: {
-                Id: watchListId,
-            },
-            Media: {
-                Id: mediaId,
-            },
+        await this.watchListItemRepository.update(watchListItem.Id, {
+            DeletedAt: new Date(),
         });
     }
 
@@ -252,6 +247,8 @@ export default class WatchListService {
 
     public async deleteWatchList(userId: number, watchListId: number) {
         await this.validateAddWatchListItemsArguments(userId, watchListId);
-        this.watchListRepository.delete(watchListId);
+        await this.watchListRepository.update(watchListId, {
+            DeletedAt: new Date(),
+        });
     }
 }

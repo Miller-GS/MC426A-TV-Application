@@ -56,7 +56,7 @@ watchListRouter.patch(
 );
 
 watchListRouter.delete(
-    "/:id/",
+    "/delete/:id/",
     auth,
     async (req, res) => await controller.deleteWatchList(req, res)
 );
