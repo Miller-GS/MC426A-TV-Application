@@ -1,9 +1,7 @@
 import FriendshipService from "../services/friendshipService";
 import { Response, Request } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
-import {
-    FriendshipStatus,
-} from "../entity/friendship.entity";
+import { FriendshipStatus } from "../entity/friendship.entity";
 import { ParseUtils } from "../utils/parseUtils";
 import { ValidationUtils } from "../utils/validationUtils";
 import { UserIdError } from "../errors/UserIdError";
@@ -49,8 +47,6 @@ export class FriendshipController {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
         }
-
-
     }
 
     public async acceptFriend(req: Request, res: Response) {
@@ -69,6 +65,5 @@ export class FriendshipController {
         } catch (err: any) {
             return ErrorUtils.handleError(err, res);
         }
-
-   }
+    }
 }

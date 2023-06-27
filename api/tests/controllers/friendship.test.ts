@@ -3,7 +3,6 @@ import { FriendshipController } from "../../src/controllers/friendship";
 import { FriendshipNotFoundError } from "../../src/errors/FriendshipNotFoundError";
 import { FriendshipAlreadyExistError } from "../../src/errors/FriendshipAlreadyExistError";
 
-
 describe("Friendship controller", () => {
     let friendshipController: FriendshipController;
     let service: any;
@@ -33,9 +32,9 @@ describe("Friendship controller", () => {
                     accepted: "true",
                 },
                 user: {
-                    id: "1"
-                }
-        } as unknown as Request;
+                    id: "1",
+                },
+            } as unknown as Request;
 
             await friendshipController.acceptFriend(req, res);
 
@@ -52,16 +51,18 @@ describe("Friendship controller", () => {
                     accepted: "true",
                 },
                 user: {
-                    id: "1"
-                }
-        } as unknown as Request;
+                    id: "1",
+                },
+            } as unknown as Request;
 
-            service.acceptFriendship = jest.fn().mockRejectedValueOnce(new FriendshipNotFoundError());
+            service.acceptFriendship = jest
+                .fn()
+                .mockRejectedValueOnce(new FriendshipNotFoundError());
             await friendshipController.acceptFriend(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
             expect(res.json).toHaveBeenCalledWith({
-                message: "Friendship not found"
+                message: "Friendship not found",
             });
         });
     });
@@ -73,9 +74,9 @@ describe("Friendship controller", () => {
                     userId: "2",
                 },
                 user: {
-                    id: "1"
-                }
-        } as unknown as Request;
+                    id: "1",
+                },
+            } as unknown as Request;
 
             await friendshipController.addFriend(req, res);
 
@@ -88,10 +89,12 @@ describe("Friendship controller", () => {
                     userId: "2",
                 },
                 user: {
-                    id: "1"
-                }
-        } as unknown as Request;
-            service.createFriendship = jest.fn().mockRejectedValueOnce(new FriendshipAlreadyExistError());
+                    id: "1",
+                },
+            } as unknown as Request;
+            service.createFriendship = jest
+                .fn()
+                .mockRejectedValueOnce(new FriendshipAlreadyExistError());
             await friendshipController.addFriend(req, res);
 
             expect(res.status).toHaveBeenCalledWith(409);
@@ -107,7 +110,7 @@ describe("Friendship controller", () => {
                 params: {
                     userId: "2",
                 },
-        } as unknown as Request;
+            } as unknown as Request;
 
             await friendshipController.listFriends(req, res);
 
