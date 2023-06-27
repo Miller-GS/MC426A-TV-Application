@@ -19,13 +19,11 @@ export class FriendshipController {
         const userId = parseInt(req.params["userId"]);
 
         if (isNaN(userId) || userId < 0) {
-            throw new InvalidUserParamsError()
+            throw new InvalidUserParamsError();
         }
 
         try {
-            const friends = await this.friendshipService.listFriends(
-                userId
-            );
+            const friends = await this.friendshipService.listFriends(userId);
             return res.status(200).json(friends);
         } catch (err: any) {
             console.error(err.message);
