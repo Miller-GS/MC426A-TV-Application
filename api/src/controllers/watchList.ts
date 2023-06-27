@@ -18,7 +18,9 @@ export class WatchListController {
         const { title, description, privacyType } = req.body;
 
         try {
-            this.validatePrivacyType(privacyType);
+            if (!this.validatePrivacyType(privacyType))
+                throw new InvalidPrivacyTypeError();
+
             if (!ValidationUtils.validateUserLoggedIn(req, res)) return res;
 
             const userId = req["user"].id;
@@ -37,7 +39,8 @@ export class WatchListController {
 
     private validatePrivacyType(privacyType: string) {
         if (!(<any>Object).values(WatchListPrivacyType).includes(privacyType))
-            throw new InvalidPrivacyTypeError();
+            return false;
+        return true;
     }
 
     public async addWatchListItems(req: Request, res: Response) {

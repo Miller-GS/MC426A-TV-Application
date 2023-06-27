@@ -1,4 +1,5 @@
 import TMDBRepository from "../repositories/tmdbRepository";
+import { ValidationUtils } from "../utils/validationUtils";
 import { TMDBMedia } from "./tmdbMedia";
 
 export interface WatchList {
@@ -38,6 +39,11 @@ export class WatchListParser {
 
             watchList.items.push(watchListItem);
         }
+
+        Object.keys(watchList).forEach(
+            (key) =>
+                ValidationUtils.isNull(watchList[key]) && delete watchList[key]
+        );
 
         return watchList;
     }

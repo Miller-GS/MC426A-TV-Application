@@ -37,6 +37,14 @@ export default class WatchListService {
         this.tmdbRepository = tmdbRepository;
     }
 
+    private async checkUserExists(userId: number) {
+        const userExists = await this.userRepository.exist({
+            where: { Id: userId },
+        });
+
+        return userExists;
+    }
+
     public async createWatchList(
         userId: number,
         title: string,
@@ -48,11 +56,8 @@ export default class WatchListService {
         if (ValidationUtils.isEmpty(description))
             throw new EmptyWatchListDescriptionError();
 
-        const userExists = await this.userRepository.exist({
-            where: { Id: userId },
-        });
-
-        if (!userExists) throw new UserNotExistsError();
+        if (!(await this.checkUserExists(userId)))
+            throw new UserNotExistsError();
 
         const watchList = await this.watchListRepository.save({
             Owner: {
@@ -61,7 +66,7 @@ export default class WatchListService {
             Title: title,
             Description: description,
             PrivacyType: privacyType,
-        } as unknown as WatchListEntity);
+        } as WatchListEntity);
 
         return watchList;
     }
@@ -82,11 +87,8 @@ export default class WatchListService {
         userId: number | undefined,
         watchListId: number
     ) {
-        if (userId) {
-            const userExists = await this.userRepository.exist({
-                where: { Id: userId },
-            });
-            if (!userExists) throw new UserNotExistsError();
+        if (userId && !(await this.checkUserExists(userId))) {
+            throw new UserNotExistsError();
         }
 
         const watchList = await this.watchListRepository.findOne({
@@ -96,7 +98,11 @@ export default class WatchListService {
         if (!watchList) throw new WatchListNotFoundError();
 
         const isOwner = watchList.Owner.Id === userId;
-        const isFriend = true; // Insert friendship logic here
+        const isFriend = ValidationUtils.areFriends(
+            null,
+            watchList.Owner.Id,
+            userId
+        );
 
         if (!isOwner && watchList.PrivacyType == WatchListPrivacyType.PRIVATE)
             throw new WatchListNotFoundError();
@@ -114,10 +120,8 @@ export default class WatchListService {
         userId: number,
         watchListId: number
     ) {
-        const userExists = await this.userRepository.exist({
-            where: { Id: userId },
-        });
-        if (!userExists) throw new UserNotExistsError();
+        if (!(await this.checkUserExists(userId)))
+            throw new UserNotExistsError();
 
         const watchList = await this.watchListRepository.findOne({
             where: { Id: watchListId },
@@ -134,15 +138,14 @@ export default class WatchListService {
         });
         if (!mediaExists) throw new MediaNotFoundError();
 
-        if (
-            await this.watchListItemRepository.exist({
-                where: {
-                    WatchList: { Id: watchListId },
-                    Media: { Id: mediaId },
-                },
-            })
-        )
-            return;
+        const watchListItemExists = await this.watchListItemRepository.exist({
+            where: {
+                WatchList: { Id: watchListId },
+                Media: { Id: mediaId },
+            },
+        });
+
+        if (watchListItemExists) return;
 
         return await this.watchListItemRepository.save({
             WatchList: {
