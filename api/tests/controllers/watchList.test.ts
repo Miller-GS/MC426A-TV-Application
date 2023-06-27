@@ -267,7 +267,7 @@ describe("WatchListController", () => {
 
     describe("getWatchList", () => {
         test("Should return 400 if watch list id not provided", async () => {
-            const req: any = {params: {}};
+            const req: any = { params: {} };
             await watchListController.getWatchList(req, defaultResponseMock);
             expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
             expect(defaultResponseMock.json).toHaveBeenCalledWith({

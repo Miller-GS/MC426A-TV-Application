@@ -8,7 +8,6 @@ import { WatchListNotOwnedError } from "../../src/errors/WatchListNotOwnedError"
 import { WatchListParser } from "../../src/models/watchList";
 import WatchListService from "../../src/services/watchListService";
 
-
 const makeWatchListEntityMock = (entity = {} as any) => {
     return {
         Id: entity.Id || 1,
@@ -63,10 +62,12 @@ describe("WatchList Service", () => {
             tmdbRepositoryMock
         );
 
-        WatchListParser.parseWatchList = jest.fn().mockImplementation((watchList) => {
-            watchList.parsed = true;
-            return watchList
-        });
+        WatchListParser.parseWatchList = jest
+            .fn()
+            .mockImplementation((watchList) => {
+                watchList.parsed = true;
+                return watchList;
+            });
     });
 
     describe("Create WatchList", () => {
@@ -271,8 +272,12 @@ describe("WatchList Service", () => {
 
         test("Should return watch list items if watch list is public", async () => {
             userRepositoryMock.exist.mockReturnValueOnce(true);
-            const watchListEntityMock = makeWatchListEntityMock({privacyType: WatchListPrivacyType.PUBLIC}) as any;
-            watchListRepositoryMock.findOne.mockReturnValueOnce(watchListEntityMock);
+            const watchListEntityMock = makeWatchListEntityMock({
+                privacyType: WatchListPrivacyType.PUBLIC,
+            }) as any;
+            watchListRepositoryMock.findOne.mockReturnValueOnce(
+                watchListEntityMock
+            );
 
             const response = await watchListService.getWatchListItems(1, 1);
 
