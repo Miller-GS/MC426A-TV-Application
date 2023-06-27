@@ -30,6 +30,7 @@ describe("WatchList Service", () => {
     let userRepositoryMock: any;
     let mediaRepositoryMock: any;
     let tmdbRepositoryMock: any;
+    let friendshipRepositoryMock: any;
 
     beforeEach(() => {
         watchListRepositoryMock = {
@@ -54,12 +55,17 @@ describe("WatchList Service", () => {
             getMedia: jest.fn(),
         };
 
+        friendshipRepositoryMock = {
+            exist: jest.fn(),
+        };
+
         watchListService = new WatchListService(
             watchListRepositoryMock,
             watchListItemRepositoryMock,
             userRepositoryMock,
             mediaRepositoryMock,
-            tmdbRepositoryMock
+            tmdbRepositoryMock,
+            friendshipRepositoryMock
         );
 
         WatchListParser.parseWatchList = jest
@@ -268,6 +274,38 @@ describe("WatchList Service", () => {
             await expect(
                 watchListService.getWatchListItems(1, 1)
             ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list is friends only and owner is not user's friend", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            friendshipRepositoryMock.exist.mockReturnValueOnce(false);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 2,
+                },
+                PrivacyType: WatchListPrivacyType.FRIENDS_ONLY,
+            });
+
+            await expect(
+                watchListService.getWatchListItems(1, 1)
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should return watch list items if watch list is friends only and owner is user's friend", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            friendshipRepositoryMock.exist.mockReturnValueOnce(true);
+            const watchListEntityMock = makeWatchListEntityMock({
+                privacyType: WatchListPrivacyType.FRIENDS_ONLY,
+            }) as any;
+            watchListRepositoryMock.findOne.mockReturnValueOnce(
+                watchListEntityMock
+            );
+
+            const response = await watchListService.getWatchListItems(1, 1);
+
+            watchListEntityMock.parsed = true;
+            expect(response).toEqual(watchListEntityMock);
         });
 
         test("Should return watch list items if watch list is public", async () => {
