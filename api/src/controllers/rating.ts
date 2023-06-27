@@ -26,7 +26,7 @@ export class RatingController {
                 rating,
                 review
             );
-            return res.status(201).send();
+            return res.status(201).json();
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
@@ -49,7 +49,7 @@ export class RatingController {
                 rating,
                 review
             );
-            return res.status(204).send();
+            return res.status(204).json();
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
@@ -68,7 +68,7 @@ export class RatingController {
                 userId,
                 ParseUtils.parseIntOrUndefined(ratingId) as number
             );
-            return res.status(204).send();
+            return res.status(204).json();
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
@@ -119,7 +119,7 @@ export class RatingController {
     }
 
     private validateRatingId(ratingId: any, res: Response) {
-        if (ValidationUtils.isEmpty(ratingId) || isNaN(ratingId)) {
+        if (!ValidationUtils.isPositiveNumber(ratingId)) {
             res.status(400).json({
                 message: "Bad request: Rating ID necessary",
             });

@@ -5,7 +5,6 @@ import { MediaEntity } from "../entity/media.entity";
 import ratingService from "../services/ratingService";
 import appDataSource from "../config/ormconfig";
 import auth from "../middleware/auth";
-import { NotificationEntity } from "../entity/notification.entity";
 
 const ratingRouter = express.Router();
 
@@ -32,7 +31,7 @@ ratingRouter.post(
     async (req, res) => await controller.createRating(req, res)
 );
 
-ratingRouter.put(
+ratingRouter.patch(
     "/:ratingId",
     auth,
     async (req, res) => await controller.updateRating(req, res)
