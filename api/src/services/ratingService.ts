@@ -121,15 +121,19 @@ export default class RatingService {
         }
 
         const averageRating = await this.ratingRepository
-                            .createQueryBuilder("rating")
-                            .select('AVG(coalesce(rating.Rating,0))', 'avgRating')
-                            .addSelect('COUNT(*)', 'ratingsCount')
-                            .where('rating.MediaId = :mediaId', { mediaId })
-                            .getRawOne();
+            .createQueryBuilder("rating")
+            .select("AVG(rating.Rating)", "avgRating")
+            .addSelect("COUNT(*)", "ratingsCount")
+            .where("rating.MediaId = :mediaId", { mediaId })
+            .getRawOne();
 
         return {
-            avgRating: ParseUtils.parseFloatOrUndefined(averageRating["avgRating"]) || 0,
-            ratingsCount: ParseUtils.parseIntOrUndefined(averageRating["ratingsCount"]) || 0
-        }
+            avgRating:
+                ParseUtils.parseFloatOrUndefined(averageRating["avgRating"]) ||
+                0,
+            ratingsCount:
+                ParseUtils.parseIntOrUndefined(averageRating["ratingsCount"]) ||
+                0,
+        };
     }
 }

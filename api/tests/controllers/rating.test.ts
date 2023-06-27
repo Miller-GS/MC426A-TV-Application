@@ -11,6 +11,7 @@ describe("Rating controller", () => {
             deleteRating: jest.fn(),
             getUserRating: jest.fn(),
             listRatings: jest.fn(),
+            getMediaAvgRating: jest.fn(),
         };
         ratingController = new RatingController(ratingService);
     });
@@ -430,6 +431,53 @@ describe("Rating controller", () => {
 
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalled();
+        });
+    });
+
+    describe("get average rating", () => {
+        test("Should return 400 if media id is empty", async () => {
+            const req: any = {
+                params: {
+                    mediaId: "",
+                },
+            };
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            await ratingController.getMediaAvgRating(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Bad request: Media ID necessary",
+            });
+        });
+
+        test("Should return 200 with json response", async () => {
+            const req: any = {
+                params: {
+                    mediaId: 1,
+                },
+            };
+            const res: any = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+
+            const expectedResponse = {
+                avgRating: 3.3,
+                ratingsCount: 9,
+            };
+
+            ratingService.getMediaAvgRating.mockReturnValueOnce(
+                expectedResponse
+            );
+
+            await ratingController.getMediaAvgRating(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(expectedResponse);
         });
     });
 });

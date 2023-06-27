@@ -28,6 +28,15 @@ describe("Rating Service", () => {
             exist: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+            createQueryBuilder: jest.fn().mockReturnValue({
+                select: jest.fn().mockReturnValue({
+                    addSelect: jest.fn().mockReturnValue({
+                        where: jest.fn().mockReturnValue({
+                            getRawOne: jest.fn(),
+                        }),
+                    }),
+                }),
+            }),
         };
 
         mediaRepositoryMock = {
@@ -195,6 +204,56 @@ describe("Rating Service", () => {
 
             expect(ratingRepositoryMock.findOne).toBeCalledWith({
                 where: { UserId: 1, MediaId: 1 },
+            });
+        });
+    });
+
+    describe("Get Media Average Rating", () => {
+        test("Should throw MediaNotFoundError if media does not exist", async () => {
+            mediaRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(ratingService.getMediaAvgRating(1)).rejects.toThrow(
+                MediaNotFoundError
+            );
+        });
+
+        test("Should get media's average rating successfully", async () => {
+            mediaRepositoryMock.exist.mockReturnValueOnce(true);
+            ratingRepositoryMock
+                .createQueryBuilder()
+                .select()
+                .addSelect()
+                .where()
+                .getRawOne.mockReturnValueOnce({
+                    avgRating: 7,
+                    ratingsCount: 3,
+                });
+
+            const response = await ratingService.getMediaAvgRating(1);
+
+            expect(response).toEqual({
+                avgRating: 7,
+                ratingsCount: 3,
+            });
+        });
+
+        test("Should get media's average rating successfully replacing empty values", async () => {
+            mediaRepositoryMock.exist.mockReturnValueOnce(true);
+            ratingRepositoryMock
+                .createQueryBuilder()
+                .select()
+                .addSelect()
+                .where()
+                .getRawOne.mockReturnValueOnce({
+                    avgRating: null,
+                    ratingsCount: "",
+                });
+
+            const response = await ratingService.getMediaAvgRating(1);
+
+            expect(response).toEqual({
+                avgRating: 0,
+                ratingsCount: 0,
             });
         });
     });
