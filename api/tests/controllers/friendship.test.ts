@@ -10,7 +10,7 @@ describe("Friendship controller", () => {
 
     beforeEach(() => {
         service = {
-            acceptFriendship: jest.fn(),
+            replyFriendshipRequest: jest.fn(),
             createFriendship: jest.fn(),
             listFriends: jest.fn(),
         };
@@ -28,7 +28,7 @@ describe("Friendship controller", () => {
                 params: {
                     userId: "2",
                 },
-                body: {
+                query: {
                     accepted: "true",
                 },
                 user: {
@@ -36,7 +36,7 @@ describe("Friendship controller", () => {
                 },
             } as unknown as Request;
 
-            await friendshipController.acceptFriend(req, res);
+            await friendshipController.replyFriendshipRequest(req, res);
 
             expect(res.status).toHaveBeenCalledWith(201);
             expect(res.json).toHaveBeenCalled();
@@ -47,7 +47,7 @@ describe("Friendship controller", () => {
                 params: {
                     userId: "2",
                 },
-                body: {
+                query: {
                     accepted: "true",
                 },
                 user: {
@@ -55,10 +55,10 @@ describe("Friendship controller", () => {
                 },
             } as unknown as Request;
 
-            service.acceptFriendship = jest
+            service.replyFriendshipRequest = jest
                 .fn()
                 .mockRejectedValueOnce(new FriendshipNotFoundError());
-            await friendshipController.acceptFriend(req, res);
+            await friendshipController.replyFriendshipRequest(req, res);
 
             expect(res.status).toHaveBeenCalledWith(404);
             expect(res.json).toHaveBeenCalledWith({

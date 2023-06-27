@@ -49,17 +49,18 @@ export class FriendshipController {
         }
     }
 
-    public async acceptFriend(req: Request, res: Response) {
+    public async replyFriendshipRequest(req: Request, res: Response) {
         const requestingUserId = req["user"].id;
         const acceptingUserId = parseInt(req.params["userId"]);
-        const accepted = ParseUtils.parseBoolean(req.body["accepted"]);
+        const accepted = ParseUtils.parseBoolean(req.query.accepted as string);
 
         try {
-            const friendship = await this.friendshipService.acceptFriendship(
-                requestingUserId,
-                acceptingUserId,
-                accepted
-            );
+            const friendship =
+                await this.friendshipService.replyFriendshipRequest(
+                    requestingUserId,
+                    acceptingUserId,
+                    accepted
+                );
 
             return res.status(201).json(friendship);
         } catch (err: any) {

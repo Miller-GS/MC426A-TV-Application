@@ -2,6 +2,7 @@ import { FriendshipStatus } from "../../src/entity/friendship.entity";
 import { NotificationType } from "../../src/entity/notification.entity";
 import { FriendshipAlreadyExistError } from "../../src/errors/FriendshipAlreadyExistError";
 import { FriendshipNotFoundError } from "../../src/errors/FriendshipNotFoundError";
+import { SelfFriendshipError } from "../../src/errors/SelfFriendshipError";
 import FriendshipService from "../../src/services/friendshipService";
 
 const makeFriendshipEntityMock = (entity = {} as any) => {
@@ -50,6 +51,17 @@ describe("Friendship Service", () => {
             ).rejects.toThrow(FriendshipAlreadyExistError);
         });
 
+        test("Should throw SelfFriendshipError if sender is also receiver", async () => {
+            await expect(
+                friendshipService.createFriendship(
+                    1,
+                    1,
+                    FriendshipStatus.PENDING,
+                    1
+                )
+            ).rejects.toThrow(SelfFriendshipError);
+        });
+
         test("Should create friendship request if friendship does not exist", async () => {
             friendshipRepositoryMock.exist.mockReturnValueOnce(false);
 
@@ -73,12 +85,12 @@ describe("Friendship Service", () => {
         });
     });
 
-    describe("Accept friendship", () => {
+    describe("Reply friendship", () => {
         test("Should throw FriendshipNotFoundError if friendship does not exist", async () => {
             friendshipRepositoryMock.findOne.mockReturnValueOnce(null);
 
             await expect(
-                friendshipService.acceptFriendship(1, 2, true)
+                friendshipService.replyFriendshipRequest(1, 2, true)
             ).rejects.toThrow(FriendshipNotFoundError);
         });
 
@@ -88,7 +100,7 @@ describe("Friendship Service", () => {
                 friendshipEntity
             );
 
-            const response = await friendshipService.acceptFriendship(
+            const response = await friendshipService.replyFriendshipRequest(
                 1,
                 2,
                 true
@@ -112,7 +124,7 @@ describe("Friendship Service", () => {
                 friendshipEntity
             );
 
-            const response = await friendshipService.acceptFriendship(
+            const response = await friendshipService.replyFriendshipRequest(
                 1,
                 2,
                 false
