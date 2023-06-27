@@ -31,7 +31,7 @@ export default class WatchListService {
         userRepository: Repository<UserEntity>,
         mediaRepository: Repository<MediaEntity>,
         tmdbRepository: TMDBRepository,
-        friendshipRepository: Repository<FriendshipEntity>,
+        friendshipRepository: Repository<FriendshipEntity>
     ) {
         this.watchListRepository = watchListRepository;
         this.watchListItemRepository = watchListItemRepository;
