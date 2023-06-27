@@ -5,6 +5,7 @@ import mediaRouter from "./src/routes/media";
 import commentRouter from "./src/routes/comment";
 import cookieParser from "cookie-parser";
 import { notificationRouter } from "./src/routes/notification";
+import ratingRouter from "./src/routes/rating";
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.use("/user", userRouter);
 app.use("/media", mediaRouter);
 app.use("/notification", notificationRouter);
 app.use("/comment", commentRouter);
+app.use("/rating", ratingRouter);
 
 export default app;
