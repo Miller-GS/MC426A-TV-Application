@@ -3,9 +3,7 @@ import env from "../../environment";
 import { Repository } from "typeorm";
 
 import { MediaEntity } from "../entity/media.entity";
-import { TMDBMedia, TMDBMediaParser, MediaTypeEnum } from "../models/tmdbMedia";
-import { HttpUtils } from "../utils/httpUtils";
-import { ValidationUtils } from "../utils/validationUtils";
+import { TMDBMedia } from "../models/tmdbMedia";
 import { ListMediasParams } from "../models/listMediasParams";
 import { MediaNotFoundError } from "../errors/MediaNotFoundError";
 import TMDBRepository from "../repositories/tmdbRepository";

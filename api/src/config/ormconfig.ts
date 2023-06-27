@@ -5,6 +5,7 @@ import { CommentEntity } from "../entity/comment.entity";
 import { FriendshipEntity } from "../entity/friendship.entity";
 import env from "../../environment";
 import { NotificationEntity } from "../entity/notification.entity";
+import { RatingEntity } from "../entity/rating.entity";
 import { WatchListEntity } from "../entity/watchList.entity";
 import { WatchListItemEntity } from "../entity/watchListItem.entity";
 
@@ -23,6 +24,7 @@ const appDataSource = new DataSource({
         FriendshipEntity,
         WatchListEntity,
         WatchListItemEntity,
+        RatingEntity,
     ],
     migrations: ["src/migration/**/*.ts"],
     synchronize: true,
