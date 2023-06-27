@@ -1,12 +1,13 @@
 import FriendshipService from "../services/friendshipService";
 import { Response, Request } from "express";
 import { ErrorUtils } from "../utils/errorUtils";
-import { InvalidUserParamsError } from "../errors/InvalidUserParamsError";
-import { ConvertionUtils } from "../utils/convertionUtils";
 import {
     FriendshipEntity,
     FriendshipStatus,
 } from "../entity/friendship.entity";
+import { ParseUtils } from "../utils/parseUtils";
+import { ValidationUtils } from "../utils/validationUtils";
+import { UserIdError } from "../errors/UserIdError";
 
 export class FriendshipController {
     private friendshipService: FriendshipService;
@@ -16,11 +17,13 @@ export class FriendshipController {
     }
 
     public async listFriends(req: Request, res: Response) {
-        const userId = parseInt(req.params["userId"]);
+        if (
+            ValidationUtils.isEmpty(req.params["userId"]) ||
+            !ValidationUtils.isPositiveNumber(req.params["userId"])
+        )
+            throw new UserIdError();
 
-        if (isNaN(userId) || userId < 0) {
-            throw new InvalidUserParamsError();
-        }
+        const userId = parseInt(req.params["userId"]);
 
         try {
             const friends = await this.friendshipService.listFriends(userId);
@@ -48,7 +51,7 @@ export class FriendshipController {
     public async acceptFriend(req: Request, res: Response) {
         const requestingUserId = req["user"].id;
         const acceptingUserId = parseInt(req.params["userId"]);
-        const accepted = ConvertionUtils.stringToBoolean(req.body["accepted"]);
+        const accepted = ParseUtils.parseBoolean(req.body["accepted"]);
 
         const friendship = await this.friendshipService.acceptFriendship({
             requestingUserId,

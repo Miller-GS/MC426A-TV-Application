@@ -8,7 +8,7 @@ import { FriendParser } from "../models/friend";
 import { FriendshipAlreadyExistError } from "../errors/FriendshipAlreadyExistError";
 import { FriendshipNotFoundError } from "../errors/FriendshipNotFoundError";
 
-export default class CommentService {
+export default class FriendshipService {
     private friendshipRepository: Repository<FriendshipEntity>;
     private userRepository: Repository<UserEntity>;
 
