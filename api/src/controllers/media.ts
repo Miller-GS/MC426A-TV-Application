@@ -1,11 +1,12 @@
 import { Response, Request } from "express";
-import TMDBService from "../services/tmdbService";
+import MediaService from "../services/mediaService";
 import { ValidationUtils } from "../utils/validationUtils";
 import { ListMediasParams } from "../models/listMediasParams";
 import { ParseUtils } from "../utils/parseUtils";
+import { ErrorUtils } from "../utils/errorUtils";
 
 export class MediaController {
-    constructor(private readonly tmdbService: TMDBService) {}
+    constructor(private readonly tmdbService: MediaService) {}
 
     public async listMedias(req: Request, res: Response) {
         if (ValidationUtils.isNull(req.query)) {
@@ -70,6 +71,25 @@ export class MediaController {
             return res.status(200).json(medias);
         } catch (err: any) {
             res.status(500).send({ error: err.message });
+        }
+    }
+
+    public async getMedia(req: Request, res: Response) {
+        const mediaId = req.params.id;
+
+        if (!ValidationUtils.isPositiveNumber(mediaId)) {
+            return res.status(400).json({
+                message: "Bad request: Media id was undefined",
+            });
+        }
+
+        try {
+            const media = await this.tmdbService.getMedia(parseInt(mediaId));
+
+            return res.status(200).json(media);
+        } catch (err: any) {
+            console.error(err.message);
+            return ErrorUtils.handleError(err, res);
         }
     }
 }
