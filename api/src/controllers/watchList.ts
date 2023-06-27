@@ -64,12 +64,11 @@ export class WatchListController {
     }
 
     public async getWatchList(req: Request, res: Response) {
-        const { id } = req.params;
+        const id = req.params.id;
 
         try {
             if (!ValidationUtils.isPositiveNumber(id))
                 throw new WatchListIdNotProvidedError();
-
             const userId = req["user"]?.id;
             const watchList = await this.watchListService.getWatchListItems(
                 userId,

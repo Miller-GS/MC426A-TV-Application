@@ -5,12 +5,14 @@ import { MediaNotFoundError } from "../../src/errors/MediaNotFoundError";
 import { UserNotExistsError } from "../../src/errors/UserNotExistsError";
 import { WatchListNotFoundError } from "../../src/errors/WatchListNotFoundError";
 import { WatchListNotOwnedError } from "../../src/errors/WatchListNotOwnedError";
+import { WatchListParser } from "../../src/models/watchList";
 import WatchListService from "../../src/services/watchListService";
+
 
 const makeWatchListEntityMock = (entity = {} as any) => {
     return {
         Id: entity.Id || 1,
-        User: {
+        Owner: {
             Id: entity.UserId || 1,
         },
         Title: entity.Title || "WatchList title",
@@ -60,6 +62,11 @@ describe("WatchList Service", () => {
             mediaRepositoryMock,
             tmdbRepositoryMock
         );
+
+        WatchListParser.parseWatchList = jest.fn().mockImplementation((watchList) => {
+            watchList.parsed = true;
+            return watchList
+        });
     });
 
     describe("Create WatchList", () => {
@@ -226,6 +233,51 @@ describe("WatchList Service", () => {
                     Id: 3,
                 },
             });
+        });
+    });
+
+    describe("getWatchListItems", () => {
+        test("Should throw UserNotExistsError if user is passed but does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(false);
+
+            await expect(
+                watchListService.getWatchListItems(1, 1)
+            ).rejects.toThrow(UserNotExistsError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list does not exist", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce(undefined);
+
+            await expect(
+                watchListService.getWatchListItems(1, 1)
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should throw WatchListNotFoundError if watch list is private and does not belong to user", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            watchListRepositoryMock.findOne.mockReturnValueOnce({
+                Id: 1,
+                Owner: {
+                    Id: 2,
+                },
+                PrivacyType: WatchListPrivacyType.PRIVATE,
+            });
+
+            await expect(
+                watchListService.getWatchListItems(1, 1)
+            ).rejects.toThrow(WatchListNotFoundError);
+        });
+
+        test("Should return watch list items if watch list is public", async () => {
+            userRepositoryMock.exist.mockReturnValueOnce(true);
+            const watchListEntityMock = makeWatchListEntityMock({privacyType: WatchListPrivacyType.PUBLIC}) as any;
+            watchListRepositoryMock.findOne.mockReturnValueOnce(watchListEntityMock);
+
+            const response = await watchListService.getWatchListItems(1, 1);
+
+            watchListEntityMock.parsed = true;
+            expect(response).toEqual(watchListEntityMock);
         });
     });
 });

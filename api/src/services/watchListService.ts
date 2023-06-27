@@ -107,7 +107,6 @@ export default class WatchListService {
         )
             throw new WatchListNotFoundError();
 
-        // return watchList;
         return WatchListParser.parseWatchList(watchList, this.tmdbRepository);
     }
 

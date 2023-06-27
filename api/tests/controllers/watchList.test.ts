@@ -1,6 +1,9 @@
 import { WatchListController } from "../../src/controllers/watchList";
 import { EmptyWatchListDescriptionError } from "../../src/errors/EmptyWatchListDescriptionError";
 import { EmptyWatchListTitleError } from "../../src/errors/EmptyWatchListTitleError";
+import { UserNotExistsError } from "../../src/errors/UserNotExistsError";
+import { WatchListNotFoundError } from "../../src/errors/WatchListNotFoundError";
+import { WatchListNotOwnedError } from "../../src/errors/WatchListNotOwnedError";
 
 describe("WatchListController", () => {
     let watchListController: WatchListController;
@@ -11,6 +14,7 @@ describe("WatchListController", () => {
         watchListService = {
             createWatchList: jest.fn(),
             addWatchListItems: jest.fn(),
+            getWatchListItems: jest.fn(),
         };
         watchListController = new WatchListController(watchListService);
         defaultResponseMock = {
@@ -203,6 +207,31 @@ describe("WatchListController", () => {
             });
         });
 
+        test("Should return 403 if user not watch list owner", async () => {
+            const req: any = {
+                body: {
+                    watchListId: 1,
+                    mediaIds: [1],
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            watchListService.addWatchListItems.mockRejectedValueOnce(
+                new WatchListNotOwnedError()
+            );
+
+            await watchListController.addWatchListItems(
+                req,
+                defaultResponseMock
+            );
+
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(403);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list not owned by logged in user",
+            });
+        });
+
         test("Should add watch list items", async () => {
             const req: any = {
                 body: {
@@ -232,6 +261,99 @@ describe("WatchListController", () => {
             expect(defaultResponseMock.status).toHaveBeenCalledWith(201);
             expect(defaultResponseMock.json).toHaveBeenCalledWith(
                 watchListItemsMock
+            );
+        });
+    });
+
+    describe("getWatchList", () => {
+        test("Should return 400 if watch list id not provided", async () => {
+            const req: any = {params: {}};
+            await watchListController.getWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(400);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list id not provided",
+            });
+        });
+
+        test("Should return 401 if logged in user does not exist", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+            };
+            watchListService.getWatchListItems.mockRejectedValueOnce(
+                new UserNotExistsError()
+            );
+            await watchListController.getWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(401);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "User does not exist",
+            });
+        });
+
+        test("Should return 404 if watch list does not exist", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            watchListService.getWatchListItems.mockRejectedValueOnce(
+                new WatchListNotFoundError()
+            );
+            await watchListController.getWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(404);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith({
+                message: "Watch list not found",
+            });
+        });
+
+        test("Should return watch given user id and watch list id", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+                user: {
+                    id: 1,
+                },
+            };
+            const watchListMock = {
+                id: 1,
+                title: "title",
+                description: "description",
+                privacyType: "Public",
+            };
+            watchListService.getWatchListItems.mockResolvedValueOnce(
+                watchListMock
+            );
+            await watchListController.getWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(200);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith(
+                watchListMock
+            );
+        });
+
+        test("Should return watch list not given user id", async () => {
+            const req: any = {
+                params: {
+                    id: 1,
+                },
+            };
+            const watchListMock = {
+                id: 1,
+                title: "title",
+                description: "description",
+                privacyType: "Public",
+            };
+            watchListService.getWatchListItems.mockResolvedValueOnce(
+                watchListMock
+            );
+            await watchListController.getWatchList(req, defaultResponseMock);
+            expect(defaultResponseMock.status).toHaveBeenCalledWith(200);
+            expect(defaultResponseMock.json).toHaveBeenCalledWith(
+                watchListMock
             );
         });
     });
