@@ -12,10 +12,7 @@ const ratingRouter = express.Router();
 const ratingRepository = appDataSource.getRepository(RatingEntity);
 const mediaRepository = appDataSource.getRepository(MediaEntity);
 
-const service = new ratingService(
-    ratingRepository,
-    mediaRepository
-);
+const service = new ratingService(ratingRepository, mediaRepository);
 const controller = new RatingController(service);
 
 ratingRouter.get(

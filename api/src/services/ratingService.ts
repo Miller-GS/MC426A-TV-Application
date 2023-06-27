@@ -69,10 +69,7 @@ export default class RatingService {
         });
     }
 
-    public async deleteRating(
-        userId: number,
-        ratingId: number
-    ) {
+    public async deleteRating(userId: number, ratingId: number) {
         const ratingEntity = await this.ratingRepository.findOne({
             where: { Id: ratingId },
         });

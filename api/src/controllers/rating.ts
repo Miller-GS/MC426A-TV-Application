@@ -20,7 +20,12 @@ export class RatingController {
 
         const userId = req["user"].id;
         try {
-            await this.ratingService.createRating(userId, mediaId, rating, review);
+            await this.ratingService.createRating(
+                userId,
+                mediaId,
+                rating,
+                review
+            );
             return res.status(201).send();
         } catch (err: any) {
             console.error(err.message);
@@ -38,7 +43,12 @@ export class RatingController {
         const userId = req["user"].id;
 
         try {
-            await this.ratingService.updateRating(userId, ParseUtils.parseIntOrUndefined(ratingId) as number, rating, review);
+            await this.ratingService.updateRating(
+                userId,
+                ParseUtils.parseIntOrUndefined(ratingId) as number,
+                rating,
+                review
+            );
             return res.status(204).send();
         } catch (err: any) {
             console.error(err.message);
@@ -54,7 +64,10 @@ export class RatingController {
         const userId = req["user"].id;
 
         try {
-            await this.ratingService.deleteRating(userId, ParseUtils.parseIntOrUndefined(ratingId) as number);
+            await this.ratingService.deleteRating(
+                userId,
+                ParseUtils.parseIntOrUndefined(ratingId) as number
+            );
             return res.status(204).send();
         } catch (err: any) {
             console.error(err.message);
@@ -73,7 +86,7 @@ export class RatingController {
                 userId,
                 ParseUtils.parseIntOrUndefined(mediaId) as number
             );
-            return res.status(200).json(ratingResponse)
+            return res.status(200).json(ratingResponse);
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
@@ -88,7 +101,7 @@ export class RatingController {
             const ratings = await this.ratingService.listRatings(
                 ParseUtils.parseIntOrUndefined(mediaId) as number
             );
-            return res.status(200).json(ratings)
+            return res.status(200).json(ratings);
         } catch (err: any) {
             console.error(err.message);
             return ErrorUtils.handleError(err, res);
