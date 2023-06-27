@@ -7,17 +7,22 @@ import { Repository } from "typeorm";
 import { FriendParser } from "../models/friend";
 import { FriendshipAlreadyExistError } from "../errors/FriendshipAlreadyExistError";
 import { FriendshipNotFoundError } from "../errors/FriendshipNotFoundError";
+import { FriendRequestNotification } from "./friendRequestNotification";
+import { NotificationEntity } from "../entity/notification.entity";
 
 export default class FriendshipService {
     private friendshipRepository: Repository<FriendshipEntity>;
     private userRepository: Repository<UserEntity>;
+    private notificationRepository: Repository<NotificationEntity>;
 
     public constructor(
         friendshipRepository: Repository<FriendshipEntity>,
-        userRepository: Repository<UserEntity>
+        userRepository: Repository<UserEntity>,
+        notificationRepository: Repository<NotificationEntity>
     ) {
         this.friendshipRepository = friendshipRepository;
         this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public async acceptFriendship({
@@ -73,6 +78,13 @@ export default class FriendshipService {
             Status: status,
             ActionUserId: actionUserId,
         } as FriendshipEntity);
+
+        const notification = new FriendRequestNotification(
+            this.notificationRepository,
+            userId2,
+            friendship
+        );
+        notification.saveNotification();
 
         return friendship;
     }
