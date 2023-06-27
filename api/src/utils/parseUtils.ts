@@ -1,7 +1,19 @@
 import { ValidationUtils } from "./validationUtils";
 
-export class ConvertionUtils {
-    static stringToBoolean(str: string, default_value: any = undefined) {
+export class ParseUtils {
+    static parseIntOrUndefined(value) {
+        return ValidationUtils.isEmpty(value) || isNaN(value)
+            ? undefined
+            : parseInt(value);
+    }
+
+    static parseFloatOrUndefined(value) {
+        return ValidationUtils.isEmpty(value) || isNaN(value)
+            ? undefined
+            : parseFloat(value);
+    }
+
+    static parseBoolean(str: string, default_value: any = undefined): boolean {
         const truth_values = ["1", "true"];
         const false_values = ["0", "false"];
 

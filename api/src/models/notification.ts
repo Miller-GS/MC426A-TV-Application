@@ -9,17 +9,27 @@ export interface Notification {
 }
 
 export class NotificationParser {
-    public static parseNotification(
-        notificationEntity: NotificationEntity
-    ): Notification {
-        return {
+    public static parseNotification(notificationEntity: any): Notification {
+        if (ValidationUtils.isNull(notificationEntity)) {
+            return {} as Notification;
+        }
+
+        const notification = {
             id: notificationEntity.Id,
             userId: ValidationUtils.isNull(notificationEntity.User)
                 ? null
                 : notificationEntity.User.Id,
             text: notificationEntity.Text,
-            read: notificationEntity.ReadAt !== null,
+            read: !ValidationUtils.isNull(notificationEntity.ReadAt),
         };
+
+        Object.keys(notification).forEach(
+            (key) =>
+                ValidationUtils.isNull(notification[key]) &&
+                delete notification[key]
+        );
+
+        return notification;
     }
 
     public static parseNotifications(

@@ -33,6 +33,7 @@ describe("Comment Service", () => {
     let commentService: CommentService;
     let commentRepositoryMock: any;
     let mediaRepositoryMock: any;
+    let notificationRepositoryMock: any;
 
     beforeEach(() => {
         commentRepositoryMock = {
@@ -47,9 +48,14 @@ describe("Comment Service", () => {
             exist: jest.fn(),
         };
 
+        notificationRepositoryMock = {
+            save: jest.fn(),
+        };
+
         commentService = new CommentService(
             commentRepositoryMock,
-            mediaRepositoryMock
+            mediaRepositoryMock,
+            notificationRepositoryMock
         );
     });
 
@@ -116,7 +122,9 @@ describe("Comment Service", () => {
 
         test("Should create comment when media exists and parent comment exists", async () => {
             mediaRepositoryMock.exist.mockReturnValueOnce(true);
-            commentRepositoryMock.exist.mockReturnValueOnce(true);
+            commentRepositoryMock.findOne.mockReturnValueOnce(
+                makeCommentEntityMock()
+            );
             const commentEntityMock = makeCommentEntityMock({ ParentId: 1 });
             commentRepositoryMock.save.mockReturnValueOnce(commentEntityMock);
 
