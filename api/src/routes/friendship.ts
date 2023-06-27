@@ -30,9 +30,9 @@ friendshipRouter.post(
 );
 
 friendshipRouter.post(
-    "/accept/:userId",
+    "/reply/:userId",
     auth,
-    async (req, res) => await controller.acceptFriend(req, res)
+    async (req, res) => await controller.replyFriendshipRequest(req, res)
 );
 
 export default friendshipRouter;

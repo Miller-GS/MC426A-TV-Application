@@ -9,6 +9,7 @@ import { FriendRequestNotification } from "./friendRequestNotification";
 import { NotificationEntity } from "../entity/notification.entity";
 import { ValidationUtils } from "../utils/validationUtils";
 import { FriendAcceptNotification } from "./friendAcceptNotification";
+import { SelfFriendshipError } from "../errors/SelfFriendshipError";
 
 export default class FriendshipService {
     private friendshipRepository: Repository<FriendshipEntity>;
@@ -22,7 +23,7 @@ export default class FriendshipService {
         this.notificationRepository = notificationRepository;
     }
 
-    public async acceptFriendship(
+    public async replyFriendshipRequest(
         requestingUserId: number,
         acceptingUserId: number,
         accepted: boolean
@@ -51,29 +52,31 @@ export default class FriendshipService {
     }
 
     public async createFriendship(
-        userId1: number,
-        userId2: number,
+        senderId: number,
+        receiverId: number,
         status: FriendshipStatus,
         actionUserId: number
     ) {
+        if (senderId == receiverId) throw new SelfFriendshipError();
+
         const areFriends = await ValidationUtils.areFriends(
             this.friendshipRepository,
-            userId1,
-            userId2
+            senderId,
+            receiverId
         );
 
         if (areFriends) throw new FriendshipAlreadyExistError();
 
         const friendship = await this.friendshipRepository.save({
-            UserId1: userId1,
-            UserId2: userId2,
+            UserId1: senderId,
+            UserId2: receiverId,
             Status: status,
             ActionUserId: actionUserId,
         } as FriendshipEntity);
 
         const notification = new FriendRequestNotification(
             this.notificationRepository,
-            userId2,
+            receiverId,
             friendship
         );
         notification.saveNotification();
