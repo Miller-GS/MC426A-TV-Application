@@ -35,7 +35,12 @@ export class ValidationUtils {
         return true;
     }
 
-    static areFriends(friendshipRepository, userId1, userId2) {
-        return true;
+    static async areFriends(friendshipRepository, userId1, userId2) {
+        return await friendshipRepository.exist({
+            where: [
+                { UserId1: userId1, UserId2: userId2 },
+                { UserId1: userId2, UserId2: userId1 },
+            ],
+        });
     }
 }

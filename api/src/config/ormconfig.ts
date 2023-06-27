@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import { UserEntity } from "../entity/user.entity";
 import { MediaEntity } from "../entity/media.entity";
 import { CommentEntity } from "../entity/comment.entity";
+import { FriendshipEntity } from "../entity/friendship.entity";
 import env from "../../environment";
 import { NotificationEntity } from "../entity/notification.entity";
 import { WatchListEntity } from "../entity/watchList.entity";
@@ -19,6 +20,7 @@ const appDataSource = new DataSource({
         MediaEntity,
         CommentEntity,
         NotificationEntity,
+        FriendshipEntity,
         WatchListEntity,
         WatchListItemEntity,
     ],

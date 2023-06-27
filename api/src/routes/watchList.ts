@@ -8,6 +8,7 @@ import { MediaEntity } from "../entity/media.entity";
 import express from "express";
 import auth, { optionalAuth } from "../middleware/auth";
 import TMDBRepository from "../repositories/tmdbRepository";
+import { FriendshipEntity } from "../entity/friendship.entity";
 
 export const watchListRouter = express.Router();
 
@@ -17,13 +18,15 @@ const watchListItemRepository =
     appDataSource.getRepository(WatchListItemEntity);
 const mediaRepository = appDataSource.getRepository(MediaEntity);
 const tmdbRepository = new TMDBRepository();
+const friendshipRepository = appDataSource.getRepository(FriendshipEntity);
 
 const service = new WatchListService(
     watchListRepository,
     watchListItemRepository,
     userRepository,
     mediaRepository,
-    tmdbRepository
+    tmdbRepository,
+    friendshipRepository
 );
 
 const controller = new WatchListController(service);

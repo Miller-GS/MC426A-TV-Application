@@ -15,6 +15,7 @@ import { WatchListNotOwnedError } from "../errors/WatchListNotOwnedError";
 import { MediaNotFoundError } from "../errors/MediaNotFoundError";
 import { WatchListParser } from "../models/watchList";
 import TMDBRepository from "../repositories/tmdbRepository";
+import { FriendshipEntity } from "../entity/friendship.entity";
 
 export default class WatchListService {
     private watchListRepository: Repository<WatchListEntity>;
@@ -22,19 +23,22 @@ export default class WatchListService {
     private userRepository: Repository<UserEntity>;
     private mediaRepository: Repository<MediaEntity>;
     private tmdbRepository: TMDBRepository;
+    private friendshipRepository: Repository<FriendshipEntity>;
 
     public constructor(
         watchListRepository: Repository<WatchListEntity>,
         watchListItemRepository: Repository<WatchListItemEntity>,
         userRepository: Repository<UserEntity>,
         mediaRepository: Repository<MediaEntity>,
-        tmdbRepository: TMDBRepository
+        tmdbRepository: TMDBRepository,
+        friendshipRepository: Repository<FriendshipEntity>
     ) {
         this.watchListRepository = watchListRepository;
         this.watchListItemRepository = watchListItemRepository;
         this.userRepository = userRepository;
         this.mediaRepository = mediaRepository;
         this.tmdbRepository = tmdbRepository;
+        this.friendshipRepository = friendshipRepository;
     }
 
     private async checkUserExists(userId: number) {
@@ -98,8 +102,8 @@ export default class WatchListService {
         if (!watchList) throw new WatchListNotFoundError();
 
         const isOwner = watchList.Owner.Id === userId;
-        const isFriend = ValidationUtils.areFriends(
-            null,
+        const isFriend = await ValidationUtils.areFriends(
+            this.friendshipRepository,
             watchList.Owner.Id,
             userId
         );

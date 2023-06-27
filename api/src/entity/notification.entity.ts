@@ -11,6 +11,7 @@ import { UserEntity } from "./user.entity";
 
 export enum NotificationType {
     COMMENT_REPLY = "CommentReply",
+    FRIEND_REQUEST = "FriendRequest",
 }
 
 @Entity("notification")
