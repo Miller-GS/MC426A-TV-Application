@@ -3,6 +3,7 @@ import { MediaNotFoundError } from "../../src/errors/MediaNotFoundError";
 import { CommentParentNotFoundError } from "../../src/errors/CommentParentNotFoundError";
 import { CommentNotFoundError } from "../../src/errors/CommentNotFoundError";
 import { CommentNotOwnedError } from "../../src/errors/CommentNotOwnedError";
+import { NotificationType } from "../../src/entity/notification.entity";
 
 const makeCommentEntityMock = (entity = {} as any) => {
     return {
@@ -136,6 +137,32 @@ describe("Comment Service", () => {
             );
 
             expect(response).toEqual(makeCommentMock({ parentId: 1 }));
+            expect(notificationRepositoryMock.save).toHaveBeenCalledWith({
+                User: {
+                    Id: 1,
+                },
+                Text: "User 1 replied to your comment made at 1.",
+                Type: NotificationType.COMMENT_REPLY,
+            });
+        });
+
+        test("Should create comment when media exists and parent is null", async () => {
+            mediaRepositoryMock.exist.mockReturnValueOnce(true);
+            commentRepositoryMock.findOne.mockReturnValueOnce(
+                makeCommentEntityMock()
+            );
+            const commentEntityMock = makeCommentEntityMock();
+            commentRepositoryMock.save.mockReturnValueOnce(commentEntityMock);
+
+            const response = await commentService.createComment(
+                1,
+                1,
+                null,
+                "Comment content"
+            );
+
+            expect(response).toEqual(makeCommentMock());
+            expect(notificationRepositoryMock.save).not.toHaveBeenCalled();
         });
     });
 

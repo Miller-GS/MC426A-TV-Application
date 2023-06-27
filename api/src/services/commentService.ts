@@ -76,7 +76,7 @@ export default class CommentService {
 
         const comment = CommentParser.parseComment(commentEntity);
 
-        if (parentComment) {
+        if (parentComment && !ValidationUtils.isNull(parentComment.userId)) {
             const parentUserId = parentComment.userId as number;
 
             const notificaton = new ReplyNotification(
