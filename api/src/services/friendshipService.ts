@@ -85,10 +85,24 @@ export default class FriendshipService {
     }
 
     public async listFriends(userId: number) {
-        const friendships = await this.friendshipRepository.find({
-            where: { UserId1: userId, Status: FriendshipStatus.ACCEPTED },
-        });
+        const friendships_user1 =
+            (await this.friendshipRepository.find({
+                where: { UserId1: userId, Status: FriendshipStatus.ACCEPTED },
+            })) || [];
+        const friendships_user2 =
+            (await this.friendshipRepository.find({
+                where: { UserId2: userId, Status: FriendshipStatus.ACCEPTED },
+            })) || [];
 
-        return friendships.map((f) => f.UserId2);
+        let friendships: number[] = [];
+
+        friendships = friendships.concat(
+            friendships_user1.map((f) => f.UserId2) as number[]
+        );
+        friendships = friendships.concat(
+            friendships_user2.map((f) => f.UserId1) as number[]
+        );
+
+        return friendships;
     }
 }
