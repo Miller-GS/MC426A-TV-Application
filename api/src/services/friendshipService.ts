@@ -94,10 +94,10 @@ export default class FriendshipService {
 
         let friendships = [];
 
-        friendships = friendships.concat(
+        friendships.concat(
             friendships_user1.map((f) => f.UserId2)
         );
-        friendships = friendships.concat(
+        friendships.concat(
             friendships_user2.map((f) => f.UserId1)
         );
 
