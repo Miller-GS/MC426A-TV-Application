@@ -92,13 +92,13 @@ export default class FriendshipService {
             where: { UserId2: userId, Status: FriendshipStatus.ACCEPTED },
         });
 
-        let friendships = [];
+        let friendships: number[] = [];
 
-        friendships.concat(
-            friendships_user1.map((f) => f.UserId2)
+        friendships = friendships.concat(
+            friendships_user1.map((f) => f.UserId2) as number[]
         );
-        friendships.concat(
-            friendships_user2.map((f) => f.UserId1)
+        friendships = friendships.concat(
+            friendships_user2.map((f) => f.UserId1) as number[]
         );
 
         return friendships;
