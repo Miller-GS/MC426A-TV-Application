@@ -85,12 +85,14 @@ export default class FriendshipService {
     }
 
     public async listFriends(userId: number) {
-        const friendships_user1 = await this.friendshipRepository.find({
-            where: { UserId1: userId, Status: FriendshipStatus.ACCEPTED },
-        }) || [];
-        const friendships_user2 = await this.friendshipRepository.find({
-            where: { UserId2: userId, Status: FriendshipStatus.ACCEPTED },
-        }) || [];
+        const friendships_user1 =
+            (await this.friendshipRepository.find({
+                where: { UserId1: userId, Status: FriendshipStatus.ACCEPTED },
+            })) || [];
+        const friendships_user2 =
+            (await this.friendshipRepository.find({
+                where: { UserId2: userId, Status: FriendshipStatus.ACCEPTED },
+            })) || [];
 
         let friendships: number[] = [];
 
