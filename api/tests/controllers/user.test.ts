@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 
 import UserController from "../../src/controllers/user";
 import { InvalidRefreshTokenError } from "../../src/errors/InvalidRefreshTokenError";
+import { UserNotExistsError } from "../../src/errors/UserNotExistsError";
+import { InvalidAccessError } from "../../src/errors/InvalidAccessError";
 
 describe("Users controller", () => {
     let controller: UserController;
@@ -165,7 +167,43 @@ describe("Users controller", () => {
             });
         });
 
-        test("login() should return 200 if login is successfull", async () => {
+        test("login() should return 401 if user does not exist", async () => {
+            const req = {
+                body: {
+                    email: "non_existing_email",
+                    password: "non_existing_password",
+                },
+            } as Request;
+
+            service.login.mockRejectedValueOnce(new UserNotExistsError());
+
+            await controller.login(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "User does not exist",
+            });
+        });
+
+        test("login() should return 401 if the password is incorrect", async () => {
+            const req = {
+                body: {
+                    email: "existing_email",
+                    password: "incorrect_password",
+                },
+            } as Request;
+
+            service.login.mockRejectedValueOnce(new InvalidAccessError());
+
+            await controller.login(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(res.json).toHaveBeenCalledWith({
+                message: "Invalid access",
+            });
+        });
+
+        test("login() should return 200 if login is successful", async () => {
             const req = {
                 body: {
                     email: "existing_email@email.com",
@@ -181,6 +219,17 @@ describe("Users controller", () => {
             await controller.login(req, res);
 
             expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.cookie).toHaveBeenCalledWith(
+                "refreshToken",
+                "refreshToken",
+                {
+                    httpOnly: true,
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                }
+            );
+            expect(res.json).toHaveBeenCalledWith({
+                accessToken: "accessToken",
+            });
         });
 
         test("login() should return 500 if an error occurs", async () => {
