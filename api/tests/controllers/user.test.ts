@@ -175,9 +175,7 @@ describe("Users controller", () => {
                 },
             } as Request;
 
-            service.login.mockRejectedValueOnce(
-                new UserNotExistsError()
-            );
+            service.login.mockRejectedValueOnce(new UserNotExistsError());
 
             await controller.login(req, res);
 
@@ -195,9 +193,7 @@ describe("Users controller", () => {
                 },
             } as Request;
 
-            service.login.mockRejectedValueOnce(
-                new InvalidAccessError()
-            );
+            service.login.mockRejectedValueOnce(new InvalidAccessError());
 
             await controller.login(req, res);
 
@@ -231,7 +227,9 @@ describe("Users controller", () => {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
                 }
             );
-            expect(res.json).toHaveBeenCalledWith({"accessToken": "accessToken"});
+            expect(res.json).toHaveBeenCalledWith({
+                accessToken: "accessToken",
+            });
         });
 
         test("login() should return 500 if an error occurs", async () => {
