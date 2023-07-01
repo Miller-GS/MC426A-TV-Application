@@ -139,6 +139,11 @@ describe("isValidEmail", () => {
         expect(response).toEqual(false);
     });
 
+    test("Should return false if it has no letters", () => {
+        const response = ValidationUtils.isValidEmail(".@");
+        expect(response).toEqual(false);
+    });
+
     test("Should return false if string is empty", () => {
         const response = ValidationUtils.isValidEmail("");
         expect(response).toEqual(false);
